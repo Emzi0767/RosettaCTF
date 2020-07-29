@@ -1,5 +1,5 @@
 // This file is part of RosettaCTF project.
-// 
+//
 // Copyright 2020 Emzi0767
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,21 +14,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { BrowserModule } from "@angular/platform-browser";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { NgModule } from "@angular/core";
+import { HttpClientModule } from "@angular/common/http";
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { AppRoutingModule } from "./app-routing.module";
+import { AppComponent } from "./app.component";
+
+import { KonamiModule } from "ngx-konami";
+import { NavbarComponent } from "./navbar/navbar.component";
+import { FooterComponent } from "./footer/footer.component";
+import { LabelledButtonComponent } from "./labelled-button/labelled-button.component";
+import { DialogComponent } from "./dialog/dialog.component";
+import { ErrorDialogComponent } from "./dialog/error-dialog/error-dialog.component";
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        NavbarComponent,
+        FooterComponent,
+        LabelledButtonComponent,
+        DialogComponent,
+        ErrorDialogComponent
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        KonamiModule,
+        BrowserAnimationsModule,
+        HttpClientModule
+    ],
+    providers: [],
+    bootstrap: [AppComponent],
+    entryComponents: [
+        ErrorDialogComponent
+    ]
 })
 export class AppModule { }

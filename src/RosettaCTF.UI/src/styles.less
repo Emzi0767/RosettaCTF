@@ -15,3 +15,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/* Import fonts */
+@import url("fonts/IBMPlexSans/IBMPlexSans.css");
+@import url("fonts/IBMPlexMono/IBMPlexMono.css");
+@import url("fonts/MaterialIcons/MaterialIcons.css");
+
+/* Force sane sizing */
+* { box-sizing: border-box; }
+
+html, body {
+    width: 100%; height: 100%;
+    margin: 0; padding: 0;
+
+    overflow-x: hidden;
+
+    font: 12pt 'IBM Plex Sans','Segoe UI','Helvetica Neue','Arial',sans-serif;
+    font-weight: 450;
+
+    background: #333;
+    color: #ddd;
+
+    /* Firefox */
+    scrollbar-color: #444 transparent;
+    scrollbar-width: 24px;
+
+    /* IE */
+    scrollbar-track-color: #333;
+    scrollbar-face-color: #444;
+    scrollbar-shadow-color: #444;
+}
+
+/* WebKit/Blink (Chrome/Chromium) */
+.view-flex > .display > html::-webkit-scrollbar-track,
+.view-flex > .display > body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.view-flex > .display > html::-webkit-scrollbar-thumb,
+.view-flex > .display > body::-webkit-scrollbar-thumb {
+    background: #444;
+}
+
+.view-flex > .display > html::-webkit-scrollbar-button,
+.view-flex > .display > body::-webkit-scrollbar-button {
+    display: none;
+}
+
+a {
+    &:link, &:visited {
+        color: #80bfff;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+    
+        transition: color 0.3s, border-bottom-color 0.3s;
+    }
+
+    &:hover, &:active {
+        color: #3399ff;
+        border-bottom-color: #3399ff;
+    }
+}

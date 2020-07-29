@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "meta", "meta", "{F014F57A-6
 	ProjectSection(SolutionItems) = preProject
 		LICENSE.TXT = LICENSE.TXT
 		NOTICE.TXT = NOTICE.TXT
+		README.MD = README.MD
 	EndProjectSection
 EndProject
 Global
