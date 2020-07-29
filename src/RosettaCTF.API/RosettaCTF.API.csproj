@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!-- 
+
+  This file is part of RosettaCTF project.
+  
+  Copyright 2020 Emzi0767
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  
+-->
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!-- Basic output binary settings -->
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <IsPackable>False</IsPackable>
+  </PropertyGroup>
+
+  <!-- Project info -->
+  <PropertyGroup>
+    <RootNamespace>RosettaCTF</RootNamespace>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>$(Version).0</AssemblyVersion>
+    <FileVersion>$(Version).0</FileVersion>
+  </PropertyGroup>
+  
+  <!-- References -->
+  <ItemGroup>
+    
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.6" />
+  </ItemGroup>
+  
+  <!-- SPA Settings -->
+  <PropertyGroup>
+    <SpaRoot>../RosettaCTF.UI</SpaRoot>
+    <MinimumNodeVersion>10.0.0</MinimumNodeVersion>
+  </PropertyGroup>
+
+  <!-- SPA build targets -->
+  
+  <!-- Emit all configuration in debug -->
+  <Target Name="EmitSpaConfiguration" BeforeTargets="BeforeCompile" Condition="'$(Configuration)' == 'Debug'">
+    <ItemGroup>
+      <AssemblyAttributes Include="RosettaCTF.SpaConfigurationAttribute">
+        <_Parameter1>$(SpaRoot)</_Parameter1>
+      </AssemblyAttributes>
+    </ItemGroup>
+    <WriteCodeFragment AssemblyAttributes="@(AssemblyAttributes)" Language="C#" OutputDirectory="$(IntermediateOutputPath)" OutputFile="SpaConfiguration.cs">
+      <Output TaskParameter="OutputFile" ItemName="Compile" />
+      <Output TaskParameter="OutputFile" ItemName="FileWrites" />
+    </WriteCodeFragment>
+  </Target>
+  
+  <!-- Ensure node.js is installed and usable -->
+  <Target Name="EnsureNode" BeforeTargets="Build">
+    <Exec Command="node --version" ContinueOnError="true" ConsoleToMsBuild="True" StandardOutputImportance="Low">
+      <Output TaskParameter="ExitCode" PropertyName="NodeErrorCode" />
+      <Output TaskParameter="ConsoleOutput" PropertyName="NodeVersion" />
+    </Exec>
+    <Error Condition="'$(NodeErrorCode)' != '0'" Text="No working copy of node.js was detected. To build this project, node.js is required to be present and usable on your system. Consult https://nodejs.org/ for information on how to install node.js on your system." />
+    <Error Condition="'$([System.Version]::Parse($(NodeVersion.Substring(1))).CompareTo($([System.Version]::Parse($(MinimumNodeVersion)))))' &lt; 0" Text="The version of node.js detected on your system is too old for this project. Please upgrade to version v$(MinimumNodeVersion) or later. Consult https://nodejs.org/ for information on how to install node.js on your system." />
+    <Message Importance="High" Text="Detected node.js version $(NodeVersion)" />
+  </Target>
+  
+  <!-- Restore node packages -->
+  <Target Name="RestoreNodePackages" AfterTargets="EnsureNode" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)/node_modules')">
+    <Message Importance="High" Text="Restoring npm packages for SPA build. This will take a while..." />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" ConsoleToMsBuild="True" StandardOutputImportance="Low" StandardErrorImportance="Normal" />
+  </Target>
+
+  <!-- Build SPA in production mode when building in Release -->
+  <Target Name="BuildWebPack" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <Message Importance="High" Text="Removing SPA build artifacts" Condition="Exists('$(SpaRoot)/dist')" />
+    <RemoveDir Directories="$(SpaRoot)/dist" Condition="Exists('$(SpaRoot)/dist')" />
+
+    <Message Importance="High" Text="Building SPA components" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" ConsoleToMsBuild="True" StandardOutputImportance="Low" StandardErrorImportance="Normal" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run prod" ConsoleToMsBuild="True" StandardOutputImportance="Low" StandardErrorImportance="Normal" />
+  </Target>
+  
+</Project>

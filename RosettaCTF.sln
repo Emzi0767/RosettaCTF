@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RosettaCTF.API", "src\RosettaCTF.API\RosettaCTF.API.csproj", "{A00D876F-E1FA-4B24-87FF-17CD0034E18A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5196EBA1-008A-445A-B0DC-302827C2E7AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RosettaCTF.UI", "RosettaCTF.UI", "{16553FC1-8EB9-43BB-AAF4-BECF8F453331}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "meta", "meta", "{F014F57A-68AE-4F86-BF34-0FC23B45429C}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.TXT = LICENSE.TXT
+		NOTICE.TXT = NOTICE.TXT
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A00D876F-E1FA-4B24-87FF-17CD0034E18A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A00D876F-E1FA-4B24-87FF-17CD0034E18A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A00D876F-E1FA-4B24-87FF-17CD0034E18A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A00D876F-E1FA-4B24-87FF-17CD0034E18A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A00D876F-E1FA-4B24-87FF-17CD0034E18A} = {5196EBA1-008A-445A-B0DC-302827C2E7AB}
+		{16553FC1-8EB9-43BB-AAF4-BECF8F453331} = {5196EBA1-008A-445A-B0DC-302827C2E7AB}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CB1F14CB-3FFE-4D9E-B9C4-D24C26CE6A52}
+	EndGlobalSection
+EndGlobal
