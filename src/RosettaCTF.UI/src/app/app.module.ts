@@ -30,6 +30,7 @@ import { DialogComponent } from "./dialog/dialog.component";
 import { ErrorDialogComponent } from "./dialog/error-dialog/error-dialog.component";
 import { NotFoundComponent } from './not-found/not-found.component';
 import { LandingComponent } from './landing/landing.component';
+import { KonamiComponent } from './konami/konami.component';
 
 @NgModule({
     declarations: [
@@ -40,7 +41,8 @@ import { LandingComponent } from './landing/landing.component';
         DialogComponent,
         ErrorDialogComponent,
         NotFoundComponent,
-        LandingComponent
+        LandingComponent,
+        KonamiComponent
     ],
     imports: [
         BrowserModule,

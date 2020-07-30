@@ -15,6 +15,7 @@
 // limitations under the License.
 
 import { Component, OnDestroy } from "@angular/core";
+import { Router } from "@angular/router";
 
 import { ErrorDialogComponent } from "./dialog/error-dialog/error-dialog.component";
 import { IErrorData } from "./data/error";
@@ -30,7 +31,8 @@ export class AppComponent implements OnDestroy {
 
     private eventHandlerQueue: Array<IEventTriple<any>>;
 
-    constructor(private eventDispatcher: EventDispatcherService) {
+    constructor(private eventDispatcher: EventDispatcherService,
+                private router: Router) {
         if (!!this.eventHandlerQueue) {
             for (const handler of this.eventHandlerQueue) {
                 this.eventDispatcher.register(handler.name, handler.handler.bind(this), handler.tag);
@@ -39,7 +41,7 @@ export class AppComponent implements OnDestroy {
     }
 
     test(): void {
-        alert("Boo");
+        this.router.navigate(["konami"]);
     }
 
     ngOnDestroy(): void {

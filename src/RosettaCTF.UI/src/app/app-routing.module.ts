@@ -19,8 +19,13 @@ import { Routes, RouterModule } from "@angular/router";
 
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { LandingComponent } from "./landing/landing.component";
+import { KonamiComponent } from "./konami/konami.component";
 
 const routes: Routes = [
+    {
+        path: "konami",
+        component: KonamiComponent
+    },
     {
         path: "",
         component: LandingComponent

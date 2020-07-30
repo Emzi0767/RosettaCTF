@@ -30,6 +30,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     container: ViewContainerRef;
     private component: ComponentRef<any>;
 
+    @ViewChild("loginContainer", { read: ViewContainerRef, static: true })
+    private loginComponent: ComponentRef<any>;
+
     public instanceName: string = null;
 
     constructor(private router: Router,

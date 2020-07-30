@@ -23,6 +23,11 @@
     <div class="spacer"></div>
     <div class="buttons">
         <span #buttonContainer></span>
-        <labelled-button [actionId]="'test'" [actionDescription]="'Test button'" [actionText]="'Test'" [actionRoute]="['/test']"></labelled-button>
+        <labelled-button [actionId]="'landing'" [actionDescription]="'Go to landing page'" [actionText]="'Home'" [actionRoute]="['/']"></labelled-button>
+        <labelled-button [actionId]="'challenges'" [actionDescription]="'Show currently-available challenges'" [actionText]="'Challenges'" [actionRoute]="['/challenges']"></labelled-button>
+        <labelled-button [actionId]="'scoreboard'" [actionDescription]="'Display current team ranking'" [actionText]="'Scoreboard'" [actionRoute]="['/scoreboard']"></labelled-button>
+        <labelled-button [actionId]="'profile'" [actionDescription]="'View your user profile'" [actionText]="'Profile'" [actionRoute]="['/profile']"></labelled-button>
+        <labelled-button [actionId]="'team'" [actionDescription]="'View your team\'s profile'" [actionText]="'Team'" [actionRoute]="['/team']"></labelled-button>
+        <span #loginContainer></span>
     </div>
 </div>
