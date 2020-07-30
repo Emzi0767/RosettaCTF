@@ -22,13 +22,12 @@
 
     position: relative;
 
-    a, button {
+    & > a, 
+    & > button {
         flex: 0 0 auto;
-        font-size: 36px;
-        line-height: 64px;
-
-        font-family: 'Material Icons';
-        font-weight: 400;    
+        font-size: 16px;
+        line-height: 32px;
+        font-weight: 450;
 
         cursor: pointer;
 
@@ -43,24 +42,39 @@
     
         transition: text-shadow 0.3s;
 
+        &:before {
+            display: inline-block;
+            margin: 0; padding: 0;
+
+            font-family: 'Material Icons';
+            font-weight: 400;
+            font-size: 18px;
+            line-height: 20px;
+
+            content: '\e315';
+
+            vertical-align: middle;
+        }
+
         &:hover,
         &:active {
             text-shadow: 0 0 6px #999;
         }
     }
 
-    .label {
-        font: 11pt 'IBM Plex Mono';
+    & > .label {
         font-weight: 450;
         white-space: nowrap;
+        line-height: 20px;
+        font-size: 14px;
     
         box-sizing: border-box;
-        padding: 8px;
+        padding: 6px 10px;
         border-radius: 0 0 4px 4px;
     
         position: absolute;
-        top: 64px;
-        right: 0;
+        top: 36px;
+        right: -8px;
     
         background: rgba(34, 34, 34, 0.75);    
     }

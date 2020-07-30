@@ -28,6 +28,8 @@ import { FooterComponent } from "./footer/footer.component";
 import { LabelledButtonComponent } from "./labelled-button/labelled-button.component";
 import { DialogComponent } from "./dialog/dialog.component";
 import { ErrorDialogComponent } from "./dialog/error-dialog/error-dialog.component";
+import { NotFoundComponent } from './not-found/not-found.component';
+import { LandingComponent } from './landing/landing.component';
 
 @NgModule({
     declarations: [
@@ -36,7 +38,9 @@ import { ErrorDialogComponent } from "./dialog/error-dialog/error-dialog.compone
         FooterComponent,
         LabelledButtonComponent,
         DialogComponent,
-        ErrorDialogComponent
+        ErrorDialogComponent,
+        NotFoundComponent,
+        LandingComponent
     ],
     imports: [
         BrowserModule,

@@ -23,27 +23,27 @@
     display: flex;
     flex-direction: row;
 
-    .navbar-title {
+    & > .navbar-title {
         flex: 0 0 auto;
-        font-size: 36px;
-        line-height: 64px;    
+        font-size: 24px;
+        line-height: 36px;
     }
 
-    .spacer {
+    & > .spacer {
         flex: 100 0 auto;
     }
 
-    .buttons {
+    & > .buttons {
         flex: 0 0 auto;
-        font-size: 32px;
-        line-height: 64px;
-        font-family: 'Material Icons';
-        font-weight: 400;
+        font-size: 18px;
+        line-height: 36px;
+
+        padding-right: 16px;
     }
     
     a {
         &:link, &:visited {
-            margin-left: 16px;
+            margin-left: 0;
 
             color: white;
             background: transparent;
@@ -51,7 +51,11 @@
             border-bottom: none;
             text-shadow: 0 0 6px #111;
         
-            transition: text-shadow 0.3s;        
+            transition: text-shadow 0.3s;
+            
+            @media (max-width: 1279px) {
+                margin-left: 12px;
+            }  
         }
 
         &:hover, &:active {

@@ -47,19 +47,23 @@ html, body {
 }
 
 /* WebKit/Blink (Chrome/Chromium) */
-.view-flex > .display > html::-webkit-scrollbar-track,
-.view-flex > .display > body::-webkit-scrollbar-track {
-    background: transparent;
-}
+.view-flex { 
+    & > .display {
+        & > html::-webkit-scrollbar-track,
+        & > body::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
-.view-flex > .display > html::-webkit-scrollbar-thumb,
-.view-flex > .display > body::-webkit-scrollbar-thumb {
-    background: #444;
-}
+        & > html::-webkit-scrollbar-thumb,
+        & > body::-webkit-scrollbar-thumb {
+            background: #444;
+        }
 
-.view-flex > .display > html::-webkit-scrollbar-button,
-.view-flex > .display > body::-webkit-scrollbar-button {
-    display: none;
+        & > html::-webkit-scrollbar-button,
+        & > body::-webkit-scrollbar-button {
+            display: none;
+        }
+    }
 }
 
 a {

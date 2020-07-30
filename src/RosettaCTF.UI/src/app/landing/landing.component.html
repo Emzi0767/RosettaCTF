@@ -18,21 +18,5 @@
  
 -->
 
-<div class="page-root" (konami)="test()">
-  <div class="page-navbar">
-    <div class="page-navbar-inner">
-      <app-navbar></app-navbar>
-    </div>
-  </div>
-  <div class="page-content">
-    <div class="page-content-inner">
-      <router-outlet></router-outlet>
-    </div>
-  </div>
-  <div class="page-footer">
-    <div class="page-footer-inner">
-      <app-footer></app-footer>
-    </div>
-  </div>
-</div>
-<dialog></dialog>
+<p>landing works!</p>
+<p *ngFor="let x of counter(128)">pn #{{x}}</p>

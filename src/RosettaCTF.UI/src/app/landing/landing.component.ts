@@ -14,25 +14,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
+import { Component, OnInit } from "@angular/core";
 
-import { NotFoundComponent } from "./not-found/not-found.component";
-import { LandingComponent } from "./landing/landing.component";
-
-const routes: Routes = [
-    {
-        path: "",
-        component: LandingComponent
-    },
-    {
-        path: "**",
-        component: NotFoundComponent
-    }
-];
-
-@NgModule({
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule]
+@Component({
+    selector: "app-landing",
+    templateUrl: "./landing.component.html",
+    styleUrls: ["./landing.component.less"]
 })
-export class AppRoutingModule { }
+export class LandingComponent {
+    counter(i: number): Array<number> {
+        const arr = new Array<number>(i);
+        for (let n = 0; n < i; n++) {
+            arr[n] = n;
+        }
+
+        return arr;
+    }
+}

@@ -1,5 +1,5 @@
 // This file is part of RosettaCTF project.
-//
+// 
 // Copyright 2020 Emzi0767
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,25 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
+import { Component } from "@angular/core";
 
-import { NotFoundComponent } from "./not-found/not-found.component";
-import { LandingComponent } from "./landing/landing.component";
-
-const routes: Routes = [
-    {
-        path: "",
-        component: LandingComponent
-    },
-    {
-        path: "**",
-        component: NotFoundComponent
-    }
-];
-
-@NgModule({
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule]
+@Component({
+    selector: "app-not-found",
+    templateUrl: "./not-found.component.html",
+    styleUrls: ["./not-found.component.less"]
 })
-export class AppRoutingModule { }
+export class NotFoundComponent { }
