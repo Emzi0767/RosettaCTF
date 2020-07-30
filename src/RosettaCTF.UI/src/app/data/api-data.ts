@@ -121,7 +121,17 @@ export enum ApiStatus {
  */
 export interface IApiTestResponse {
     /**
-     * Gets the status returned by API, if any.
+     * Gets the name of the event.
      */
-    status?: string;
+    name: string;
+
+    /**
+     * Gets the start time of the event.
+     */
+    startTime: string;
+
+    /**
+     * Gets the end time of the event.
+     */
+    endTime: string;
 }

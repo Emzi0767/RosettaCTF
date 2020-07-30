@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, OnInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, ComponentRef, OnDestroy } from "@angular/core";
+import { Component, OnInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, ComponentRef, OnDestroy, Input } from "@angular/core";
 import { Router, ResolveEnd } from "@angular/router";
 
 import { INavbarData } from "../data/navbar-data";
@@ -33,6 +33,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     @ViewChild("loginContainer", { read: ViewContainerRef, static: true })
     private loginComponent: ComponentRef<any>;
 
+    @Input()
     public instanceName: string = null;
 
     constructor(private router: Router,

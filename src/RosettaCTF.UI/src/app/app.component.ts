@@ -14,25 +14,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, Output } from "@angular/core";
 import { Router } from "@angular/router";
+
+import { Moment, parseZone } from "moment";
 
 import { ErrorDialogComponent } from "./dialog/error-dialog/error-dialog.component";
 import { IErrorData } from "./data/error";
 import { EventDispatcherService, EventHandler, IEventTriple } from "./services/event-dispatcher.service";
+import { RosettaApiService } from "./services/rosetta-api.service";
 
 @Component({
     selector: "app-root",
     templateUrl: "./app.component.html",
     styleUrls: ["./app.component.less"]
 })
-export class AppComponent implements OnDestroy {
-    title = "RosettaCTF";
+export class AppComponent implements OnInit, OnDestroy {
+
+    @Output()
+    title: string = null;
+
+    @Output()
+    startTime: Moment = null;
+
+    @Output()
+    endTime: Moment = null;
 
     private eventHandlerQueue: Array<IEventTriple<any>>;
 
     constructor(private eventDispatcher: EventDispatcherService,
-                private router: Router) {
+                private router: Router,
+                private api: RosettaApiService) {
         if (!!this.eventHandlerQueue) {
             for (const handler of this.eventHandlerQueue) {
                 this.eventDispatcher.register(handler.name, handler.handler.bind(this), handler.tag);
@@ -42,6 +54,19 @@ export class AppComponent implements OnDestroy {
 
     test(): void {
         this.router.navigate(["konami"]);
+    }
+
+    ngOnInit(): void {
+        this.api.testApi().then(x => {
+            if (!x.isSuccess) {
+                this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message: "Could not establish a connection with the API." } });
+                return;
+            }
+
+            this.title = x.result.name;
+            this.startTime = parseZone(x.result.startTime);
+            this.endTime = parseZone(x.result.endTime);
+        });
     }
 
     ngOnDestroy(): void {
@@ -58,7 +83,7 @@ export class AppComponent implements OnDestroy {
             console.log(e.reason);
         }
 
-        let message = e.message || "Failed to submit paste data.";
+        let message = e.message || "Error occured while communicating with the API.";
         if (!!e.reason && !!e.reason.message) {
             message += ` ${e.reason.message}`;
         }
