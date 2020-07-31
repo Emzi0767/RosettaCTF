@@ -38,7 +38,7 @@ namespace RosettaCTF.API
             // Load envvars and cmdline switches
             var cfg = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
-                .AddEnvironmentVariables("ROSETTACTF_")
+                .AddEnvironmentVariables("ROSETTACTF__")
                 .AddCommandLine(Environment.GetCommandLineArgs())
                 .Build();
 
