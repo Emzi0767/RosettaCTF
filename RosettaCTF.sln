@@ -21,6 +21,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "meta", "meta", "{F014F57A-6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RosettaCTF.Abstractions", "src\RosettaCTF.Abstractions\RosettaCTF.Abstractions.csproj", "{5E4779E7-3A7A-4C95-83EA-D7B90CE5D085}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RosettaCTF.ChallengeLoader.Yaml", "src\challenge\RosettaCTF.ChallengeLoader.Yaml\RosettaCTF.ChallengeLoader.Yaml.csproj", "{17A836A6-D481-4992-8AD8-53AFF29110B4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "challenge", "challenge", "{49D21669-6EA0-4A70-AB12-6FA316FBB3E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +39,10 @@ Global
 		{5E4779E7-3A7A-4C95-83EA-D7B90CE5D085}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E4779E7-3A7A-4C95-83EA-D7B90CE5D085}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E4779E7-3A7A-4C95-83EA-D7B90CE5D085}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17A836A6-D481-4992-8AD8-53AFF29110B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17A836A6-D481-4992-8AD8-53AFF29110B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17A836A6-D481-4992-8AD8-53AFF29110B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17A836A6-D481-4992-8AD8-53AFF29110B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +51,8 @@ Global
 		{A00D876F-E1FA-4B24-87FF-17CD0034E18A} = {5196EBA1-008A-445A-B0DC-302827C2E7AB}
 		{16553FC1-8EB9-43BB-AAF4-BECF8F453331} = {5196EBA1-008A-445A-B0DC-302827C2E7AB}
 		{5E4779E7-3A7A-4C95-83EA-D7B90CE5D085} = {5196EBA1-008A-445A-B0DC-302827C2E7AB}
+		{17A836A6-D481-4992-8AD8-53AFF29110B4} = {49D21669-6EA0-4A70-AB12-6FA316FBB3E1}
+		{49D21669-6EA0-4A70-AB12-6FA316FBB3E1} = {5196EBA1-008A-445A-B0DC-302827C2E7AB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CB1F14CB-3FFE-4D9E-B9C4-D24C26CE6A52}

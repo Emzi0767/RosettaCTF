@@ -14,18 +14,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using RosettaCTF.Data;
+using YamlDotNet.Serialization;
 
-namespace RosettaCTF.Controllers
+namespace RosettaCTF.Datatypes
 {
-    [ApiController, Route("api/[controller]"), AllowAnonymous]
-    public sealed class TestController : ControllerBase
+    internal sealed class YamlCtfChallengeCategory : ICtfChallengeCategory
     {
-        [HttpGet]
-        public CtfEvent Get()
-            => new CtfEvent("Test CTF", new[] { "Emzi0767" }, DateTimeOffset.UtcNow, TimeSpan.FromDays(2));
+        [YamlMember(Alias = "name")]
+        public string Name { get; set; }
+
+        [YamlMember(Alias = "id")]
+        public string Id { get; set; }
+
+        [YamlMember(Alias = "hidden")]
+        public bool IsHidden { get; set; }
+
+        [YamlMember(Alias = "challenges", SerializeAs = typeof(List<YamlCtfChallenge>))]
+        public IEnumerable<ICtfChallenge> Challenges { get; set; }
     }
 }

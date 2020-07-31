@@ -1,6 +1,11 @@
 {
   "name": "rosetta-ctf-ui",
   "version": "1.0.0",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Emzi0767",
+    "url": "https://emzi0767.com"
+  },
   "scripts": {
     "ng": "npx ng",
     "start": "echo Why do we need this dumb workaround in 2020 && npx ng serve",

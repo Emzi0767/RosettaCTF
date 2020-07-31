@@ -15,47 +15,40 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace RosettaCTF.Data
+namespace RosettaCTF.Data.Configuration
 {
     /// <summary>
-    /// Represents information about a file attached to a challenge.
+    /// Represents an HTTP listen endpoint.
     /// </summary>
-    public interface ICtfChallengeAttachment
+    public sealed class RosettaConfigurationEndpoint
     {
         /// <summary>
-        /// Gets the name of the file attached.
+        /// Gets the address to bind to.
         /// </summary>
-        string Name { get; }
+        [Required]
+        public string Address { get; set; }
 
         /// <summary>
-        /// Gets the type of the file attached.
+        /// Gets the port to bind to.
         /// </summary>
-        string Type { get; }
+        [Required, Range(1, 65535)]
+        public int Port { get; set; }
 
         /// <summary>
-        /// Gets the length of the file attached, in bytes.
+        /// Gets whether requests served on this endpoint should use encryption.
         /// </summary>
-        long Length { get; }
+        public bool UseSsl { get; set; }
 
         /// <summary>
-        /// Gets the SHA256 checksum of the file attached.
+        /// Gets the path to certificate file to use for this endpoint.
         /// </summary>
-        string Sha256 { get; }
+        public string CertificateFile { get; set; }
 
         /// <summary>
-        /// Gets the SHA1 checksum of the file attached.
+        /// Gets the path to certificate password file to use for this endpoint.
         /// </summary>
-        string Sha1 { get; }
-
-        /// <summary>
-        /// Gets the URI which allows the user to download the file.
-        /// </summary>
-        Uri DownloadUri { get; }
-
-        /// <summary>
-        /// Gets the information about the decompressed version of attached file.
-        /// </summary>
-        ICtfChallengeAttachment DecompressedAttachment { get; }
+        public string CertificatePasswordFile { get; set; }
     }
 }

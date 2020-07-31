@@ -14,16 +14,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace RosettaCTF.Data
+using System.Text;
+
+namespace RosettaCTF
 {
     /// <summary>
-    /// Represents information about compressed attachment's contents.
+    /// Various static helpers.
     /// </summary>
-    public interface ICtfChallengeCompressedAttachment : ICtfChallengeAttachment
+    public static class AbstractionUtilities
     {
         /// <summary>
-        /// Gets the information about the decompressed version of attached file.
+        /// Gets the common, properly-configured instance of the UTF-8 encoder.
         /// </summary>
-        ICtfChallengeAttachment DecompressedAttachment { get; }
+        public static Encoding UTF8 { get; } = new UTF8Encoding(false);
     }
 }

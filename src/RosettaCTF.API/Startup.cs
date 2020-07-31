@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RosettaCTF.Data.Configuration;
 
 namespace RosettaCTF.API
 {
@@ -34,7 +35,24 @@ namespace RosettaCTF.API
 
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            // Load envvars and cmdline switches
+            var cfg = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
+                .AddEnvironmentVariables("ROSETTACTF_")
+                .AddCommandLine(Environment.GetCommandLineArgs())
+                .Build();
+
+            // Load file config
+            var cfgf = new ConfigurationBuilder()
+                .AddJsonFile(cfg.GetSection("JsonConfiguration")?.Value ?? "config.json", true)
+                .AddJsonFile(cfg.GetSection("YamlConfiguration")?.Value ?? "config.yaml", true)
+                .Build();
+
+            // Prepend file config so it has lower priority
+            this.Configuration = new ConfigurationBuilder()
+                .AddConfiguration(cfgf)
+                .AddConfiguration(cfg)
+                .Build();
 
 #if DEBUG
             this.SpaConfiguration = Assembly.GetExecutingAssembly().GetCustomAttribute<SpaConfigurationAttribute>()
@@ -45,6 +63,29 @@ namespace RosettaCTF.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHsts(opts =>
+            {
+                opts.Preload = true;
+                opts.IncludeSubDomains = true;
+                opts.MaxAge = TimeSpan.FromDays(365);
+            });
+
+            services.AddOptions<RosettaConfigurationRoot>()
+                .Bind(this.Configuration)
+                .ValidateDataAnnotations();
+
+            services.AddOptions<RosettaConfigurationDatastore>()
+                .Bind(this.Configuration.GetSection("Database"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<RosettaConfigurationCache>()
+                .Bind(this.Configuration.GetSection("Cache"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<RosettaConfigurationHttp>()
+                .Bind(this.Configuration.GetSection("Http"))
+                .ValidateDataAnnotations();
+
 #if !DEBUG
             services.AddControllers();
 #else

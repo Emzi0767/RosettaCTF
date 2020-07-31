@@ -15,6 +15,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 
 namespace RosettaCTF.Data
 {
@@ -27,6 +28,11 @@ namespace RosettaCTF.Data
         /// Gets the name of this event.
         /// </summary>
         public string Name { get; }
+
+        /// <summary>
+        /// Gets the organizers of this event.
+        /// </summary>
+        public IEnumerable<string> Organizers { get; }
 
         /// <summary>
         /// Gets the start time of this event.
@@ -42,11 +48,13 @@ namespace RosettaCTF.Data
         /// Creates a new instance with specified settings.
         /// </summary>
         /// <param name="name">Name of this event.</param>
+        /// <param name="organizers">Organizers of this event.</param>
         /// <param name="start">Time at which the event starts.</param>
         /// <param name="end">Time at which the event ends.</param>
-        public CtfEvent(string name, DateTimeOffset start, DateTimeOffset end)
+        public CtfEvent(string name, IEnumerable<string> organizers, DateTimeOffset start, DateTimeOffset end)
         {
             this.Name = name;
+            this.Organizers = organizers;
             this.StartTime = start;
             this.EndTime = end;
         }
@@ -55,10 +63,11 @@ namespace RosettaCTF.Data
         /// Creates a new instance with specified settings.
         /// </summary>
         /// <param name="name">Name of this event.</param>
+        /// <param name="organizers">Organizers of this event.</param>
         /// <param name="start">Time at which the event starts.</param>
         /// <param name="duration">Duration of this event.</param>
-        public CtfEvent(string name, DateTimeOffset start, TimeSpan duration)
-            : this(name, start, start + duration)
+        public CtfEvent(string name, IEnumerable<string> organizers, DateTimeOffset start, TimeSpan duration)
+            : this(name, organizers, start, start + duration)
         { }
     }
 }

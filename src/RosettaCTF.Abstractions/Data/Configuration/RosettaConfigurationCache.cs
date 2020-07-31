@@ -15,47 +15,47 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace RosettaCTF.Data
+namespace RosettaCTF.Data.Configuration
 {
     /// <summary>
-    /// Represents information about a file attached to a challenge.
+    /// Represents configuration for a temporary cache, like Redis.
     /// </summary>
-    public interface ICtfChallengeAttachment
+    public sealed class RosettaConfigurationCache
     {
         /// <summary>
-        /// Gets the name of the file attached.
+        /// Gets the type of the datastore.
         /// </summary>
-        string Name { get; }
+        [Required, MinLength(1)]
+        public string Type { get; set; }
 
         /// <summary>
-        /// Gets the type of the file attached.
+        /// Gets the hostname to connect to.
         /// </summary>
-        string Type { get; }
+        [Required, MinLength(1)]
+        public string Hostname { get; set; }
 
         /// <summary>
-        /// Gets the length of the file attached, in bytes.
+        /// Gets the port to connect to.
         /// </summary>
-        long Length { get; }
+        [Required, Range(1, 65535)]
+        public int Port { get; set; }
 
         /// <summary>
-        /// Gets the SHA256 checksum of the file attached.
+        /// Gets the index of the datastore to use.
         /// </summary>
-        string Sha256 { get; }
+        [Required, Range(0, int.MaxValue)]
+        public int Index { get; set; }
 
         /// <summary>
-        /// Gets the SHA1 checksum of the file attached.
+        /// Gets the password used to authenticate with the datastore.
         /// </summary>
-        string Sha1 { get; }
+        public string Password { get; set; }
 
         /// <summary>
-        /// Gets the URI which allows the user to download the file.
+        /// Gets whether to use encryption for datastore connection.
         /// </summary>
-        Uri DownloadUri { get; }
-
-        /// <summary>
-        /// Gets the information about the decompressed version of attached file.
-        /// </summary>
-        ICtfChallengeAttachment DecompressedAttachment { get; }
+        public bool UseSsl { get; set; }
     }
 }

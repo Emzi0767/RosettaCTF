@@ -14,18 +14,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using RosettaCTF.Data;
+using System.ComponentModel.DataAnnotations;
 
-namespace RosettaCTF.Controllers
+namespace RosettaCTF.Data.Configuration
 {
-    [ApiController, Route("api/[controller]"), AllowAnonymous]
-    public sealed class TestController : ControllerBase
+    /// <summary>
+    /// Represents HTTP configuration options for the application.
+    /// </summary>
+    public sealed class RosettaConfigurationHttp
     {
-        [HttpGet]
-        public CtfEvent Get()
-            => new CtfEvent("Test CTF", new[] { "Emzi0767" }, DateTimeOffset.UtcNow, TimeSpan.FromDays(2));
+        /// <summary>
+        /// Gets the endpoints to bind to.
+        /// </summary>
+        [Required]
+        public RosettaConfigurationEndpoint[] Listen { get; set; }
     }
 }
