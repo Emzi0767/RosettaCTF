@@ -19,10 +19,9 @@ using System.IO;
 using Microsoft.Extensions.Options;
 using RosettaCTF.Converters;
 using RosettaCTF.Data;
-using RosettaCTF.Datatypes;
-using YamlDotNet.Core;
-using YamlDotNet.Core.Events;
-using YamlDotNet.Serialization;
+using SharpYaml;
+using SharpYaml.Events;
+using SharpYaml.Serialization;
 
 namespace RosettaCTF
 {
@@ -31,7 +30,7 @@ namespace RosettaCTF
     /// </summary>
     public sealed class YamlCtfConfigurationLoader : ICtfConfigurationLoader
     {
-        private readonly CtfEvent _eventConfig;
+        private readonly ICtfEvent _eventConfig;
         private readonly IEnumerable<ICtfChallengeCategory> _categories;
 
         /// <summary>
@@ -40,11 +39,16 @@ namespace RosettaCTF
         /// <param name="opts">Application configuration.</param>
         public YamlCtfConfigurationLoader(IOptions<RosettaConfigurationRoot> opts)
         {
-            var deserializer = new DeserializerBuilder()
-                .WithTypeConverter(new YamlTimeSpanConverter(), c => c.OnTop())
-                .WithTypeConverter(new YamlDateTimeOffsetConverter(), c => c.OnTop())
-                .IgnoreFields()
-                .Build();
+            var des = new SerializerSettings
+            {
+                ObjectFactory = new YamlObjectFactory()
+            };
+
+            des.RegisterSerializerFactory(new YamlTimeSpanConverter());
+            des.RegisterSerializerFactory(new YamlDateTimeOffsetConverter());
+            des.RegisterSerializerFactory(new YamlUriConverter());
+
+            var deserializer = new Serializer(des);
 
             var optv = opts.Value;
             var fi = new FileInfo(optv.EventConfiguration);
@@ -52,34 +56,31 @@ namespace RosettaCTF
             using (var sr = new StreamReader(fs, AbstractionUtilities.UTF8))
             {
                 var parser = new Parser(sr);
+                var er = new EventReader(parser);
+                if (er.Expect<StreamStart>() == null)
+                    throw new InvalidDataException("YAML configuration is malformed.");
 
-                this._eventConfig = ReadEvent(parser, deserializer);
-                this._categories = ReadCategories(parser, deserializer);
+                this._eventConfig = ReadEvent(er, deserializer);
+                this._categories = ReadCategories(er, deserializer);
+
+                foreach (var cat in this._categories)
+                    foreach (var chall in cat.Challenges)
+                        (chall as YamlCtfChallenge).Category = cat;
             }
         }
 
         /// <inheritdoc />
-        public CtfEvent LoadEventData()
+        public ICtfEvent LoadEventData()
             => this._eventConfig;
 
         /// <inheritdoc />
         public IEnumerable<ICtfChallengeCategory> LoadChallenges()
             => this._categories;
 
-        private static CtfEvent ReadEvent(IParser parser, IDeserializer deserializer)
-        {
-            if (!parser.TryConsume<DocumentStart>(out _))
-                throw new InvalidDataException("YAML configuration is malformed.");
+        private static ICtfEvent ReadEvent(EventReader eventReader, Serializer serializer)
+            => serializer.Deserialize<YamlCtfEvent>(eventReader);
 
-            return deserializer.Deserialize<CtfEvent>(parser);
-        }
-
-        private static IEnumerable<ICtfChallengeCategory> ReadCategories(IParser parser, IDeserializer deserializer)
-        {
-            if (!parser.TryConsume<DocumentStart>(out _))
-                throw new InvalidDataException("YAML configuration is malformed.");
-
-            return deserializer.Deserialize<List<YamlCtfChallengeCategory>>(parser);
-        }
+        private static IEnumerable<ICtfChallengeCategory> ReadCategories(EventReader eventReader, Serializer serializer)
+            => serializer.Deserialize<List<YamlCtfChallengeCategory>>(eventReader);
     }
 }

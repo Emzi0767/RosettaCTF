@@ -72,5 +72,10 @@ namespace RosettaCTF.Data
         /// Gets whether this challenge is hidden by default.
         /// </summary>
         bool IsHidden { get; }
+
+        /// <summary>
+        /// Gets the base score for this challenge.
+        /// </summary>
+        int BaseScore { get; }
     }
 }

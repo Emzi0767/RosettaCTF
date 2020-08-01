@@ -16,31 +16,31 @@
 
 using System;
 using RosettaCTF.Data;
-using YamlDotNet.Serialization;
+using SharpYaml.Serialization;
 
 namespace RosettaCTF
 {
     internal sealed class YamlCtfChallengeAttachment : ICtfChallengeAttachment
     {
-        [YamlMember(Alias = "filename")]
+        [YamlMember("filename")]
         public string Name { get; set; }
 
-        [YamlMember(Alias = "type")]
+        [YamlMember("type")]
         public string Type { get; set; }
 
-        [YamlMember(Alias = "length")]
+        [YamlMember("length")]
         public long Length { get; set; }
 
-        [YamlMember(Alias = "sha256")]
+        [YamlMember("sha256")]
         public string Sha256 { get; set; }
 
-        [YamlMember(Alias = "sha1")]
+        [YamlMember("sha1")]
         public string Sha1 { get; set; }
 
-        [YamlMember(Alias = "url")]
+        [YamlMember("url")]
         public Uri DownloadUri { get; set; }
 
-        [YamlMember(Alias = "decompressed", SerializeAs = typeof(YamlCtfChallengeAttachment))]
+        [YamlMember("decompressed")]
         public ICtfChallengeAttachment DecompressedAttachment { get; set; }
     }
 }

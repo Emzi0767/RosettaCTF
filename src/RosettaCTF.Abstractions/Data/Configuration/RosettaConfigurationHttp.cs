@@ -16,7 +16,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace RosettaCTF.Data.Configuration
+namespace RosettaCTF.Data
 {
     /// <summary>
     /// Represents HTTP configuration options for the application.

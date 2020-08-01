@@ -16,22 +16,22 @@
 
 using System.Collections.Generic;
 using RosettaCTF.Data;
-using YamlDotNet.Serialization;
+using SharpYaml.Serialization;
 
-namespace RosettaCTF.Datatypes
+namespace RosettaCTF
 {
     internal sealed class YamlCtfChallengeCategory : ICtfChallengeCategory
     {
-        [YamlMember(Alias = "name")]
+        [YamlMember("name")]
         public string Name { get; set; }
 
-        [YamlMember(Alias = "id")]
+        [YamlMember("id")]
         public string Id { get; set; }
 
-        [YamlMember(Alias = "hidden")]
+        [YamlMember("hidden")]
         public bool IsHidden { get; set; }
 
-        [YamlMember(Alias = "challenges", SerializeAs = typeof(List<YamlCtfChallenge>))]
+        [YamlMember("challenges")]
         public IEnumerable<ICtfChallenge> Challenges { get; set; }
     }
 }

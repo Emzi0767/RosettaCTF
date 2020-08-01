@@ -62,5 +62,10 @@ namespace RosettaCTF.Data
         /// Gets the endpoint the users are meant to connect to as part of the challenge.
         /// </summary>
         string Endpoint { get; }
+
+        /// <summary>
+        /// Gets the current score for solving the challenge.
+        /// </summary>
+        int Score { get; }
     }
 }

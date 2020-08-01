@@ -16,40 +16,43 @@
 
 using System.Collections.Generic;
 using RosettaCTF.Data;
-using YamlDotNet.Serialization;
+using SharpYaml.Serialization;
 
 namespace RosettaCTF
 {
     internal sealed class YamlCtfChallenge : ICtfChallenge
     {
-        [YamlMember(Alias = "id")]
+        [YamlMember("id")]
         public string Id { get; set; }
 
-        [YamlMember(Alias = "title")]
+        [YamlMember("title")]
         public string Title { get; set; }
 
         [YamlIgnore]
         public ICtfChallengeCategory Category { get; set; }
 
-        [YamlMember(Alias = "flag")]
+        [YamlMember("flag")]
         public string Flag { get; set; }
 
-        [YamlMember(Alias = "difficulty", SerializeAs = typeof(int))]
+        [YamlMember("difficulty")]
         public CtfChallengeDifficulty Difficulty { get; set; }
 
-        [YamlMember(Alias = "description")]
+        [YamlMember("description")]
         public string Description { get; set; }
 
-        [YamlMember(Alias = "hints", SerializeAs = typeof(List<YamlCtfChallengeHint>))]
+        [YamlMember("hints")]
         public IEnumerable<ICtfChallengeHint> Hints { get; set; }
 
-        [YamlMember(Alias = "attachments", SerializeAs = typeof(List<YamlCtfChallengeAttachment>))]
+        [YamlMember("attachments")]
         public IEnumerable<ICtfChallengeAttachment> Attachments { get; set; }
 
-        [YamlMember(Alias = "endpoint", SerializeAs = typeof(YamlCtfChallengeEndpoint))]
+        [YamlMember("endpoint")]
         public ICtfChallengeEndpoint Endpoint { get; set; }
 
-        [YamlMember(Alias = "hidden", DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)]
+        [YamlMember("hidden")]
         public bool IsHidden { get; set; }
+
+        [YamlMember("baseScore")]
+        public int BaseScore { get; set; }
     }
 }

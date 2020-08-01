@@ -16,16 +16,16 @@
 
 using System;
 using RosettaCTF.Data;
-using YamlDotNet.Serialization;
+using SharpYaml.Serialization;
 
 namespace RosettaCTF
 {
     internal sealed class YamlCtfChallengeHint : ICtfChallengeHint
     {
-        [YamlMember(Alias = "contents")]
+        [YamlMember("contents")]
         public string Contents { get; set; }
 
-        [YamlMember(Alias = "release_after")]
+        [YamlMember("releaseAfter")]
         public TimeSpan ReleaseTime { get; set; }
     }
 }

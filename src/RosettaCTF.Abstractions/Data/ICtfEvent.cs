@@ -14,25 +14,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 
 namespace RosettaCTF.Data
 {
-    /// <summary>
-    /// Provides an interface for loading challenges outlined for a
-    /// </summary>
-    public interface ICtfConfigurationLoader
+
+    public interface ICtfEvent
     {
         /// <summary>
-        /// Loads basic information about the event.
+        /// Gets the name of this event.
         /// </summary>
-        /// <returns></returns>
-        ICtfEvent LoadEventData();
+        public string Name { get; }
 
         /// <summary>
-        /// Loads all defined challenges.
+        /// Gets the organizers of this event.
         /// </summary>
-        /// <returns>An enumerable of defined challenges, packed into categories.</returns>
-        IEnumerable<ICtfChallengeCategory> LoadChallenges();
+        public IEnumerable<string> Organizers { get; }
+
+        /// <summary>
+        /// Gets the start time of this event.
+        /// </summary>
+        public DateTimeOffset StartTime { get; }
+
+        /// <summary>
+        /// Gets the end time of this event.
+        /// </summary>
+        public DateTimeOffset EndTime { get; }
+
+        /// <summary>
+        /// Gets the scoring mode of the event.
+        /// </summary>
+        public CtfScoringMode Scoring { get; }
     }
 }

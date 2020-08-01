@@ -16,32 +16,23 @@
 
 using System;
 using System.Globalization;
-using YamlDotNet.Core;
-using YamlDotNet.Core.Events;
-using YamlDotNet.Serialization;
+using SharpYaml.Events;
+using SharpYaml.Serialization;
+using SharpYaml.Serialization.Serializers;
 
 namespace RosettaCTF.Converters
 {
-    internal sealed class YamlDateTimeOffsetConverter : IYamlTypeConverter
+    internal sealed class YamlDateTimeOffsetConverter : ScalarSerializerBase, IYamlSerializableFactory
     {
-        public bool Accepts(Type type)
-            => type == typeof(DateTimeOffset);
+        public override object ConvertFrom(ref ObjectContext context, Scalar fromScalar)
+            => DateTimeOffset.ParseExact(fromScalar.Value, "yyyy-MM-ddTHH:mm:sszzz", CultureInfo.InvariantCulture);
 
-        public object ReadYaml(IParser parser, Type type)
-        {
-            var val = parser.Consume<Scalar>().Value;
-            return DateTimeOffset.ParseExact(val, "yyyy-MM-ddTHH:mm:sszzz", CultureInfo.InvariantCulture);
-        }
+        public override string ConvertTo(ref ObjectContext objectContext)
+            => ((DateTimeOffset)objectContext.Instance).ToString("yyyy-MM-ddTHH:mm:sszzz", CultureInfo.InvariantCulture);
 
-        public void WriteYaml(IEmitter emitter, object value, Type type)
-        {
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
-
-            var dto = (DateTimeOffset)value;
-            var val = dto.ToString("yyyy-MM-ddTHH:mm:sszzz", CultureInfo.InvariantCulture);
-
-            emitter.Emit(new Scalar(null, null, val, ScalarStyle.Any, true, false));
-        }
+        public IYamlSerializable TryCreate(SerializerContext context, ITypeDescriptor typeDescriptor)
+            => typeDescriptor.Type == typeof(DateTimeOffset)
+            ? this
+            : null;
     }
 }

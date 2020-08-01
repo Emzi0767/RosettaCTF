@@ -17,7 +17,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace RosettaCTF.Data.Configuration
+namespace RosettaCTF.Data
 {
     /// <summary>
     /// Represents configuration options for persistent datastores (typically an SQL database).

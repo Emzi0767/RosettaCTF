@@ -22,7 +22,7 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RosettaCTF.Data.Configuration;
+using RosettaCTF.Data;
 
 namespace RosettaCTF.API
 {
@@ -117,6 +117,8 @@ namespace RosettaCTF.API
             services.AddOptions<RosettaConfigurationHttp>()
                 .Bind(this.Configuration.GetSection("Http"))
                 .ValidateDataAnnotations();
+
+            services.AddTransient<ICtfConfigurationLoader, YamlCtfConfigurationLoader>();
 
 #if !DEBUG
             services.AddControllers();

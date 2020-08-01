@@ -14,20 +14,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using RosettaCTF.Data;
+using System;
+using SharpYaml.Events;
 using SharpYaml.Serialization;
+using SharpYaml.Serialization.Serializers;
 
-namespace RosettaCTF
+namespace RosettaCTF.Converters
 {
-    internal sealed class YamlCtfChallengeEndpoint : ICtfChallengeEndpoint
+    internal sealed class YamlUriConverter : ScalarSerializerBase, IYamlSerializableFactory
     {
-        [YamlMember("type")]
-        public CtfChallengeEndpointType Type { get; set; }
+        public override object ConvertFrom(ref ObjectContext context, Scalar fromScalar)
+            => new Uri(fromScalar.Value);
 
-        [YamlMember("host")]
-        public string Hostname { get; set; }
+        public override string ConvertTo(ref ObjectContext objectContext)
+            => (objectContext.Instance as Uri)?.ToString();
 
-        [YamlMember("port")]
-        public int Port { get; set; }
+        public IYamlSerializable TryCreate(SerializerContext context, ITypeDescriptor typeDescriptor)
+            => typeDescriptor.Type == typeof(Uri)
+            ? this
+            : null;
     }
 }

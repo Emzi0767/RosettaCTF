@@ -22,27 +22,22 @@ namespace RosettaCTF.Data
     /// <summary>
     /// Represents basic information about ongoing CTF event.
     /// </summary>
-    public sealed class CtfEvent
+    public sealed class CtfEvent : ICtfEvent
     {
-        /// <summary>
-        /// Gets the name of this event.
-        /// </summary>
+        /// <inheritdoc />
         public string Name { get; }
 
-        /// <summary>
-        /// Gets the organizers of this event.
-        /// </summary>
+        /// <inheritdoc />
         public IEnumerable<string> Organizers { get; }
 
-        /// <summary>
-        /// Gets the start time of this event.
-        /// </summary>
+        /// <inheritdoc />
         public DateTimeOffset StartTime { get; }
 
-        /// <summary>
-        /// Gets the end time of this event.
-        /// </summary>
+        /// <inheritdoc />
         public DateTimeOffset EndTime { get; }
+
+        /// <inheritdoc />
+        public CtfScoringMode Scoring { get; }
 
         /// <summary>
         /// Creates a new instance with specified settings.
@@ -51,12 +46,14 @@ namespace RosettaCTF.Data
         /// <param name="organizers">Organizers of this event.</param>
         /// <param name="start">Time at which the event starts.</param>
         /// <param name="end">Time at which the event ends.</param>
-        public CtfEvent(string name, IEnumerable<string> organizers, DateTimeOffset start, DateTimeOffset end)
+        /// <param name="scoring">Scoring mode for this event.</param>
+        public CtfEvent(string name, IEnumerable<string> organizers, DateTimeOffset start, DateTimeOffset end, CtfScoringMode scoring)
         {
             this.Name = name;
             this.Organizers = organizers;
             this.StartTime = start;
             this.EndTime = end;
+            this.Scoring = scoring;
         }
 
         /// <summary>
@@ -66,8 +63,9 @@ namespace RosettaCTF.Data
         /// <param name="organizers">Organizers of this event.</param>
         /// <param name="start">Time at which the event starts.</param>
         /// <param name="duration">Duration of this event.</param>
-        public CtfEvent(string name, IEnumerable<string> organizers, DateTimeOffset start, TimeSpan duration)
-            : this(name, organizers, start, start + duration)
+        /// <param name="scoring">Scoring mode for this event.</param>
+        public CtfEvent(string name, IEnumerable<string> organizers, DateTimeOffset start, TimeSpan duration, CtfScoringMode scoring)
+            : this(name, organizers, start, start + duration, scoring)
         { }
     }
 }

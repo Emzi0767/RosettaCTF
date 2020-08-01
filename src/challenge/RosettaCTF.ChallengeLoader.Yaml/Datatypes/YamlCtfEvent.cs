@@ -14,20 +14,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Collections.Generic;
 using RosettaCTF.Data;
 using SharpYaml.Serialization;
 
 namespace RosettaCTF
 {
-    internal sealed class YamlCtfChallengeEndpoint : ICtfChallengeEndpoint
+    internal sealed class YamlCtfEvent : ICtfEvent
     {
-        [YamlMember("type")]
-        public CtfChallengeEndpointType Type { get; set; }
+        /// <inheritdoc />
+        [YamlMember("name")]
+        public string Name { get; set; }
 
-        [YamlMember("host")]
-        public string Hostname { get; set; }
+        /// <inheritdoc />
+        [YamlMember("organizers")]
+        public IEnumerable<string> Organizers { get; set; }
 
-        [YamlMember("port")]
-        public int Port { get; set; }
+        /// <inheritdoc />
+        [YamlMember("startTime")]
+        public DateTimeOffset StartTime { get; set; }
+
+        /// <inheritdoc />
+        [YamlMember("endTime")]
+        public DateTimeOffset EndTime { get; set; }
+
+        /// <inheritdoc />
+        [YamlMember("scoring")]
+        public CtfScoringMode Scoring { get; set; }
     }
 }

@@ -16,32 +16,23 @@
 
 using System;
 using System.Globalization;
-using YamlDotNet.Core;
-using YamlDotNet.Core.Events;
-using YamlDotNet.Serialization;
+using SharpYaml.Events;
+using SharpYaml.Serialization;
+using SharpYaml.Serialization.Serializers;
 
 namespace RosettaCTF.Converters
 {
-    internal sealed class YamlTimeSpanConverter : IYamlTypeConverter
+    internal sealed class YamlTimeSpanConverter : ScalarSerializerBase, IYamlSerializableFactory
     {
-        public bool Accepts(Type type)
-            => type == typeof(TimeSpan);
+        public override object ConvertFrom(ref ObjectContext context, Scalar fromScalar)
+            => TimeSpan.FromSeconds(long.Parse(fromScalar.Value, NumberStyles.Integer, CultureInfo.InvariantCulture));
 
-        public object ReadYaml(IParser parser, Type type)
-        {
-            var val = long.Parse(parser.Consume<Scalar>().Value, NumberStyles.Integer, CultureInfo.InvariantCulture);
-            return TimeSpan.FromSeconds(val);
-        }
+        public override string ConvertTo(ref ObjectContext objectContext)
+            => ((long)((TimeSpan)objectContext.Instance).TotalSeconds).ToString(CultureInfo.InvariantCulture);
 
-        public void WriteYaml(IEmitter emitter, object value, Type type)
-        {
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
-
-            var ts = (TimeSpan)value;
-            var val = (long)ts.TotalSeconds;
-
-            emitter.Emit(new Scalar(null, null, val.ToString(CultureInfo.InvariantCulture), ScalarStyle.Any, true, false));
-        }
+        public IYamlSerializable TryCreate(SerializerContext context, ITypeDescriptor typeDescriptor)
+            => typeDescriptor.Type == typeof(TimeSpan)
+            ? this
+            : null;
     }
 }

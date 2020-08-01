@@ -15,9 +15,8 @@
 // limitations under the License.
 
 using System.ComponentModel.DataAnnotations;
-using RosettaCTF.Data.Configuration;
 
-namespace RosettaCTF
+namespace RosettaCTF.Data
 {
     /// <summary>
     /// Represents the root of RosettaCTF basic configuration.

@@ -17,7 +17,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace RosettaCTF.Data.Configuration
+namespace RosettaCTF.Data
 {
     /// <summary>
     /// Represents an HTTP listen endpoint.

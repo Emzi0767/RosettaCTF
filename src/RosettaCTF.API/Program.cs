@@ -23,7 +23,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using RosettaCTF.Data.Configuration;
+using RosettaCTF.Data;
 
 namespace RosettaCTF.API
 {
@@ -76,7 +76,7 @@ namespace RosettaCTF.API
                                 kopts.Listen(new IPEndPoint(IPAddress.Parse(endpoint.Address), endpoint.Port), lopts =>
                                 {
                                     lopts.Protocols = HttpProtocols.Http1AndHttp2;
-                                    lopts.UseHttps(x509, sopts => sopts.SslProtocols = SslProtocols.Tls13);
+                                    lopts.UseHttps(x509, sopts => sopts.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13);
                                 });
                             }
                             else
