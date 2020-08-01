@@ -31,7 +31,7 @@ namespace RosettaCTF.Controllers
         }
 
         [HttpGet]
-        public ICtfEvent Get()
-            => this.ConfigurationLoader.LoadEventData();
+        public ApiResult<ICtfEvent> Get()
+            => ApiResult.FromResult(this.ConfigurationLoader.LoadEventData());
     }
 }

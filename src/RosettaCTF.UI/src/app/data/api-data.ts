@@ -31,17 +31,71 @@ export enum ApiErrorCode {
     // --------------------------------------------------------------------------------------------
     // 1xxx - permission errors
 
-    
+    /**
+     * Requested action requires the user to be authorized and logged in, but the user is not logged in.
+     */
+    NotLoggedIn = 1000,
+
+    /**
+     * Current user is not authorized to perform the requested action.
+     */
+    Unauthorized = 1001,
+
+    /**
+     * Current user is missing permissions required to access a resource.
+     */
+    MissingPermissions = 1002,
+
+    /**
+     * External authentication source responded with an error.
+     */
+    ExternalAuthenticationError = 1003,
 
     // --------------------------------------------------------------------------------------------
     // 2xxx - retrieval errors
 
-    
+    /**
+     * Requested challenge is not available. It might require separate activation.
+     */
+    ChallengeUnavailable = 2000,
+
+    /**
+     * Requested challenge does not exist.
+     */
+    ChallengeNotFound = 2001,
+
+    /**
+     * Requested team does not exist.
+     */
+    TeamNotFound = 2002,
 
     // --------------------------------------------------------------------------------------------
     // 3xxx - creation errors
 
-    
+    /**
+     * Challenge has already been solved by the current user's team.
+     */
+    AlreadySolved = 3000,
+
+    /**
+     * The submitted flag is not the expected flag. Try again!
+     */
+    InvalidFlag = 3001,
+
+    /**
+     * Specified username is taken.
+     */
+    DuplicateUsername = 3002,
+
+    /**
+     * Specified team name is taken.
+     */
+    DuplicateTeamName = 3003,
+
+    /**
+     * Specified user already exists.
+     */
+    UserExists = 3004,
 
     // --------------------------------------------------------------------------------------------
     // 4xxx - generic errors
@@ -60,7 +114,7 @@ export interface IApiError {
     /**
      * Specific error code, which indicates the problem that occured.
      */
-    errorCode: ApiErrorCode;
+    code: ApiErrorCode;
 
     /**
      * Optional error message that can be displayed to the user.
@@ -134,4 +188,11 @@ export interface IApiTestResponse {
      * Gets the end time of the event.
      */
     endTime: string;
+
+    /**
+     * Gets the organizers of the event.
+     */
+    organizers: string[];
+
+
 }

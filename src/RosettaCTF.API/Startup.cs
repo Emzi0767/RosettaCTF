@@ -16,8 +16,12 @@
 
 using System;
 using System.Reflection;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -118,7 +122,7 @@ namespace RosettaCTF.API
                 .Bind(this.Configuration.GetSection("Http"))
                 .ValidateDataAnnotations();
 
-            services.AddTransient<ICtfConfigurationLoader, YamlCtfConfigurationLoader>();
+            services.AddSingleton<ICtfConfigurationLoader, YamlCtfConfigurationLoader>();
 
 #if !DEBUG
             services.AddControllers();
@@ -132,9 +136,14 @@ namespace RosettaCTF.API
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
             else
-                app.UseHsts();
+            {
+                app.UseStatusCodePages(this.RenderStatusCode)
+                    .UseHsts();
+            }
 
             app.UseHttpsRedirection()
 #if DEBUG
@@ -150,6 +159,18 @@ namespace RosettaCTF.API
                 x.UseAngularCliServer(npmScript: "start");
             });
 #endif
+        }
+
+        private Task RenderStatusCode(StatusCodeContext ctx)
+        {
+            ctx.HttpContext.Response.ContentType = "application/json";
+
+            using (var utf8json = new Utf8JsonWriter(ctx.HttpContext.Response.Body))
+                JsonSerializer.Serialize(
+                    ApiResult.FromError(
+                        new ApiError(ApiErrorCode.GenericError, $"HTTP Error {ctx.HttpContext.Response.StatusCode}")));
+
+            return Task.CompletedTask;
         }
     }
 }
