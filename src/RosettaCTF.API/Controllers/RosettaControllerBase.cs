@@ -14,24 +14,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using RosettaCTF.Data;
+
+// All controllers defined herein are API controllers
+[assembly: ApiController]
 
 namespace RosettaCTF.Controllers
 {
-    [Route("api/[controller]"), AllowAnonymous]
-    public sealed class TestController : ControllerBase
+    public abstract class RosettaControllerBase : ControllerBase
     {
-        private ICtfConfigurationLoader ConfigurationLoader { get; }
-
-        public TestController(ICtfConfigurationLoader cfgLoader)
-        {
-            this.ConfigurationLoader = cfgLoader;
-        }
-
-        [HttpGet]
-        public ApiResult<ICtfEvent> Get()
-            => ApiResult.FromResult(this.ConfigurationLoader.LoadEventData());
     }
 }
