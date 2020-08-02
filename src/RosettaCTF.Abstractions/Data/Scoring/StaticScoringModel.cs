@@ -14,25 +14,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-
-// All controllers defined herein are API controllers
-[assembly: ApiController]
-
-namespace RosettaCTF.Controllers
+namespace RosettaCTF.Data.Scoring
 {
-    public abstract class RosettaControllerBase : ControllerBase
+    /// <summary>
+    /// Static scoring mode. Challenge scoring does not decay.
+    /// </summary>
+    public sealed class StaticScoringModel : IScoringModel
     {
-        protected ILoggerFactory LoggerFactory { get; }
-
-        protected RosettaControllerBase(ILoggerFactory loggerFactory)
-        {
-            this.LoggerFactory = loggerFactory;
-        }
+        int IScoringModel.ComputeScore(int baseScore, double solveRate)
+            => baseScore;
     }
 }

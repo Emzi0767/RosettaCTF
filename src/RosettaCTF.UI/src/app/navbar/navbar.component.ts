@@ -18,6 +18,9 @@ import { Component, OnInit, ViewChild, ViewContainerRef, ComponentFactoryResolve
 import { Router, ResolveEnd } from "@angular/router";
 
 import { INavbarData } from "../data/navbar-data";
+import { Observable } from "rxjs";
+import { IApiEventConfiguration } from "../data/api-data";
+import { ConfigurationProviderService } from "../services/configuration-provider.service";
 
 @Component({
     selector: "app-navbar",
@@ -33,11 +36,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
     @ViewChild("loginContainer", { read: ViewContainerRef, static: true })
     private loginComponent: ComponentRef<any>;
 
-    @Input()
-    public instanceName: string = null;
+    configuration$: Observable<IApiEventConfiguration>;
 
     constructor(private router: Router,
-                private resolver: ComponentFactoryResolver) { }
+                private resolver: ComponentFactoryResolver,
+                private configurationProvider: ConfigurationProviderService) {
+        this.configuration$ = this.configurationProvider.configurationChange;
+    }
 
     ngOnInit(): void {
         this.router.events.subscribe(x => {

@@ -19,18 +19,21 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
 
+import { KonamiModule } from "ngx-konami";
+
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 
-import { KonamiModule } from "ngx-konami";
+import { ConfigurationProviderService } from "./services/configuration-provider.service";
+
 import { NavbarComponent } from "./navbar/navbar.component";
 import { FooterComponent } from "./footer/footer.component";
 import { LabelledButtonComponent } from "./labelled-button/labelled-button.component";
 import { DialogComponent } from "./dialog/dialog.component";
 import { ErrorDialogComponent } from "./dialog/error-dialog/error-dialog.component";
-import { NotFoundComponent } from './not-found/not-found.component';
-import { LandingComponent } from './landing/landing.component';
-import { KonamiComponent } from './konami/konami.component';
+import { NotFoundComponent } from "./not-found/not-found.component";
+import { LandingComponent } from "./landing/landing.component";
+import { KonamiComponent } from "./konami/konami.component";
 
 @NgModule({
     declarations: [
@@ -51,7 +54,9 @@ import { KonamiComponent } from './konami/konami.component';
         BrowserAnimationsModule,
         HttpClientModule
     ],
-    providers: [],
+    providers: [
+        ConfigurationProviderService
+    ],
     bootstrap: [AppComponent],
     entryComponents: [
         ErrorDialogComponent

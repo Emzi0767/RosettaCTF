@@ -16,23 +16,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System.Text;
 
-// All controllers defined herein are API controllers
-[assembly: ApiController]
-
-namespace RosettaCTF.Controllers
+namespace RosettaCTF.Data.Scoring
 {
-    public abstract class RosettaControllerBase : ControllerBase
+    /// <summary>
+    /// Challenge scores decay in a manner similar to a sigmoid function (a logistic curve). This variant decays slowly in the beginning, then speeds up.
+    /// </summary>
+    public sealed class SlowLogisticDecayScoringModel : IScoringModel
     {
-        protected ILoggerFactory LoggerFactory { get; }
-
-        protected RosettaControllerBase(ILoggerFactory loggerFactory)
-        {
-            this.LoggerFactory = loggerFactory;
-        }
+        // MATLAB curve fitter is a wonderful tool, pt.2
+        int IScoringModel.ComputeScore(int baseScore, double solveRate)
+            => (int)Math.Min(baseScore,
+                Math.Max(Math.Ceiling(baseScore * 0.1),
+                    baseScore * (1771 / (1964 + Math.Exp(25.28 * solveRate)) + 0.09977)));
     }
 }

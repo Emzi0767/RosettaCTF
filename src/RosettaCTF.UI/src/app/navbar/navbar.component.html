@@ -19,7 +19,7 @@
 -->
 
 <div class="navbar-root">
-    <div class="navbar-title"><a [routerLink]="['/']">{{ instanceName || "RosettaCTF" }}</a></div>
+    <div class="navbar-title"><a [routerLink]="['/']">{{ (configuration$ | async)?.name || "RosettaCTF" }}</a></div>
     <div class="spacer"></div>
     <div class="buttons">
         <span #buttonContainer></span>

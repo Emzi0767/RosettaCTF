@@ -15,25 +15,17 @@
 // limitations under the License.
 
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { ReplaySubject } from "rxjs";
 
-import { ApiErrorCode, ApiStatus, IApiResult, IApiError, IApiEventConfiguration, IApiFlag } from "../data/api-data";
+import { IApiEventConfiguration } from "../data/api-data";
 
 @Injectable({
     providedIn: "root"
 })
-export class RosettaApiService {
+export class ConfigurationProviderService {
+    configurationChange: ReplaySubject<IApiEventConfiguration> = new ReplaySubject<IApiEventConfiguration>(1);
 
-    constructor(private http: HttpClient) { }
-
-    async testApi(): Promise<IApiResult<IApiEventConfiguration>> {
-        try {
-            const response = await this.http.get<IApiResult<IApiEventConfiguration>>("/api/test", { responseType: "json" }).toPromise();
-            return response;
-        } catch (ex) { }
-
-        return {
-            isSuccess: false
-        };
+    updateConfiguration(data: IApiEventConfiguration): void {
+        this.configurationChange.next(data);
     }
 }

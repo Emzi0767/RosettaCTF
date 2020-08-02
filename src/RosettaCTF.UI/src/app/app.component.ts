@@ -23,6 +23,9 @@ import { ErrorDialogComponent } from "./dialog/error-dialog/error-dialog.compone
 import { IErrorData } from "./data/error";
 import { EventDispatcherService, EventHandler, IEventTriple } from "./services/event-dispatcher.service";
 import { RosettaApiService } from "./services/rosetta-api.service";
+import { ConfigurationProviderService } from "./services/configuration-provider.service";
+import { Observable } from 'rxjs';
+import { IApiEventConfiguration } from './data/api-data';
 
 @Component({
     selector: "app-root",
@@ -31,20 +34,16 @@ import { RosettaApiService } from "./services/rosetta-api.service";
 })
 export class AppComponent implements OnInit, OnDestroy {
 
-    @Output()
-    title: string = null;
-
-    @Output()
-    startTime: Moment = null;
-
-    @Output()
-    endTime: Moment = null;
+    private configuration$: Observable<IApiEventConfiguration>;
 
     private eventHandlerQueue: Array<IEventTriple<any>>;
 
     constructor(private eventDispatcher: EventDispatcherService,
                 private router: Router,
-                private api: RosettaApiService) {
+                private api: RosettaApiService,
+                private configurationProvider: ConfigurationProviderService) {
+        this.configuration$ = this.configurationProvider.configurationChange;
+
         if (!!this.eventHandlerQueue) {
             for (const handler of this.eventHandlerQueue) {
                 this.eventDispatcher.register(handler.name, handler.handler.bind(this), handler.tag);
@@ -63,9 +62,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 return;
             }
 
-            this.title = x.result.name;
-            this.startTime = parseZone(x.result.startTime);
-            this.endTime = parseZone(x.result.endTime);
+            this.configurationProvider.updateConfiguration(x.result);
         });
     }
 

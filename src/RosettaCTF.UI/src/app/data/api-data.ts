@@ -171,9 +171,31 @@ export enum ApiStatus {
 }
 
 /**
+ * Represents the event-configured scoring type.
+ */
+export enum ApiEventScoringMode {
+    /**
+     * Static jeopardy-style scoring mode (i.e. all challenges have static amount of points).
+     */
+    Static = 0,
+
+    /**
+     * Dynamic jeopardy-style scoring mode, where the number of points for each challenge will decay for all
+     * participants as more teams solve the challenge.
+     */
+    Jeopardy = 1,
+
+    /**
+     * Defines dynamic jeopardy-style scoring mode, where the number of points for each challenge will decay, much
+     * like Jeopardy, however, once a team completes a challenge, their points will no longer decay.
+     */
+    FirstComeFirstServe = 2
+}
+
+/**
  * Represents an API connection test response.
  */
-export interface IApiTestResponse {
+export interface IApiEventConfiguration {
     /**
      * Gets the name of the event.
      */
@@ -194,5 +216,8 @@ export interface IApiTestResponse {
      */
     organizers: string[];
 
-
+    /**
+     * Gets the scoring mode for this event.
+     */
+    scoring: ApiEventScoringMode;
 }

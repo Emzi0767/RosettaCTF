@@ -14,25 +14,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-
-// All controllers defined herein are API controllers
-[assembly: ApiController]
-
-namespace RosettaCTF.Controllers
+namespace RosettaCTF.Data.Scoring
 {
-    public abstract class RosettaControllerBase : ControllerBase
+    /// <summary>
+    /// Defines a basic interface for computing the score of a challenge.
+    /// </summary>
+    public interface IScoringModel
     {
-        protected ILoggerFactory LoggerFactory { get; }
-
-        protected RosettaControllerBase(ILoggerFactory loggerFactory)
-        {
-            this.LoggerFactory = loggerFactory;
-        }
+        /// <summary>
+        /// Computes the current score of a challenge, based on the solve rate.
+        /// </summary>
+        /// <param name="baseScore">Base score of the challenge.</param>
+        /// <param name="solveRate">Percentage of participants who solved the challenge.</param>
+        /// <returns>The computed score.</returns>
+        int ComputeScore(int baseScore, double solveRate);
     }
 }

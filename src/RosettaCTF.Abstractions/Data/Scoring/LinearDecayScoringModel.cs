@@ -15,24 +15,15 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
-// All controllers defined herein are API controllers
-[assembly: ApiController]
-
-namespace RosettaCTF.Controllers
+namespace RosettaCTF.Data.Scoring
 {
-    public abstract class RosettaControllerBase : ControllerBase
+    /// <summary>
+    /// Challenge scores decay in a linear fashion.
+    /// </summary>
+    public sealed class LinearDecayScoringModel : IScoringModel
     {
-        protected ILoggerFactory LoggerFactory { get; }
-
-        protected RosettaControllerBase(ILoggerFactory loggerFactory)
-        {
-            this.LoggerFactory = loggerFactory;
-        }
+        int IScoringModel.ComputeScore(int baseScore, double solveRate)
+            => (int)Math.Round(Math.Max(Math.Ceiling(baseScore * 0.1), (solveRate * -1.8 + 1.0) * baseScore), MidpointRounding.AwayFromZero);
     }
 }

@@ -14,7 +14,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
+import { Observable } from "rxjs";
+import { parseZone, duration } from "moment";
+
+import { IApiEventConfiguration, ApiEventScoringMode } from "../data/api-data";
+import { ConfigurationProviderService } from "../services/configuration-provider.service";
 
 @Component({
     selector: "app-landing",
@@ -22,12 +27,26 @@ import { Component, OnInit } from "@angular/core";
     styleUrls: ["./landing.component.less"]
 })
 export class LandingComponent {
-    counter(i: number): Array<number> {
-        const arr = new Array<number>(i);
-        for (let n = 0; n < i; n++) {
-            arr[n] = n;
+    configuration$: Observable<IApiEventConfiguration>;
+    ApiEventScoringMode = ApiEventScoringMode;
+
+    constructor(private configurationProvider: ConfigurationProviderService) {
+        this.configuration$ = this.configurationProvider.configurationChange;
+    }
+
+    joinOrganizers(names: string[]): string {
+        if (names.length === 1) {
+            return names[0];
         }
 
-        return arr;
+        return names.slice(0, -1).join(", ") + ", and" + names.slice(-1);
+    }
+
+    computeDuration(cfg: IApiEventConfiguration): string {
+        const end = parseZone(cfg.endTime);
+        const start = parseZone(cfg.startTime);
+
+        const dur = duration(end.diff(start));
+        return dur.humanize();
     }
 }
