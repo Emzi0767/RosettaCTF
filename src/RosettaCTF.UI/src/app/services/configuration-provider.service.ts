@@ -17,7 +17,7 @@
 import { Injectable } from "@angular/core";
 import { ReplaySubject } from "rxjs";
 
-import { IApiEventConfiguration } from "../data/api-data";
+import { IApiEventConfiguration } from "../data/api";
 
 @Injectable({
     providedIn: "root"

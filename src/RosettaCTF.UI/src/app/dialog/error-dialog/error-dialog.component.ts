@@ -16,7 +16,7 @@
 
 import { Component, OnInit, EventEmitter } from "@angular/core";
 
-import { IDialogComponent, IErrorDialogDefaults } from "src/app/data/dialog-data";
+import { IDialogComponent, IErrorDialogDefaults } from "src/app/data/dialog";
 
 @Component({
     selector: "app-error-dialog",

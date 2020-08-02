@@ -15,43 +15,35 @@
 // limitations under the License.
 
 using System.ComponentModel.DataAnnotations;
-using RosettaCTF.Data.Configuration;
 
-namespace RosettaCTF.Data
+namespace RosettaCTF.Data.Configuration
 {
     /// <summary>
-    /// Represents the root of RosettaCTF basic configuration.
+    /// Represents Discord OAuth2 configuration for authentication purposes.
     /// </summary>
-    public sealed class RosettaConfigurationRoot
+    public sealed class RosettaConfigurationDiscord
     {
         /// <summary>
-        /// Gets the path to event configuration file.
-        /// </summary>
-        [ValidFilePath]
-        public string EventConfiguration { get; set; }
-
-        /// <summary>
-        /// Gets the persistent datastore configuration.
+        /// Gets the Client ID used for Discord redirect and token exchange.
         /// </summary>
         [Required]
-        public RosettaConfigurationDatastore Database { get; set; }
+        public ulong ClientId { get; set; }
 
         /// <summary>
-        /// Gets the cache datastore configuration.
+        /// Gets the Client Secret used to exchange code for a token.
         /// </summary>
         [Required]
-        public RosettaConfigurationCache Cache { get; set; }
+        public string Secret { get; set; }
 
         /// <summary>
-        /// Gets the HTTP configuration.
+        /// Gets the hostname for the redirect URL.
         /// </summary>
         [Required]
-        public RosettaConfigurationHttp Http { get; set; }
+        public string Hostname { get; set; }
 
         /// <summary>
-        /// Gets the Discord OAuth configuration.
+        /// Gets the port for the redirect URL.
         /// </summary>
-        [Required]
-        public RosettaConfigurationDiscord Discord { get; set; }
+        public int Port { get; set; }
     }
 }

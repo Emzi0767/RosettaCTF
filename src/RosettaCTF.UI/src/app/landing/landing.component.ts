@@ -18,7 +18,7 @@ import { Component } from "@angular/core";
 import { Observable } from "rxjs";
 import { parseZone, duration } from "moment";
 
-import { IApiEventConfiguration, ApiEventScoringMode } from "../data/api-data";
+import { IApiEventConfiguration, ApiEventScoringMode } from "../data/api";
 import { ConfigurationProviderService } from "../services/configuration-provider.service";
 
 @Component({

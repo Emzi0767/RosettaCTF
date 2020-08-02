@@ -17,7 +17,7 @@
 import { Component, HostBinding, OnDestroy, ViewContainerRef, ViewChild, ComponentRef, ComponentFactoryResolver, HostListener } from "@angular/core";
 import { style, state, trigger, transition, animate } from "@angular/animations";
 
-import { IDialogComponent, IDialogData } from "../data/dialog-data";
+import { IDialogComponent, IDialogData } from "../data/dialog";
 import { EventDispatcherService, EventHandler, IEventTriple } from "../services/event-dispatcher.service";
 
 @Component({

@@ -17,7 +17,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { ApiErrorCode, ApiStatus, IApiResult, IApiError, IApiEventConfiguration, IApiFlag } from "../data/api-data";
+import { ApiErrorCode, ApiStatus, IApiResult, IApiError, IApiEventConfiguration, IApiFlag } from "../data/api";
 
 @Injectable({
     providedIn: "root"

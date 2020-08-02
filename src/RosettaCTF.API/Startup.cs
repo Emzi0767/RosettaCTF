@@ -26,6 +26,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RosettaCTF.Data;
+using RosettaCTF.Data.Configuration;
 
 namespace RosettaCTF.API
 {
@@ -119,6 +120,10 @@ namespace RosettaCTF.API
 
             services.AddOptions<RosettaConfigurationHttp>()
                 .Bind(this.Configuration.GetSection("Http"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<RosettaConfigurationDiscord>()
+                .Bind(this.Configuration.GetSection("Discord"))
                 .ValidateDataAnnotations();
 
             services.AddSingleton<ICtfConfigurationLoader, YamlCtfConfigurationLoader>();

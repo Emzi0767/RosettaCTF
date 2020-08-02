@@ -17,9 +17,9 @@
 import { Component, OnInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, ComponentRef, OnDestroy, Input } from "@angular/core";
 import { Router, ResolveEnd } from "@angular/router";
 
-import { INavbarData } from "../data/navbar-data";
+import { INavbarData } from "../data/navbar";
 import { Observable } from "rxjs";
-import { IApiEventConfiguration } from "../data/api-data";
+import { IApiEventConfiguration } from "../data/api";
 import { ConfigurationProviderService } from "../services/configuration-provider.service";
 
 @Component({

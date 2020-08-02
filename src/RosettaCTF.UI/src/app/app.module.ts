@@ -25,6 +25,7 @@ import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 
 import { ConfigurationProviderService } from "./services/configuration-provider.service";
+import { SessionProviderService } from "./services/session-provider.service";
 
 import { NavbarComponent } from "./navbar/navbar.component";
 import { FooterComponent } from "./footer/footer.component";
@@ -55,7 +56,8 @@ import { KonamiComponent } from "./konami/konami.component";
         HttpClientModule
     ],
     providers: [
-        ConfigurationProviderService
+        ConfigurationProviderService,
+        SessionProviderService
     ],
     bootstrap: [AppComponent],
     entryComponents: [

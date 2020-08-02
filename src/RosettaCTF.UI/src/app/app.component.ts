@@ -25,7 +25,7 @@ import { EventDispatcherService, EventHandler, IEventTriple } from "./services/e
 import { RosettaApiService } from "./services/rosetta-api.service";
 import { ConfigurationProviderService } from "./services/configuration-provider.service";
 import { Observable } from 'rxjs';
-import { IApiEventConfiguration } from './data/api-data';
+import { IApiEventConfiguration } from './data/api';
 
 @Component({
     selector: "app-root",

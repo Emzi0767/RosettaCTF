@@ -14,9 +14,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { IApiError } from "./api";
+import { Injectable } from "@angular/core";
+import { ReplaySubject } from "rxjs";
 
-export interface IErrorData {
-    message?: string;
-    reason?: IApiError;
+import { ISession } from "../data/session";
+
+@Injectable({
+    providedIn: "root"
+})
+export class SessionProviderService {
+    sessionChange: ReplaySubject<ISession> = new ReplaySubject<ISession>(1);
+
+    constructor() {
+        this.updateSession({
+            authenticated: false,
+            token: null,
+            user: null,
+            team: null
+        });
+    }
+
+    updateSession(data: ISession): void {
+        this.sessionChange.next(data);
+    }
 }

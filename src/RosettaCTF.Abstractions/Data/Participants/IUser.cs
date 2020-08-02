@@ -41,7 +41,7 @@ namespace RosettaCTF.Data
         /// <summary>
         /// Gets the URL of the user's avatar.
         /// </summary>
-        Uri Avatar { get; }
+        Uri AvatarUrl { get; }
 
         /// <summary>
         /// Gets the team this user belongs to.
