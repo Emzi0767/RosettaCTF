@@ -18,6 +18,7 @@ using System;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -25,8 +26,10 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using RosettaCTF.Data;
 using RosettaCTF.Data.Configuration;
+using RosettaCTF.Filters;
 
 namespace RosettaCTF.API
 {
@@ -106,6 +109,14 @@ namespace RosettaCTF.API
                 opts.MaxAge = TimeSpan.FromDays(365);
             });
 
+            services.AddAntiforgery(x =>
+            {
+                x.Cookie.Name = "Rosetta-XSRF-Token";
+                x.HeaderName = "X-Rosetta-XSRF";
+            });
+
+            services.AddCors();
+
             services.AddOptions<RosettaConfigurationRoot>()
                 .Bind(this.Configuration)
                 .ValidateDataAnnotations();
@@ -137,7 +148,11 @@ namespace RosettaCTF.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(
+            IApplicationBuilder app, 
+            IWebHostEnvironment env, 
+            IAntiforgery xsrf,
+            IOptions<RosettaConfigurationHttp> httpOpts)
         {
             if (env.IsDevelopment())
             {
@@ -154,6 +169,11 @@ namespace RosettaCTF.API
                 .UseStaticFiles()
 #endif
                 .UseRouting()
+                .UseCors(x => x
+                    .AllowAnyMethod()
+                    .WithOrigins(httpOpts.Value.CorsOrigins))
+                //.UseAuthorization()
+                .UseMiddleware<XsrfMiddleware>(xsrf, "Rosetta-XSRF")
                 .UseEndpoints(endpoints => endpoints.MapControllers());
 
 #if DEBUG

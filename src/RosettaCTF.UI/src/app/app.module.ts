@@ -17,7 +17,8 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from "@angular/core";
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule, HttpClientXsrfModule, HTTP_INTERCEPTORS } from "@angular/common/http";
+import { MarkdownModule } from "ngx-markdown";
 
 import { KonamiModule } from "ngx-konami";
 
@@ -26,6 +27,7 @@ import { AppComponent } from "./app.component";
 
 import { ConfigurationProviderService } from "./services/configuration-provider.service";
 import { SessionProviderService } from "./services/session-provider.service";
+import { RosettaHttpInterceptor } from "./services/rosetta-http-interceptor.service";
 
 import { NavbarComponent } from "./navbar/navbar.component";
 import { FooterComponent } from "./footer/footer.component";
@@ -35,6 +37,9 @@ import { ErrorDialogComponent } from "./dialog/error-dialog/error-dialog.compone
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { LandingComponent } from "./landing/landing.component";
 import { KonamiComponent } from "./konami/konami.component";
+import { LoginComponent } from "./session/login/login.component";
+import { LogoutComponent } from "./session/logout/logout.component";
+import { CallbackComponent } from "./session/callback/callback.component";
 
 @NgModule({
     declarations: [
@@ -46,18 +51,27 @@ import { KonamiComponent } from "./konami/konami.component";
         ErrorDialogComponent,
         NotFoundComponent,
         LandingComponent,
-        KonamiComponent
+        KonamiComponent,
+        LoginComponent,
+        LogoutComponent,
+        CallbackComponent
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
         KonamiModule,
         BrowserAnimationsModule,
-        HttpClientModule
+        HttpClientModule,
+        HttpClientXsrfModule.withOptions({
+            cookieName: "Rosetta-XSRF",
+            headerName: "X-Rosetta-XSRF"
+        }),
+        MarkdownModule.forRoot()
     ],
     providers: [
         ConfigurationProviderService,
-        SessionProviderService
+        SessionProviderService,
+        { provide: HTTP_INTERCEPTORS, useClass: RosettaHttpInterceptor, multi: true }
     ],
     bootstrap: [AppComponent],
     entryComponents: [

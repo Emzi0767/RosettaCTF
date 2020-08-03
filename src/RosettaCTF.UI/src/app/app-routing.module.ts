@@ -20,11 +20,26 @@ import { Routes, RouterModule } from "@angular/router";
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { LandingComponent } from "./landing/landing.component";
 import { KonamiComponent } from "./konami/konami.component";
+import { LoginComponent } from "./session/login/login.component";
+import { LogoutComponent } from "./session/logout/logout.component";
+import { CallbackComponent } from "./session/callback/callback.component";
 
 const routes: Routes = [
     {
         path: "konami",
         component: KonamiComponent
+    },
+    {
+        path: "session/login",
+        component: LoginComponent
+    },
+    {
+        path: "session/logout",
+        component: LogoutComponent
+    },
+    {
+        path: "session/callback",
+        component: CallbackComponent
     },
     {
         path: "",

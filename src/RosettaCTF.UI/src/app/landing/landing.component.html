@@ -19,26 +19,47 @@
 -->
 
 <ng-container *ngIf="configuration$ | async; let configuration">
-  <h1>Welcome to {{ configuration.name }}!</h1>
-  <p>
-    This event is organized by {{ joinOrganizers(configuration.organizers) }}, and features Jeopardy-style 
-    cybersecurity challenges from different categories. This event lasts {{ computeDuration(configuration) }}, during 
-    which your goal is to rack up as many points as possible by solving challenges presented by the organizers.
-  </p>
-  <p *ngIf="configuration.scoring === ApiEventScoringMode.Static">
-    Solving each challenge will net you a fixed amount of points, therefore, to scale the leaderboard, you have to 
-    solve challenges faster than others.
-  </p>
-  <p *ngIf="configuration.scoring === ApiEventScoringMode.Jeopardy">
-    Solving challenges will net you points, however, each challenge's score scales dynamically with the number of 
-    participants who solved it. This means that if the majority of participants solve a challenge, it will ultimately 
-    be worth less points than a challenge that was solved by only a handful of people. It's important to remember that 
-    points continue to scale after you solve the challenge, and your total is updated to reflect that. This means that 
-    solving easy challenges quickly will not guarantee your position at the top of the leaderboard!
-  </p>
-  <p *ngIf="configuration.scoring === ApiEventScoringMode.FirstComeFirstServe">
-    Solving challenges will net you points, but challenge scores scale dynamically with the number of participants who 
-    solved it. Any points you gain, however, are yours to keep. To maintain the top position on the leaderboard, you 
-    have to solve as many challenges as you can, as quickly as you can.
-  </p>
+    <h1>Welcome to {{ configuration.name }}!</h1>
+    <p>
+        This event is organized by {{ joinOrganizers(configuration.organizers) }}, and features Jeopardy-style
+        cybersecurity challenges from different categories. This event lasts {{ computeDuration(configuration) }},
+        during which your goal is to rack up as many points as possible by solving challenges presented by the
+        organizers.
+    </p>
+    <p *ngIf="configuration.scoring === ApiEventScoringMode.Static">
+        Solving each challenge will net you a fixed amount of points, therefore, to scale the leaderboard, you have to
+        solve challenges faster than others.
+    </p>
+    <p *ngIf="configuration.scoring === ApiEventScoringMode.Jeopardy">
+        Solving challenges will net you points, however, each challenge's score scales dynamically with the number of
+        participants who solved it. This means that if the majority of participants solve a challenge, it will
+        ultimately be worth less points than a challenge that was solved by only a handful of people. It's important to
+        remember that points continue to scale after you solve the challenge, and your total is updated to reflect that.
+        This means that solving easy challenges quickly will not guarantee your position at the top of the leaderboard!
+    </p>
+    <p *ngIf="configuration.scoring === ApiEventScoringMode.FirstComeFirstServe">
+        Solving challenges will net you points, but challenge scores scale dynamically with the number of participants
+        who solved it. Any points you gain, however, are yours to keep. To maintain the top position on the leaderboard,
+        you have to solve as many challenges as you can, as quickly as you can.
+    </p>
+
+
+    <h2>Rules</h2>
+    <ul>
+        <li>Don't cheat</li>
+        <li>Dunno what else to write here</li>
+    </ul>
+
+    <h2>How-to</h2>
+    <p>
+        To begin solving the challenges, you need to log in through Discord, and join or create a team. The challenges
+        will become available once the event starts, and will accept responses until it ends. Hints for challenges will
+        be released automatically after a certain time has passed, based on difficulty. The hints for harder challenges
+        were set to release sooner.
+    </p>
+
+    <h2>Enjoying the event?</h2>
+    <p>
+        If you have any feedback, send it to /dev/null. I appreciate your input!
+    </p>
 </ng-container>

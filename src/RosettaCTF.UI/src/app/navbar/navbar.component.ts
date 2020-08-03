@@ -21,6 +21,8 @@ import { INavbarData } from "../data/navbar";
 import { Observable } from "rxjs";
 import { IApiEventConfiguration } from "../data/api";
 import { ConfigurationProviderService } from "../services/configuration-provider.service";
+import { ISession } from "../data/session";
+import { SessionProviderService } from "../services/session-provider.service";
 
 @Component({
     selector: "app-navbar",
@@ -33,15 +35,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
     container: ViewContainerRef;
     private component: ComponentRef<any>;
 
-    @ViewChild("loginContainer", { read: ViewContainerRef, static: true })
-    private loginComponent: ComponentRef<any>;
-
     configuration$: Observable<IApiEventConfiguration>;
+
+    session$: Observable<ISession>;
 
     constructor(private router: Router,
                 private resolver: ComponentFactoryResolver,
-                private configurationProvider: ConfigurationProviderService) {
+                private configurationProvider: ConfigurationProviderService,
+                private sessionProvider: SessionProviderService) {
         this.configuration$ = this.configurationProvider.configurationChange;
+        this.session$ = this.sessionProvider.sessionChange;
     }
 
     ngOnInit(): void {

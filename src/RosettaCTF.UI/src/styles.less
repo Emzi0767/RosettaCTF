@@ -80,3 +80,22 @@ a {
         border-bottom-color: #3399ff;
     }
 }
+
+/* General styling */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'IBM Plex Sans','Segoe UI','Helvetica Neue','Arial',sans-serif;
+    font-weight: 600;
+    margin: 12px auto;
+}
+
+.hfs(@n) when (@n > 0) {
+    .hfs((@n - 1));
+    h@{n} {
+        font-size: 28pt - @n * 2;
+    }
+}
+.hfs(6);
+
+ul, ol {
+    padding-left: 16px;
+}

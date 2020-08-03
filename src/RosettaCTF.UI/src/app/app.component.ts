@@ -14,18 +14,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, OnInit, OnDestroy, Output } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
-
-import { Moment, parseZone } from "moment";
 
 import { ErrorDialogComponent } from "./dialog/error-dialog/error-dialog.component";
 import { IErrorData } from "./data/error";
 import { EventDispatcherService, EventHandler, IEventTriple } from "./services/event-dispatcher.service";
 import { RosettaApiService } from "./services/rosetta-api.service";
 import { ConfigurationProviderService } from "./services/configuration-provider.service";
-import { Observable } from 'rxjs';
-import { IApiEventConfiguration } from './data/api';
+import { SessionProviderService } from "./services/session-provider.service";
 
 @Component({
     selector: "app-root",
@@ -34,16 +31,13 @@ import { IApiEventConfiguration } from './data/api';
 })
 export class AppComponent implements OnInit, OnDestroy {
 
-    private configuration$: Observable<IApiEventConfiguration>;
-
     private eventHandlerQueue: Array<IEventTriple<any>>;
 
     constructor(private eventDispatcher: EventDispatcherService,
                 private router: Router,
                 private api: RosettaApiService,
-                private configurationProvider: ConfigurationProviderService) {
-        this.configuration$ = this.configurationProvider.configurationChange;
-
+                private configurationProvider: ConfigurationProviderService,
+                private sessionProvider: SessionProviderService) {
         if (!!this.eventHandlerQueue) {
             for (const handler of this.eventHandlerQueue) {
                 this.eventDispatcher.register(handler.name, handler.handler.bind(this), handler.tag);
@@ -57,12 +51,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.api.testApi().then(x => {
-            if (!x.isSuccess) {
-                this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message: "Could not establish a connection with the API." } });
-                return;
-            }
+            this.sessionProvider.init().then(() => {
+                if (!x.isSuccess) {
+                    this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message: "Could not establish a connection with the API." } });
+                    return;
+                }
 
-            this.configurationProvider.updateConfiguration(x.result);
+                this.configurationProvider.updateConfiguration(x.result);
+            });
         });
     }
 
