@@ -28,11 +28,5 @@ namespace RosettaCTF.Data
         /// </summary>
         [Required]
         public RosettaConfigurationEndpoint[] Listen { get; set; }
-
-        /// <summary>
-        /// Gets the allowed CORS origins for AJAX requests.
-        /// </summary>
-        [Required]
-        public string[] CorsOrigins { get; set; }
     }
 }

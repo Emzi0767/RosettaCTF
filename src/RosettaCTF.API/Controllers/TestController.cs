@@ -15,6 +15,7 @@
 // limitations under the License.
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using RosettaCTF.Data;
 

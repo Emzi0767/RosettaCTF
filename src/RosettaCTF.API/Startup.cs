@@ -26,7 +26,6 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using RosettaCTF.Data;
 using RosettaCTF.Data.Configuration;
 using RosettaCTF.Filters;
@@ -115,8 +114,6 @@ namespace RosettaCTF.API
                 x.HeaderName = "X-Rosetta-XSRF";
             });
 
-            services.AddCors();
-
             services.AddOptions<RosettaConfigurationRoot>()
                 .Bind(this.Configuration)
                 .ValidateDataAnnotations();
@@ -151,8 +148,7 @@ namespace RosettaCTF.API
         public void Configure(
             IApplicationBuilder app, 
             IWebHostEnvironment env, 
-            IAntiforgery xsrf,
-            IOptions<RosettaConfigurationHttp> httpOpts)
+            IAntiforgery xsrf)
         {
             if (env.IsDevelopment())
             {
@@ -169,9 +165,6 @@ namespace RosettaCTF.API
                 .UseStaticFiles()
 #endif
                 .UseRouting()
-                .UseCors(x => x
-                    .AllowAnyMethod()
-                    .WithOrigins(httpOpts.Value.CorsOrigins))
                 //.UseAuthorization()
                 .UseMiddleware<XsrfMiddleware>(xsrf, "Rosetta-XSRF")
                 .UseEndpoints(endpoints => endpoints.MapControllers());
