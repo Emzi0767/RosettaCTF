@@ -27,7 +27,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RosettaCTF.Data;
-using RosettaCTF.Data.Configuration;
 using RosettaCTF.Filters;
 
 namespace RosettaCTF.API
@@ -184,7 +183,7 @@ namespace RosettaCTF.API
 
             using (var utf8json = new Utf8JsonWriter(ctx.HttpContext.Response.Body))
                 JsonSerializer.Serialize(
-                    ApiResult.FromError(
+                    ApiResult.FromError<object>(
                         new ApiError(ApiErrorCode.GenericError, $"HTTP Error {ctx.HttpContext.Response.StatusCode}")));
 
             return Task.CompletedTask;

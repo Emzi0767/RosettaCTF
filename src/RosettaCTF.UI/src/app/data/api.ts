@@ -156,21 +156,6 @@ export interface IApiResult<T> {
 }
 
 /**
- * Represents the status of the backing API.
- */
-export enum ApiStatus {
-    /**
-     * Defines that the API connection test was successful.
-     */
-    OK = 0,
-
-    /**
-     * Defines that the API connection test failed.
-     */
-    Failed = -1
-}
-
-/**
  * Represents the event-configured scoring type.
  */
 export enum ApiEventScoringMode {

@@ -62,8 +62,8 @@ namespace RosettaCTF.Data
         /// </summary>
         /// <param name="error">Error to encapsulate.</param>
         /// <returns>The created result.</returns>
-        public static ApiResult<object> FromError(ApiError error)
-            => new ApiResult<object>(false, error, null);
+        public static ApiResult<T> FromError<T>(ApiError error)
+            => new ApiResult<T>(false, error, default);
 
         /// <summary>
         /// Creates a new success result instance.

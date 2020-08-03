@@ -15,6 +15,11 @@
 // limitations under the License.
 
 import { Component, OnInit } from "@angular/core";
+import { Router, ActivatedRoute } from "@angular/router";
+
+import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
+import { RosettaApiService } from "src/app/services/rosetta-api.service";
+import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
 
 @Component({
     selector: "app-callback",
@@ -23,9 +28,17 @@ import { Component, OnInit } from "@angular/core";
 })
 export class CallbackComponent implements OnInit {
 
-    constructor() { }
+    constructor(private eventDispatcher: EventDispatcherService,
+                private api: RosettaApiService,
+                private router: Router,
+                private currentRoute: ActivatedRoute) { }
 
     ngOnInit(): void {
+        const args = this.currentRoute.snapshot.queryParamMap;
+        if (args.has("error")) {
+            this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message: "Discord login failed. Please try again. If the problem persists, contact the organizers." } });
+            this.router.navigate(["/"]);
+            return;
+        }
     }
-
 }

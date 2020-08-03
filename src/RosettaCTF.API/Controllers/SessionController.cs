@@ -16,14 +16,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Threading.Tasks;
+using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using RosettaCTF.Data;
 
 namespace RosettaCTF.Controllers
@@ -31,9 +29,45 @@ namespace RosettaCTF.Controllers
     [Route("api/[controller]"), ValidateAntiForgeryToken]
     public class SessionController : RosettaControllerBase
     {
-        public SessionController(ILoggerFactory loggerFactory)
+        private RosettaConfigurationDiscord DiscordConfiguration { get; }
+
+        public SessionController(
+            ILoggerFactory loggerFactory,
+            IOptions<RosettaConfigurationDiscord> cfgDiscord)
             : base(loggerFactory)
-        { }
+        {
+            this.DiscordConfiguration = cfgDiscord.Value;
+        }
+
+        [HttpGet, Route("endpoint")]
+        public ActionResult<ApiResult<string>> Endpoint()
+        {
+            var ub = new UriBuilder
+            {
+                Scheme = "https",
+                Host = "discord.com",
+                Path = "/api/v7/oauth2/authorize"
+            };
+
+            var rub = new UriBuilder
+            {
+                Scheme = this.HttpContext.Request.Scheme,
+                Host = this.DiscordConfiguration.Hostname,
+                Port = this.DiscordConfiguration.Port,
+                Path = "/session/callback"
+            };
+
+            var uri = QueryHelpers.AddQueryString(ub.Uri.ToString(), new Dictionary<string, string>(5)
+            {
+                ["client_id"] = this.DiscordConfiguration.ClientId.ToString(CultureInfo.InvariantCulture),
+                ["redirect_uri"] = rub.Uri.ToString(),
+                ["response_type"] = "code",
+                ["scope"] = "guilds identify",
+                ["state"] = Guid.NewGuid().ToString()
+            });
+
+            return ApiResult.FromResult(uri);
+        }
 
         [HttpGet]
         public ActionResult<ApiResult<object>> Get()

@@ -15,6 +15,11 @@
 // limitations under the License.
 
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+
+import { RosettaApiService } from "src/app/services/rosetta-api.service";
+import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
+import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
 
 @Component({
     selector: "app-login",
@@ -23,9 +28,28 @@ import { Component, OnInit } from "@angular/core";
 })
 export class LoginComponent implements OnInit {
 
-    constructor() { }
+    constructor(private eventDispatcher: EventDispatcherService,
+                private api: RosettaApiService,
+                private router: Router) { }
 
     ngOnInit(): void {
-    }
+        this.api.getLoginUrl().then(x => {
+            if (!x.isSuccess) {
+                this.eventDispatcher.emit("dialog",
+                    {
+                        componentType: ErrorDialogComponent,
+                        defaults:
+                        {
+                            message: !!x.error?.message
+                                ? `Could not retrieve login data. Please try again. If the problem persists, contact the organizers, with the following error message: ${x.error.message} (${x.error.code})`
+                                : "Could not retrieve login data. Please try again. If the problem persists, contact the organizers."
+                        }
+                    });
+                this.router.navigate(["/"]);
+                return;
+            }
 
+            window.location.href = x.result;
+        });
+    }
 }

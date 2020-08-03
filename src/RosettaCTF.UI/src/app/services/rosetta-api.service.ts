@@ -17,7 +17,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { ApiErrorCode, ApiStatus, IApiResult, IApiError, IApiEventConfiguration, IApiFlag } from "../data/api";
+import { IApiResult, IApiEventConfiguration, IApiFlag } from "../data/api";
 import { ISession } from "../data/session";
 
 @Injectable({
@@ -51,5 +51,16 @@ export class RosettaApiService {
         return {
             isSuccess: false
         }
+    }
+
+    async getLoginUrl(): Promise<IApiResult<string>> {
+        try {
+            const response = await this.http.get<IApiResult<string>>("/api/session/endpoint", { responseType: "json" }).toPromise();
+            return response;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
     }
 }

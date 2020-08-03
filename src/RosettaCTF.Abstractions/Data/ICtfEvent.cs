@@ -19,7 +19,9 @@ using System.Collections.Generic;
 
 namespace RosettaCTF.Data
 {
-
+    /// <summary>
+    /// Represents a CTF event configuration.
+    /// </summary>
     public interface ICtfEvent
     {
         /// <summary>

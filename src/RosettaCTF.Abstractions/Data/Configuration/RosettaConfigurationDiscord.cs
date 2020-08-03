@@ -16,7 +16,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace RosettaCTF.Data.Configuration
+namespace RosettaCTF.Data
 {
     /// <summary>
     /// Represents Discord OAuth2 configuration for authentication purposes.

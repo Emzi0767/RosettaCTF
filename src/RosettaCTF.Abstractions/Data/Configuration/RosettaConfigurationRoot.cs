@@ -15,7 +15,6 @@
 // limitations under the License.
 
 using System.ComponentModel.DataAnnotations;
-using RosettaCTF.Data.Configuration;
 
 namespace RosettaCTF.Data
 {
