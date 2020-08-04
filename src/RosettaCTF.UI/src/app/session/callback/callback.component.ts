@@ -36,7 +36,16 @@ export class CallbackComponent implements OnInit {
     ngOnInit(): void {
         const args = this.currentRoute.snapshot.queryParamMap;
         if (args.has("error")) {
-            this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message: "Discord login failed. Please try again. If the problem persists, contact the organizers." } });
+            this.eventDispatcher.emit("dialog",
+                {
+                    componentType: ErrorDialogComponent,
+                    defaults:
+                    {
+                        message: args.get("error") === "access_denied"
+                            ? "You refused to authorize the application. You need to allow access for login to work."
+                            : "Discord login failed. Please try again. If the problem persists, contact the organizers."
+                    }
+                });
             this.router.navigate(["/"]);
             return;
         }
