@@ -41,7 +41,7 @@ namespace RosettaCTF.Data
         /// <summary>
         /// Current user is not authorized to perform the requested action.
         /// </summary>
-        Unauhtorized = 1001,
+        Unauthorized = 1001,
 
         /// <summary>
         /// Current user is missing permissions required to access a resource.
@@ -52,6 +52,11 @@ namespace RosettaCTF.Data
         /// External authentication source responded with an error.
         /// </summary>
         ExternalAuthenticationError = 1003,
+
+        /// <summary>
+        /// User is already logged in.
+        /// </summary>
+        AlreadyLoggedIn = 1004,
 
         // 2xxx - retrieval errors
 

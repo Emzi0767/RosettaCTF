@@ -51,6 +51,11 @@ export enum ApiErrorCode {
      */
     ExternalAuthenticationError = 1003,
 
+    /**
+     * User is already logged in.
+     */
+    AlreadyLoggedIn = 1004,
+
     // --------------------------------------------------------------------------------------------
     // 2xxx - retrieval errors
 
