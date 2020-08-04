@@ -14,42 +14,65 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 import { RosettaApiService } from "src/app/services/rosetta-api.service";
 import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
 import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
+import { SessionProviderService } from "src/app/services/session-provider.service";
+import { ISession } from "src/app/data/session";
 
 @Component({
     selector: "app-login",
     templateUrl: "./login.component.html",
     styleUrls: ["./login.component.less"]
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
+
+    private ngUnsubscribe = new Subject();
 
     constructor(private eventDispatcher: EventDispatcherService,
                 private api: RosettaApiService,
-                private router: Router) { }
+                private router: Router,
+                private sessionProvider: SessionProviderService) { }
 
     ngOnInit(): void {
-        this.api.getLoginUrl().then(x => {
-            if (!x.isSuccess) {
-                this.eventDispatcher.emit("dialog",
-                    {
-                        componentType: ErrorDialogComponent,
-                        defaults:
-                        {
-                            message: !!x.error?.message
-                                ? `Could not retrieve login data. Please try again. If the problem persists, contact the organizers, with the following error message: ${x.error.message} (${x.error.code})`
-                                : "Could not retrieve login data. Please try again. If the problem persists, contact the organizers."
-                        }
-                    });
-                this.router.navigate(["/"]);
-                return;
-            }
+        this.sessionProvider.sessionChange
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(x => this.beginLogin(x));
+    }
 
-            window.location.href = x.result;
-        });
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
+
+    private async beginLogin(session: ISession): Promise<void> {
+        if (session.authenticated) {
+            this.router.navigate(["/"]);
+            return;
+        }
+
+        const endpoint = await this.api.getLoginUrl();
+        if (!endpoint.isSuccess) {
+            this.eventDispatcher.emit("dialog",
+                {
+                    componentType: ErrorDialogComponent,
+                    defaults:
+                    {
+                        message: !!endpoint.error?.message
+                            ? `Could not retrieve login data. Please try again. If the problem persists, contact the organizers, with the following error message: ${endpoint.error.message} (${endpoint.error.code})`
+                            : "Could not retrieve login data. Please try again. If the problem persists, contact the organizers."
+                    }
+                });
+
+            this.router.navigate(["/"]);
+            return;
+        }
+
+        window.location.href = endpoint.result;
     }
 }

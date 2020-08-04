@@ -16,6 +16,8 @@
 
 import { Component, HostBinding, OnDestroy, ViewContainerRef, ViewChild, ComponentRef, ComponentFactoryResolver, HostListener } from "@angular/core";
 import { style, state, trigger, transition, animate } from "@angular/animations";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 import { IDialogComponent, IDialogData } from "../data/dialog";
 import { EventDispatcherService, EventHandler, IEventTriple } from "../services/event-dispatcher.service";
@@ -45,6 +47,8 @@ export class DialogComponent implements OnDestroy {
         return this.displayState;
     }
 
+    private ngUnsubscribe = new Subject();
+
     @ViewChild("componentAnchor", { read: ViewContainerRef, static: true })
     container: ViewContainerRef;
     private component: ComponentRef<IDialogComponent>;
@@ -64,7 +68,8 @@ export class DialogComponent implements OnDestroy {
 
     ngOnDestroy(): void {
         if (!!this.component) {
-            this.component.instance.dialogDismiss.unsubscribe();
+            this.ngUnsubscribe.next();
+            this.ngUnsubscribe.complete();
             this.component.destroy();
         }
 
@@ -82,11 +87,13 @@ export class DialogComponent implements OnDestroy {
         if (!!data.componentType) {
             const factory = this.resolver.resolveComponentFactory(data.componentType);
             this.component = this.container.createComponent(factory);
-            this.component.instance.dialogDismiss.subscribe({
-                next: (e: null) => {
-                    this.displayState = "hiding";
-                }
-            });
+            this.component.instance.dialogDismiss
+                .pipe(takeUntil(this.ngUnsubscribe))
+                .subscribe({
+                    next: (e: null) => {
+                        this.displayState = "hiding";
+                    }
+                });
 
             if (!!data.defaults) {
                 this.component.instance.provideDefaults(data.defaults);

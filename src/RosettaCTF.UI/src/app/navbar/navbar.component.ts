@@ -18,7 +18,8 @@ import { Component, OnInit, ViewChild, ViewContainerRef, ComponentFactoryResolve
 import { Router, ResolveEnd } from "@angular/router";
 
 import { INavbarData } from "../data/navbar";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 import { IApiEventConfiguration } from "../data/api";
 import { ConfigurationProviderService } from "../services/configuration-provider.service";
 import { ISession } from "../data/session";
@@ -30,6 +31,8 @@ import { SessionProviderService } from "../services/session-provider.service";
     styleUrls: ["./navbar.component.less"]
 })
 export class NavbarComponent implements OnInit, OnDestroy {
+
+    private ngUnsubscribe = new Subject();
 
     @ViewChild("buttonContainer", { read: ViewContainerRef, static: true })
     container: ViewContainerRef;
@@ -48,26 +51,31 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.router.events.subscribe(x => {
-            if (!(x instanceof ResolveEnd)) {
-                return;
-            }
-            const data = x.state.root.children[0].data as INavbarData;
+        this.router.events
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(x => {
+                if (!(x instanceof ResolveEnd)) {
+                    return;
+                }
+                const data = x.state.root.children[0].data as INavbarData;
 
-            this.container.clear();
-            if (!!this.component) {
-                this.component.destroy();
-                this.component = null;
-            }
+                this.container.clear();
+                if (!!this.component) {
+                    this.component.destroy();
+                    this.component = null;
+                }
 
-            if (!!data.buttons) {
-                const factory = this.resolver.resolveComponentFactory(data.buttons);
-                this.component = this.container.createComponent(factory);
-            }
-        });
+                if (!!data.buttons) {
+                    const factory = this.resolver.resolveComponentFactory(data.buttons);
+                    this.component = this.container.createComponent(factory);
+                }
+            });
     }
 
     ngOnDestroy(): void {
         this.component.destroy();
+
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 }

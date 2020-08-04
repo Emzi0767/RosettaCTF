@@ -20,6 +20,7 @@ import { Router, ActivatedRoute } from "@angular/router";
 import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
 import { RosettaApiService } from "src/app/services/rosetta-api.service";
 import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
+import { SessionProviderService } from "src/app/services/session-provider.service";
 
 @Component({
     selector: "app-callback",
@@ -31,7 +32,8 @@ export class CallbackComponent implements OnInit {
     constructor(private eventDispatcher: EventDispatcherService,
                 private api: RosettaApiService,
                 private router: Router,
-                private currentRoute: ActivatedRoute) { }
+                private currentRoute: ActivatedRoute,
+                private sessionProvider: SessionProviderService) { }
 
     ngOnInit(): void {
         const args = this.currentRoute.snapshot.queryParamMap;
