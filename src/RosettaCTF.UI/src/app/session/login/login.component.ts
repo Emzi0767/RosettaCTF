@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.sessionProvider.sessionChange
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(x => this.beginLogin(x));
+            .subscribe(this.beginLogin);
     }
 
     ngOnDestroy(): void {

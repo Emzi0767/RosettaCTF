@@ -14,18 +14,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+import { Router } from "@angular/router";
+
+import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
+import { RosettaApiService } from "src/app/services/rosetta-api.service";
+import { SessionProviderService } from "src/app/services/session-provider.service";
+import { ISession } from "src/app/data/session";
 
 @Component({
     selector: "app-logout",
     templateUrl: "./logout.component.html",
     styleUrls: ["./logout.component.less"]
 })
-export class LogoutComponent implements OnInit {
+export class LogoutComponent implements OnInit, OnDestroy {
 
-    constructor() { }
+    private ngUnsubscribe = new Subject();
+
+    constructor(private eventDispatcher: EventDispatcherService,
+                private api: RosettaApiService,
+                private router: Router,
+                private sessionProvider: SessionProviderService) { }
 
     ngOnInit(): void {
+        this.sessionProvider.sessionChange
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(this.beginLogout);
     }
 
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
+
+    private async beginLogout(session: ISession): Promise<void> {
+        if (!session.authenticated) {
+            this.router.navigate(["/"]);
+            return;
+        }
+    }
 }
