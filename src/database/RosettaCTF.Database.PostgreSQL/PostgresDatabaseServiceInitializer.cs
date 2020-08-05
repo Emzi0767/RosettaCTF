@@ -14,21 +14,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using RosettaCTF;
+using RosettaCTF.Attributes;
 
-// All controllers defined herein are API controllers
-[assembly: ApiController]
+[assembly: DatabaseProvider("postgresql", typeof(PostgresDatabaseServiceInitializer))]
 
-namespace RosettaCTF.Controllers
+namespace RosettaCTF
 {
-    public abstract class RosettaControllerBase : ControllerBase
+    internal sealed class PostgresDatabaseServiceInitializer : IDatabaseServiceInitializer
     {
-        protected ILoggerFactory LoggerFactory { get; }
-
-        protected RosettaControllerBase(ILoggerFactory loggerFactory)
+        public void ConfigureServices(IServiceCollection services)
         {
-            this.LoggerFactory = loggerFactory;
+            
         }
     }
 }

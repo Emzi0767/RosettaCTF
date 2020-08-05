@@ -29,7 +29,7 @@ export class RosettaApiService {
 
     async testApi(): Promise<IApiResult<IApiEventConfiguration>> {
         try {
-            const response = await this.http.get<IApiResult<IApiEventConfiguration>>("/api/test", { responseType: "json" }).toPromise();
+            const response = await this.http.get<IApiResult<IApiEventConfiguration>>("/api/config", { responseType: "json" }).toPromise();
             return response;
         } catch (ex) { }
 

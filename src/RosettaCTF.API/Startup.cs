@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -135,6 +136,11 @@ namespace RosettaCTF.API
 
             services.AddSingleton<ICtfConfigurationLoader, YamlCtfConfigurationLoader>();
 
+            services.AddAuthentication(x =>
+            {
+                
+            });
+
 #if !DEBUG
             services.AddControllers();
 #else
@@ -155,7 +161,8 @@ namespace RosettaCTF.API
             }
             else
             {
-                app.UseStatusCodePages(this.RenderStatusCode)
+                app.UseExceptionHandler(this.HandlePipelineException)
+                    .UseStatusCodePages(this.RenderStatusCode)
                     .UseHsts();
             }
 
@@ -164,7 +171,8 @@ namespace RosettaCTF.API
                 .UseStaticFiles()
 #endif
                 .UseRouting()
-                //.UseAuthorization()
+                .UseAuthentication()
+                .UseAuthorization()
                 .UseMiddleware<XsrfMiddleware>(xsrf, "Rosetta-XSRF")
                 .UseEndpoints(endpoints => endpoints.MapControllers());
 
@@ -178,13 +186,30 @@ namespace RosettaCTF.API
         }
 
         private Task RenderStatusCode(StatusCodeContext ctx)
-        {
-            ctx.HttpContext.Response.ContentType = "application/json";
+            => this.RunHandlerAsync(ctx.HttpContext);
 
-            using (var utf8json = new Utf8JsonWriter(ctx.HttpContext.Response.Body))
-                JsonSerializer.Serialize(
-                    ApiResult.FromError<object>(
-                        new ApiError(ApiErrorCode.GenericError, $"HTTP Error {ctx.HttpContext.Response.StatusCode}")));
+        private void HandlePipelineException(IApplicationBuilder app)
+            => app.Run(this.RunHandlerAsync);
+
+        private Task RunHandlerAsync(HttpContext ctx)
+        {
+            ctx.Response.ContentType = "application/json";
+
+            ApiError error;
+            var exhpf = ctx.Features.Get<IExceptionHandlerPathFeature>();
+            if (exhpf?.Error != null)
+            {
+                ctx.Response.StatusCode = 500;
+
+                error = new ApiError(ApiErrorCode.GenericError, "Internal server error occured while processing the request");
+            }
+            else
+            {
+                error = new ApiError(ApiErrorCode.GenericError, $"HTTP Error {ctx.Response.StatusCode}");
+            }
+
+            using (var utf8json = new Utf8JsonWriter(ctx.Response.Body))
+                JsonSerializer.Serialize(ApiResult.FromError<object>(error));
 
             return Task.CompletedTask;
         }

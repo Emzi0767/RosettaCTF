@@ -28,7 +28,6 @@ namespace RosettaCTF.Filters
 
         private string CookieName { get; }
 
-
         public XsrfMiddleware(RequestDelegate next, IAntiforgery xsrf, string cookieName)
         {
             this.Next = next;

@@ -14,21 +14,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-
-// All controllers defined herein are API controllers
-[assembly: ApiController]
+using RosettaCTF.Data;
 
 namespace RosettaCTF.Controllers
 {
-    public abstract class RosettaControllerBase : ControllerBase
+    [Route("api/[controller]"), AllowAnonymous]
+    public sealed class ConfigController : ControllerBase
     {
-        protected ILoggerFactory LoggerFactory { get; }
+        private ICtfConfigurationLoader ConfigurationLoader { get; }
 
-        protected RosettaControllerBase(ILoggerFactory loggerFactory)
+        public ConfigController(ICtfConfigurationLoader cfgLoader)
         {
-            this.LoggerFactory = loggerFactory;
+            this.ConfigurationLoader = cfgLoader;
         }
+
+        [HttpGet]
+        public ActionResult<ApiResult<ICtfEvent>> Get()
+            => ApiResult.FromResult(this.ConfigurationLoader.LoadEventData());
     }
 }

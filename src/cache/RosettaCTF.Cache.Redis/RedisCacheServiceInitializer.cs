@@ -14,25 +14,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Mvc;
-using RosettaCTF.Data;
+using Microsoft.Extensions.DependencyInjection;
+using RosettaCTF;
+using RosettaCTF.Attributes;
 
-namespace RosettaCTF.Controllers
+[assembly: CacheProvider("redis", typeof(RedisCacheServiceInitializer))]
+
+namespace RosettaCTF
 {
-    [Route("api/[controller]"), AllowAnonymous]
-    public sealed class TestController : ControllerBase
+    internal sealed class RedisCacheServiceInitializer : ICacheServiceInitializer
     {
-        private ICtfConfigurationLoader ConfigurationLoader { get; }
-
-        public TestController(ICtfConfigurationLoader cfgLoader)
+        public void ConfigureServices(IServiceCollection services)
         {
-            this.ConfigurationLoader = cfgLoader;
+            
         }
-
-        [HttpGet]
-        public ActionResult<ApiResult<ICtfEvent>> Get()
-            => ApiResult.FromResult(this.ConfigurationLoader.LoadEventData());
     }
 }

@@ -44,6 +44,21 @@ namespace RosettaCTF.Data
         Uri AvatarUrl { get; }
 
         /// <summary>
+        /// Gets the Discord OAuth token for this user.
+        /// </summary>
+        string Token { get; }
+
+        /// <summary>
+        /// Gets the Discord OAuth refresh token for this user.
+        /// </summary>
+        string RefreshToken { get; }
+
+        /// <summary>
+        /// Gets the time at which the token expires.
+        /// </summary>
+        DateTimeOffset TokenExpirationTime { get; }
+
+        /// <summary>
         /// Gets the team this user belongs to.
         /// </summary>
         ITeam Team { get; }

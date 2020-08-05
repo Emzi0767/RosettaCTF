@@ -14,21 +14,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
-// All controllers defined herein are API controllers
-[assembly: ApiController]
-
-namespace RosettaCTF.Controllers
+namespace RosettaCTF
 {
-    public abstract class RosettaControllerBase : ControllerBase
+    /// <summary>
+    /// Represents an initializer for database providers. An implementation configures appropriate services for supplied collection.
+    /// </summary>
+    public interface IDatabaseServiceInitializer
     {
-        protected ILoggerFactory LoggerFactory { get; }
-
-        protected RosettaControllerBase(ILoggerFactory loggerFactory)
-        {
-            this.LoggerFactory = loggerFactory;
-        }
+        /// <summary>
+        /// Configures services in the supplied collection.
+        /// </summary>
+        /// <param name="services">Service collection to configure.</param>
+        void ConfigureServices(IServiceCollection services);
     }
 }
