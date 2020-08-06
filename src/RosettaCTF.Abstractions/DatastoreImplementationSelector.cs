@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,15 +31,22 @@ namespace RosettaCTF
     {
         private readonly IReadOnlyDictionary<string, DatabaseProviderAttribute> _databaseProviders;
         private readonly IReadOnlyDictionary<string, CacheProviderAttribute> _cacheProviders;
+        private readonly IReadOnlyDictionary<string, CtfConfigurationLoaderProviderAttribute> _configurationLoaderProviders;
 
         /// <summary>
         /// Initializes the selector.
         /// </summary>
         public DatastoreImplementationSelector()
         {
-            var implAssemblies = AppDomain.CurrentDomain.GetAssemblies()
-                .Select(x => new { assembly = x, database = x.GetCustomAttribute<DatabaseProviderAttribute>(), cache = x.GetCustomAttribute<CacheProviderAttribute>() })
-                .Where(x => x.database != null || x.cache != null)
+            var implAssemblies = AbstractionUtilities.AssemblyCache
+                .Select(x => new 
+                    { 
+                        assembly = x, 
+                        database = x.GetCustomAttribute<DatabaseProviderAttribute>(), 
+                        cache = x.GetCustomAttribute<CacheProviderAttribute>(),
+                        configurationLoader = x.GetCustomAttribute<CtfConfigurationLoaderProviderAttribute>()
+                    })
+                .Where(x => x.database != null || x.cache != null || x.configurationLoader != null)
                 .ToList();
 
             this._databaseProviders = implAssemblies.Where(x => x.database != null)
@@ -48,6 +56,10 @@ namespace RosettaCTF
             this._cacheProviders = implAssemblies.Where(x => x.cache != null)
                 .Select(x => x.cache)
                 .ToDictionary(x => x.Id, x => x, StringComparer.InvariantCultureIgnoreCase);
+
+            this._configurationLoaderProviders = implAssemblies.Where(x => x.configurationLoader != null)
+                .Select(x => x.configurationLoader)
+                .ToDictionary(x => x.Id, x => x, StringComparer.CurrentCultureIgnoreCase);
         }
 
         /// <summary>
@@ -70,6 +82,17 @@ namespace RosettaCTF
         {
             if (this._cacheProviders.TryGetValue(id, out var cpa))
                 cpa.GetServiceInitializer().ConfigureServices(services);
+        }
+
+        /// <summary>
+        /// Initializes and configures the selected CTF configuration loader provider by registering appropriate services in the DB collection.
+        /// </summary>
+        /// <param name="id">Id of the CTF configuration loader implementation provider.</param>
+        /// <param name="services">Service collection to register appropriate services in.</param>
+        public void ConfigureCtfConfigurationLoaderProvider(string id, IServiceCollection services)
+        {
+            if (this._configurationLoaderProviders.TryGetValue(id, out var clpa))
+                clpa.GetServiceInitializer().ConfigureServices(services);
         }
     }
 }

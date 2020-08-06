@@ -14,6 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace RosettaCTF
@@ -27,5 +32,35 @@ namespace RosettaCTF
         /// Gets the common, properly-configured instance of the UTF-8 encoder.
         /// </summary>
         public static Encoding UTF8 { get; } = new UTF8Encoding(false);
+
+        /// <summary>
+        /// Contains an enumerable of currently-loaded assemblies.
+        /// </summary>
+        internal static IEnumerable<Assembly> AssemblyCache { get; }
+
+        static AbstractionUtilities()
+        {
+            ForceLoadAssemblies();
+            AssemblyCache = AppDomain.CurrentDomain.GetAssemblies();
+        }
+
+        private static void ForceLoadAssemblies()
+        {
+            var asns = new HashSet<string>(AppDomain.CurrentDomain
+                .GetAssemblies()
+                .Select(x => x.GetName().Name));
+
+            var a = Assembly.GetEntryAssembly();
+            var loc = Path.GetFullPath(a.Location);
+            var dir = Path.GetDirectoryName(loc.AsSpan());
+            var assemblies = Directory.GetFiles(new string(dir), "RosettaCTF.**.dll");
+
+            foreach (var assembly in assemblies)
+            {
+                var asn = Path.GetFileNameWithoutExtension(assembly.AsSpan());
+                if (!asns.Contains(new string(asn)))
+                    Assembly.LoadFile(assembly);
+            }
+        }
     }
 }

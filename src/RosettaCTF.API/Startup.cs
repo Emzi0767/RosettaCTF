@@ -23,7 +23,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+#if DEBUG
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+#endif
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -134,12 +136,13 @@ namespace RosettaCTF.API
                 .Bind(this.Configuration.GetSection("Discord"))
                 .ValidateDataAnnotations();
 
-            services.AddSingleton<ICtfConfigurationLoader, YamlCtfConfigurationLoader>();
+            var dsiSelector = new DatastoreImplementationSelector();
 
-            services.AddAuthentication(x =>
-            {
-                
-            });
+            // Configure datastore providers
+            dsiSelector.ConfigureCtfConfigurationLoaderProvider("yaml", services);
+
+            dsiSelector.ConfigureDatabaseProvider(this.Configuration["Database:Type"], services);
+            dsiSelector.ConfigureCacheProvider(this.Configuration["Cache:Type"], services);
 
 #if !DEBUG
             services.AddControllers();

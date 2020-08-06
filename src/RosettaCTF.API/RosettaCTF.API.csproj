@@ -26,12 +26,12 @@
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.6" />
   </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="NetEscapades.Configuration.Yaml" Version="2.0.1" />
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\challenge\RosettaCTF.ChallengeLoader.Yaml\RosettaCTF.ChallengeLoader.Yaml.csproj" />
     <ProjectReference Include="..\RosettaCTF.Abstractions\RosettaCTF.Abstractions.csproj" />
   </ItemGroup>
   
@@ -39,6 +39,30 @@
     <Content Update="config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  
+  <!-- 
+    Reference plugins because otherwise we can't deploy them. Their references are stripped from the final assembly, 
+    as we don't explicitly use any of their code, but they will all be loaded explicitly at run-time. Fact is, if we 
+    don't reference them this way, their dependencies will not become transitive, and thusly, will not be deployed 
+    alongside the application, making it so that any attempt to load them will likely succeed, however calling 
+    anything defined in them will throw assembly loading exceptions (as their references might be missing). 
+    Truthfully, I'd rather the binaries were deployed alongside the application as content, but due to how .NET Core 
+    builds work, this cannot work, as it only deploys binaries built from the projects within the solution, leading us 
+    back to square one - we have the plugins, but we lack their dependencies. There is an option to output all 
+    dependencies to the build directory during build, but as far as I know it will output *everything*, including 
+    design-only references (such as reference assemblies which only contain stubs, as their real implementations live
+    inside mscorlib). Things like this, make me miss the .NETFX somewhat...
+  -->
+  <ItemGroup>
+    <PluginProject Include="../challenge/**/*.csproj" />
+    <PluginProject Include="../database/**/*.csproj" />
+    <PluginProject Include="../cache/**/*.csproj" />
+    
+    <ProjectReference Include="@(PluginProject)">
+      <PrivateAssets>All</PrivateAssets>
+      <ReferenceOutputAssembly>True</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
   
   <!-- SPA Settings -->
