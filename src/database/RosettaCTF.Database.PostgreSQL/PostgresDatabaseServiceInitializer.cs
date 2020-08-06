@@ -14,9 +14,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using RosettaCTF;
 using RosettaCTF.Attributes;
+using RosettaCTF.Data;
 
 [assembly: DatabaseProvider("postgresql", typeof(PostgresDatabaseServiceInitializer))]
 
@@ -26,7 +29,15 @@ namespace RosettaCTF
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            services.AddSingleton<PostgresConfigurationProvider>();
+            services.AddDbContext<PostgresDbContext>((srv, opts) =>
+            {
+                var cfg = srv.GetRequiredService<PostgresConfigurationProvider>();
+                opts.UseNpgsql(cfg.ConnectionString,
+                    pgopts => pgopts.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name)
+                        .MigrationsHistoryTable("efcore_migrations"));
+            }, contextLifetime: ServiceLifetime.Scoped, optionsLifetime: ServiceLifetime.Singleton);
+            services.AddScoped<IUserRepository, PostgresUserRepository>();
         }
     }
 }

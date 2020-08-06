@@ -1,0 +1,129 @@
+﻿// This file is part of RosettaCTF project.
+//
+// Copyright 2020 Emzi0767
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System;
+using System.IO;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+using Emzi0767;
+using Konscious.Security.Cryptography;
+using Microsoft.Extensions.Options;
+using RosettaCTF.Data;
+
+namespace RosettaCTF
+{
+    /// <summary>
+    /// Handles encryption and decryption of Discord tokens for the purpose of storage.
+    /// </summary>
+    public sealed class DiscordTokenHandler
+    {
+        private byte[] Key { get; }
+
+        /// <summary>
+        /// Instantiates the handler and configures the encryption key.
+        /// </summary>
+        /// <param name="cfg">Configuration for the handler.</param>
+        public DiscordTokenHandler(IOptions<RosettaConfigurationDiscord> cfg)
+        {
+            this.Key = AbstractionUtilities.UTF8.GetBytes(cfg.Value.Secret);
+        }
+
+        /// <summary>
+        /// Encrypts a value.
+        /// </summary>
+        /// <param name="value">Value to encrypt.</param>
+        /// <returns>Encrypted value as a base64 string.</returns>
+        public async Task<string> EncryptAsync(string value)
+        {
+            using var rng = new SecureRandom();
+
+            var v = AbstractionUtilities.UTF8.GetBytes(value);
+            var s = new byte[16];
+            rng.GetBytes(s);
+
+            using (var aes = new RijndaelManaged())
+            {
+                aes.Key = await this.DeriveKeyAsync(s);
+                aes.IV = new byte[aes.BlockSize / 8];
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+
+                rng.GetBytes(aes.IV);
+                var osize = v.Length * 8 / aes.BlockSize + 1;
+
+                using (var enc = aes.CreateEncryptor())
+                using (var ms = new MemoryStream(osize + s.Length + aes.IV.Length))
+                using (var cs = new CryptoStream(ms, enc, CryptoStreamMode.Write))
+                {
+                    ms.Write(s);
+                    ms.Write(aes.IV);
+
+                    cs.Write(v);
+                    cs.FlushFinalBlock();
+
+                    return Convert.ToBase64String(ms.GetBuffer().AsSpan(), Base64FormattingOptions.None);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Decrypts a value.
+        /// </summary>
+        /// <param name="value">Base64 string containing the value to decrypt.</param>
+        /// <returns>Decrypted string.</returns>
+        public async Task<string> DecryptAsync(string value)
+        {
+            using var ms = new MemoryStream(Convert.FromBase64String(value));
+
+            var s = new byte[16];
+            ms.Read(s);
+            
+            using (var aes = new RijndaelManaged())
+            {
+                aes.Key = await this.DeriveKeyAsync(s);
+                aes.IV = new byte[aes.BlockSize / 8];
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+
+                ms.Read(aes.IV);
+                var output = new byte[(int)ms.Length - s.Length - aes.IV.Length];
+
+                using (var dec = aes.CreateDecryptor())
+                using (var cs = new CryptoStream(ms, dec, CryptoStreamMode.Read))
+                    cs.Read(output);
+
+                return AbstractionUtilities.UTF8.GetString(output);
+            }
+        }
+
+        private async Task<byte[]> DeriveKeyAsync(byte[] salt)
+        {
+            // just to be safe
+            var k = new byte[this.Key.Length];
+            this.Key.AsSpan().CopyTo(k);
+
+            var argon2 = new Argon2id(k)
+            {
+                DegreeOfParallelism = Environment.ProcessorCount * 2,
+                MemorySize = 16384, /* 16 MiB */
+                Iterations = 8,
+                Salt = salt
+            };
+
+            return await argon2.GetBytesAsync(256 / 8);
+        }
+    }
+}

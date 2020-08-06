@@ -32,6 +32,11 @@ export interface IUser {
      * Gets the URL of the user's avatar. Usually a Piroxy URL.
      */
     avatarUrl: string | null;
+
+    /**
+     * Gets the team this user belongs to.
+     */
+    team: ITeam | null;
 }
 
 /**
@@ -64,17 +69,12 @@ export interface ISession {
     authenticated: boolean;
 
     /**
-     * Gets the current authentcation token.
-     */
-    token: string | null;
-
-    /**
      * Gets the currently-authenticated user.
      */
     user: IUser | null;
 
     /**
-     * Gets the team the currently-authenticated user belongs to.
+     * Gets the token issued to the caller.
      */
-    team: ITeam | null;
+    token?: string;
 }

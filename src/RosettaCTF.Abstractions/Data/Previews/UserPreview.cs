@@ -19,48 +19,36 @@ using System;
 namespace RosettaCTF.Data
 {
     /// <summary>
-    /// Represents an individual user.
+    /// Represents a brief, abridged view of <see cref="IUser"/>.
     /// </summary>
-    public interface IUser
+    public sealed class UserPreview
     {
         /// <summary>
         /// Gets the ID of the user.
         /// </summary>
-        long Id { get; }
+        public long Id { get; }
 
         /// <summary>
-        /// Gets the name of the suer.
+        /// Gets the username of the user.
         /// </summary>
-        string Username { get; }
+        public string Username { get; }
 
         /// <summary>
-        /// Gets the ID of the Discord profile associated with this user.
+        /// Gets the avatar url of the user.
         /// </summary>
-        ulong DiscordId { get; }
+        public Uri AvatarUrl { get; }
 
         /// <summary>
-        /// Gets the URL of the user's avatar.
+        /// Gets the team the user belongs to.
         /// </summary>
-        Uri AvatarUrl { get; }
+        public TeamPreview Team { get; }
 
-        /// <summary>
-        /// Gets the Discord OAuth token for this user.
-        /// </summary>
-        string Token { get; }
-
-        /// <summary>
-        /// Gets the Discord OAuth refresh token for this user.
-        /// </summary>
-        string RefreshToken { get; }
-
-        /// <summary>
-        /// Gets the time at which the token expires.
-        /// </summary>
-        DateTimeOffset? TokenExpirationTime { get; }
-
-        /// <summary>
-        /// Gets the team this user belongs to.
-        /// </summary>
-        ITeam Team { get; }
+        internal UserPreview(IUser user, TeamPreview team)
+        {
+            this.Id = user.Id;
+            this.Username = user.Username;
+            this.AvatarUrl = user.AvatarUrl;
+            this.Team = team;
+        }
     }
 }

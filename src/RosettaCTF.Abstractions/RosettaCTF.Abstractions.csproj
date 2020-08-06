@@ -23,7 +23,10 @@
   <Import Project="../RosettaCTF.Common.targets" />
 
   <ItemGroup>
+    <PackageReference Include="Emzi0767.Common" Version="2.2.0" />
+    <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.2.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.6" />
   </ItemGroup>
 
 </Project>

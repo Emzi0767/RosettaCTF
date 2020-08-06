@@ -15,6 +15,7 @@
 // limitations under the License.
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RosettaCTF.Data
@@ -28,63 +29,72 @@ namespace RosettaCTF.Data
         /// Retrieves a user by their ID.
         /// </summary>
         /// <param name="id">ID of the user to retrieve.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>Requested user.</returns>
-        Task<IUser> GetUserAsync(long id);
+        Task<IUser> GetUserAsync(long id, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Creates a new user with specified parameters. This method will fail if a user with this name exists.
         /// </summary>
         /// <param name="username">Username for the user.</param>
+        /// <param name="discordId">Discord ID of the user.</param>
         /// <param name="token">Discord OAuth2 authentication token.</param>
         /// <param name="refreshToken">Discord OAuth2 refresh token.</param>
         /// <param name="tokenExpiresAt">Exact timestamp at which this OAuth2 token expires.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>Created user.</returns>
-        Task<IUser> CreateUserAsync(string username, string token, string refreshToken, DateTimeOffset tokenExpiresAt);
+        Task<IUser> CreateUserAsync(string username, ulong discordId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Deletes a user by their ID.
         /// </summary>
         /// <param name="id">ID of the user to delete.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>A task encapsulating the operation.</returns>
-        Task DeleteUserAsync(long id);
+        Task DeleteUserAsync(long id, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Retrieves a team by its ID.
         /// </summary>
         /// <param name="id">ID of the team to retrieve.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>Requested team.</returns>
-        Task<ITeam> GetTeamAsync(long id);
+        Task<ITeam> GetTeamAsync(long id, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Creates a new team with specified parameters. This method will fail if a team with this name exists.
         /// </summary>
         /// <param name="name">Name for the team.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>Created team.</returns>
-        Task<ITeam> CreateTeamAsync(string name);
+        Task<ITeam> CreateTeamAsync(string name, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Deletes a team by its ID.
         /// </summary>
         /// <param name="id">ID of the team to delete.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>A task encapsulating the operation.</returns>
-        Task DeleteTeamAsync(long id);
+        Task DeleteTeamAsync(long id, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Assigns a user to a team. A null team will unassign the user from the team.
         /// </summary>
-        /// <param name="user">User to assign to the team.</param>
-        /// <param name="team">Team to assign the user to. Null will unassign the user from the team.</param>
+        /// <param name="userId">ID of the user to assign to the team.</param>
+        /// <param name="teamId">ID of the team to assign the user to. Null will unassign the user from the team.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>A task encapsulating the operation.</returns>
-        Task AssignTeamMembershipAsync(IUser user, ITeam team);
+        Task AssignTeamMembershipAsync(long userId, long? teamId, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Updates OAuth2 authentication data for a user.
         /// </summary>
-        /// <param name="user">User to update authentication data for.</param>
+        /// <param name="userId">ID of the user to update authentication data for.</param>
         /// <param name="token">New Discord OAuth2 authentication token.</param>
         /// <param name="refreshToken">New Discord OAuth2 refresh token.</param>
         /// <param name="tokenExpiresAt">New expiration timestamp for the token.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>A task encapsulating the operation.</returns>
-        Task UpdateTokensAsync(IUser user, string token, string refreshToken, DateTimeOffset tokenExpiresAt);
+        Task UpdateTokensAsync(long userId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, CancellationToken cancellationToken = default);
     }
 }

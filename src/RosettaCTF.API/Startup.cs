@@ -136,13 +136,24 @@ namespace RosettaCTF.API
                 .Bind(this.Configuration.GetSection("Discord"))
                 .ValidateDataAnnotations();
 
-            var dsiSelector = new DatastoreImplementationSelector();
 
             // Configure datastore providers
+            var dsiSelector = new DatastoreImplementationSelector();
             dsiSelector.ConfigureCtfConfigurationLoaderProvider("yaml", services);
-
             dsiSelector.ConfigureDatabaseProvider(this.Configuration["Database:Type"], services);
             dsiSelector.ConfigureCacheProvider(this.Configuration["Cache:Type"], services);
+
+            services.AddSingleton<DiscordTokenHandler>();
+
+            services.AddAuthentication(x =>
+            {
+                
+            });
+
+            services.AddAuthorization(x =>
+            {
+                
+            });
 
 #if !DEBUG
             services.AddControllers();

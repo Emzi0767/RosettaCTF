@@ -30,13 +30,19 @@ namespace RosettaCTF.Controllers
     public class SessionController : RosettaControllerBase
     {
         private RosettaConfigurationDiscord DiscordConfiguration { get; }
+        private IUserRepository UserRepository { get; }
+        private UserPreviewRepository UserPreviewRepository { get; }
 
         public SessionController(
             ILoggerFactory loggerFactory,
-            IOptions<RosettaConfigurationDiscord> cfgDiscord)
+            IOptions<RosettaConfigurationDiscord> cfgDiscord,
+            IUserRepository userRepository,
+            UserPreviewRepository userPreviewRepository)
             : base(loggerFactory)
         {
             this.DiscordConfiguration = cfgDiscord.Value;
+            this.UserRepository = userRepository;
+            this.UserPreviewRepository = userPreviewRepository;
         }
 
         [HttpGet, Route("endpoint")]
