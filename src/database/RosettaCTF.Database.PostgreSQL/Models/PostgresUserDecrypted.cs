@@ -36,6 +36,8 @@ namespace RosettaCTF.Models
 
         public DateTimeOffset? TokenExpirationTime { get; set; }
 
+        public bool IsAuthorized { get; set; }
+
         public ITeam Team { get; set; }
 
         public PostgresUserDecrypted(PostgresUser pgUser)
@@ -47,6 +49,7 @@ namespace RosettaCTF.Models
             this.Token = pgUser.Token;
             this.RefreshToken = pgUser.RefreshToken;
             this.TokenExpirationTime = pgUser.TokenExpirationTime;
+            this.IsAuthorized = pgUser.IsAuthorized;
             this.Team = pgUser.Team;
         }
 

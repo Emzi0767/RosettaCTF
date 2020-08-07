@@ -45,5 +45,17 @@ namespace RosettaCTF.Data
         /// Gets the port for the redirect URL.
         /// </summary>
         public int Port { get; set; }
+
+        /// <summary>
+        /// Gets the token used to store keys.
+        /// </summary>
+        [Required]
+        public string TokenKey { get; set; }
+
+        /// <summary>
+        /// Gets the guild ID used to determine whether users are authorized.
+        /// </summary>
+        [Required]
+        public string GuildId { get; set; }
     }
 }

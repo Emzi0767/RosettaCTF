@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -38,10 +39,22 @@ namespace RosettaCTF
         /// </summary>
         internal static IEnumerable<Assembly> AssemblyCache { get; }
 
+        /// <summary>
+        /// Gets the directory the current assembly resides in.
+        /// </summary>
+        private static DirectoryInfo CurrentDirectory { get; }
+
+        /// <summary>
+        /// Gets loadable assemblies from assembly's directory.
+        /// </summary>
+        private static IEnumerable<FileInfo> LoadableAssemblies { get; }
+
         static AbstractionUtilities()
         {
             ForceLoadAssemblies();
             AssemblyCache = AppDomain.CurrentDomain.GetAssemblies();
+            CurrentDirectory = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            LoadableAssemblies = CurrentDirectory.GetFiles("*.dll", SearchOption.TopDirectoryOnly);
         }
 
         private static void ForceLoadAssemblies()
@@ -58,8 +71,31 @@ namespace RosettaCTF
             foreach (var assembly in assemblies)
             {
                 var asn = Path.GetFileNameWithoutExtension(assembly.AsSpan());
-                if (!asns.Contains(new string(asn)))
-                    Assembly.LoadFile(assembly);
+                var asnst = new string(asn);
+                if (!asns.Contains(asnst))
+                    Assembly.Load(asnst);
+            }
+
+            // So here's a great question. Why do I need this? I don't know. Without it, .NET just gives up on 
+            // assembly loading altogether. Amazing software.
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+        }
+
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs ea)
+        {
+            var an = new AssemblyName(ea.Name);
+            var dll = string.Create(an.Name.Length + 4, an.Name, CreateDllString);
+            return LoadableAssemblies.Any(x => x.Name == dll)
+                ? Assembly.LoadFrom(Path.Combine(CurrentDirectory.FullName, dll))
+                : null;
+
+            static void CreateDllString(Span<char> buffer, string state)
+            {
+                buffer[^1] = 'l';
+                buffer[^2] = 'l';
+                buffer[^3] = 'd';
+                buffer[^4] = '.';
+                state.AsSpan().CopyTo(buffer);
             }
         }
     }

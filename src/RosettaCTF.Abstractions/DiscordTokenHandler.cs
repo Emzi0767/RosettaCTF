@@ -38,7 +38,7 @@ namespace RosettaCTF
         /// <param name="cfg">Configuration for the handler.</param>
         public DiscordTokenHandler(IOptions<RosettaConfigurationDiscord> cfg)
         {
-            this.Key = AbstractionUtilities.UTF8.GetBytes(cfg.Value.Secret);
+            this.Key = AbstractionUtilities.UTF8.GetBytes(cfg.Value.TokenKey);
         }
 
         /// <summary>
@@ -56,20 +56,23 @@ namespace RosettaCTF
 
             using (var aes = new RijndaelManaged())
             {
+                var bsize = aes.BlockSize / 8;
+                var osize = (v.Length / bsize + 1) * bsize;
+
+                var iv = new byte[bsize];
+                rng.GetBytes(iv);
+
                 aes.Key = await this.DeriveKeyAsync(s);
-                aes.IV = new byte[aes.BlockSize / 8];
+                aes.IV = iv;
                 aes.Mode = CipherMode.CBC;
                 aes.Padding = PaddingMode.PKCS7;
-
-                rng.GetBytes(aes.IV);
-                var osize = v.Length * 8 / aes.BlockSize + 1;
 
                 using (var enc = aes.CreateEncryptor())
                 using (var ms = new MemoryStream(osize + s.Length + aes.IV.Length))
                 using (var cs = new CryptoStream(ms, enc, CryptoStreamMode.Write))
                 {
                     ms.Write(s);
-                    ms.Write(aes.IV);
+                    ms.Write(iv);
 
                     cs.Write(v);
                     cs.FlushFinalBlock();
@@ -93,13 +96,16 @@ namespace RosettaCTF
             
             using (var aes = new RijndaelManaged())
             {
+                var bsize = aes.BlockSize / 8;
+                var output = new byte[(int)ms.Length - s.Length - aes.IV.Length];
+
+                var iv = new byte[bsize];
+                ms.Read(iv);
+
                 aes.Key = await this.DeriveKeyAsync(s);
-                aes.IV = new byte[aes.BlockSize / 8];
+                aes.IV = iv;
                 aes.Mode = CipherMode.CBC;
                 aes.Padding = PaddingMode.PKCS7;
-
-                ms.Read(aes.IV);
-                var output = new byte[(int)ms.Length - s.Length - aes.IV.Length];
 
                 using (var dec = aes.CreateDecryptor())
                 using (var cs = new CryptoStream(ms, dec, CryptoStreamMode.Read))

@@ -41,7 +41,7 @@ export class LogoutComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.sessionProvider.sessionChange
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(this.beginLogout);
+            .subscribe(x => this.beginLogout(x));
     }
 
     ngOnDestroy(): void {
@@ -50,7 +50,7 @@ export class LogoutComponent implements OnInit, OnDestroy {
     }
 
     private async beginLogout(session: ISession): Promise<void> {
-        if (!session.authenticated) {
+        if (!session.isAuthenticated) {
             this.router.navigate(["/"]);
             return;
         }

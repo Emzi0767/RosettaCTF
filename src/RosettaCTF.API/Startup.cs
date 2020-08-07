@@ -15,6 +15,7 @@
 // limitations under the License.
 
 using System;
+using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -30,6 +31,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RosettaCTF.Data;
+using RosettaCTF.Discord;
 using RosettaCTF.Filters;
 
 namespace RosettaCTF.API
@@ -136,6 +138,15 @@ namespace RosettaCTF.API
                 .Bind(this.Configuration.GetSection("Discord"))
                 .ValidateDataAnnotations();
 
+            services.AddAuthentication(x =>
+            {
+
+            });
+
+            services.AddAuthorization(x =>
+            {
+
+            });
 
             // Configure datastore providers
             var dsiSelector = new DatastoreImplementationSelector();
@@ -143,17 +154,10 @@ namespace RosettaCTF.API
             dsiSelector.ConfigureDatabaseProvider(this.Configuration["Database:Type"], services);
             dsiSelector.ConfigureCacheProvider(this.Configuration["Cache:Type"], services);
 
-            services.AddSingleton<DiscordTokenHandler>();
-
-            services.AddAuthentication(x =>
-            {
-                
-            });
-
-            services.AddAuthorization(x =>
-            {
-                
-            });
+            services.AddTransient<UserPreviewRepository>()
+                .AddSingleton<DiscordTokenHandler>()
+                .AddSingleton<HttpClient>()
+                .AddScoped<DiscordHandler>();
 
 #if !DEBUG
             services.AddControllers();
@@ -197,6 +201,12 @@ namespace RosettaCTF.API
                 x.UseAngularCliServer(npmScript: "start");
             });
 #endif
+
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var users = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+                users.Initialize();
+            }
         }
 
         private Task RenderStatusCode(StatusCodeContext ctx)

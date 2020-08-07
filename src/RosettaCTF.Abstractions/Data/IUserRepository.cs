@@ -41,9 +41,10 @@ namespace RosettaCTF.Data
         /// <param name="token">Discord OAuth2 authentication token.</param>
         /// <param name="refreshToken">Discord OAuth2 refresh token.</param>
         /// <param name="tokenExpiresAt">Exact timestamp at which this OAuth2 token expires.</param>
+        /// <param name="isAuthorized">Whether the user is authorized.</param>
         /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>Created user.</returns>
-        Task<IUser> CreateUserAsync(string username, ulong discordId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, CancellationToken cancellationToken = default);
+        Task<IUser> CreateUserAsync(string username, ulong discordId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, bool isAuthorized, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Deletes a user by their ID.
@@ -96,5 +97,10 @@ namespace RosettaCTF.Data
         /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>A task encapsulating the operation.</returns>
         Task UpdateTokensAsync(long userId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Performs any initialization tasks for the underlying datastores.
+        /// </summary>
+        void Initialize();
     }
 }

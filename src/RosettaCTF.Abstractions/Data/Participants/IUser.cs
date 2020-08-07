@@ -59,6 +59,11 @@ namespace RosettaCTF.Data
         DateTimeOffset? TokenExpirationTime { get; }
 
         /// <summary>
+        /// Gets whether the user is authorized to take part in challenges.
+        /// </summary>
+        bool IsAuthorized { get; }
+
+        /// <summary>
         /// Gets the team this user belongs to.
         /// </summary>
         ITeam Team { get; }

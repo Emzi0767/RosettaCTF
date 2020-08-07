@@ -33,13 +33,21 @@ namespace RosettaCTF.Models
             set => this.DiscordIdInternal = (long)value;
         }
 
-        public Uri AvatarUrl { get; set; }
+        public string AvatarUrlInternal { get; set; }
+
+        public Uri AvatarUrl
+        {
+            get => this.AvatarUrlInternal != null ? new Uri(this.AvatarUrlInternal) : null;
+            set => this.AvatarUrlInternal = value?.ToString();
+        }
 
         public string Token { get; set; }
 
         public string RefreshToken { get; set; }
 
         public DateTimeOffset? TokenExpirationTime { get; set; }
+
+        public bool IsAuthorized { get; set; }
 
         public long? TeamId { get; set; }
 

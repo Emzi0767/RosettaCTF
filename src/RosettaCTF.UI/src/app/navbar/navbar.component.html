@@ -19,7 +19,7 @@
 -->
 
 <div class="navbar-root">
-    <div class="navbar-title"><a [routerLink]="['/']">{{ (configuration$ | async)?.name || "RosettaCTF" }}</a></div>
+    <div class="navbar-title"><a [routerLink]="['/']">{{ configuration?.name || "RosettaCTF" }}</a></div>
     <div class="spacer"></div>
     <div class="buttons">
         <span #buttonContainer></span>
@@ -28,11 +28,9 @@
         <labelled-button [actionId]="'scoreboard'" [actionDescription]="'Display current team ranking'" [actionText]="'Scoreboard'" [actionRoute]="['/scoreboard']"></labelled-button>
         <labelled-button [actionId]="'profile'" [actionDescription]="'View your user profile'" [actionText]="'Profile'" [actionRoute]="['/profile']"></labelled-button>
         <labelled-button [actionId]="'team'" [actionDescription]="'View your team\'s profile'" [actionText]="'Team'" [actionRoute]="['/team']"></labelled-button>
-        <ng-container *ngIf="session$ | async; let session">
-            <labelled-button *ngIf="!session.authenticated else elseBlock" [actionId]="'login'" [actionDescription]="'Log in using Discord'" [actionText]="'Log in'" [actionRoute]="['/session/login']"></labelled-button>
-            <ng-template #elseBlock>
-                <labelled-button [actionId]="'logout'" [actionDescription]="'Log out to have a nice walk outside. Just kidding, everyone knows you never leave your room.'" [actionText]="'Log out'" [actionRoute]="['/session/logout']"></labelled-button>
-            </ng-template>
-        </ng-container>
+        <labelled-button *ngIf="!session.isAuthenticated else elseBlock" [actionId]="'login'" [actionDescription]="'Log in using Discord'" [actionText]="'Log in'" [actionRoute]="['/session/login']"></labelled-button>
+        <ng-template #elseBlock>
+            <labelled-button [actionId]="'logout'" [actionDescription]="'Log out to have a nice walk outside. Just kidding, everyone knows you never leave your room.'" [actionText]="'Log out'" [actionRoute]="['/session/logout']"></labelled-button>
+        </ng-template>
     </div>
 </div>

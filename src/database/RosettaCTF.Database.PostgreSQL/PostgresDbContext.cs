@@ -34,7 +34,8 @@ namespace RosettaCTF
             modelBuilder.Entity<PostgresUser>()
                 .ToTable("users")
                 .Ignore(x => x.DiscordId)
-                .Ignore(x => x.Team);
+                .Ignore(x => x.Team)
+                .Ignore(x => x.AvatarUrl);
 
             modelBuilder.Entity<PostgresUser>()
                 .Property(x => x.Id)
@@ -53,7 +54,7 @@ namespace RosettaCTF
                 .HasColumnName("discord_id");
 
             modelBuilder.Entity<PostgresUser>()
-                .Property(x => x.AvatarUrl)
+                .Property(x => x.AvatarUrlInternal)
                 .HasColumnName("avatar")
                 .HasColumnType("text")
                 .HasDefaultValue(null);
@@ -73,6 +74,11 @@ namespace RosettaCTF
                 .HasColumnName("token_expires_at")
                 .HasColumnType("timestamptz")
                 .HasDefaultValue(null);
+
+            modelBuilder.Entity<PostgresUser>()
+                .Property(x => x.IsAuthorized)
+                .IsRequired()
+                .HasColumnName("authorized");
 
             modelBuilder.Entity<PostgresUser>()
                 .Property(x => x.TeamId)
@@ -97,7 +103,8 @@ namespace RosettaCTF
             // Team
             modelBuilder.Entity<PostgresTeam>()
                 .ToTable("teams")
-                .Ignore(x => x.Members);
+                .Ignore(x => x.Members)
+                .Ignore(x => x.AvatarUrl);
 
             modelBuilder.Entity<PostgresTeam>()
                 .Property(x => x.Id)
@@ -111,7 +118,7 @@ namespace RosettaCTF
                 .HasColumnName("name");
 
             modelBuilder.Entity<PostgresTeam>()
-                .Property(x => x.AvatarUrl)
+                .Property(x => x.AvatarUrlInternal)
                 .HasColumnName("avatar")
                 .HasColumnType("text")
                 .HasDefaultValue(null);

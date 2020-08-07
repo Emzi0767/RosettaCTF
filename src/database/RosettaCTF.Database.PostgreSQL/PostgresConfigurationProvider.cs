@@ -25,8 +25,11 @@ namespace RosettaCTF
         internal string ConnectionString { get; }
 
         public PostgresConfigurationProvider(IOptions<RosettaConfigurationDatastore> cfg)
+            : this(cfg.Value)
+        { }
+
+        internal PostgresConfigurationProvider(RosettaConfigurationDatastore cfgv)
         {
-            var cfgv = cfg.Value;
             var csb = new NpgsqlConnectionStringBuilder
             {
                 Host = cfgv.Hostname,

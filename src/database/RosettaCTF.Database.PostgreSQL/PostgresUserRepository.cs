@@ -46,12 +46,17 @@ namespace RosettaCTF
                 : null;
         }
 
-        public async Task<IUser> CreateUserAsync(string username, ulong discordId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, CancellationToken cancellationToken = default)
+        public async Task<IUser> CreateUserAsync(string username, ulong discordId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, bool isAuthorized, CancellationToken cancellationToken = default)
         {
             if (token != null && refreshToken != null)
             {
                 token = await this.TokenHandler.EncryptAsync(token);
                 refreshToken = await this.TokenHandler.EncryptAsync(refreshToken);
+            }
+            else
+            {
+                token = null;
+                refreshToken = null;
             }
 
             var user = new PostgresUser
@@ -64,7 +69,8 @@ namespace RosettaCTF
                 RefreshToken = refreshToken,
                 TokenExpirationTime = token != null && refreshToken != null
                     ? tokenExpiresAt as DateTimeOffset?
-                    : null
+                    : null,
+                IsAuthorized = isAuthorized
             };
 
             await this.Database.Users.AddAsync(user, cancellationToken);
@@ -134,6 +140,17 @@ namespace RosettaCTF
 
         public async Task UpdateTokensAsync(long userId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, CancellationToken cancellationToken = default)
         {
+            if (token != null && refreshToken != null)
+            {
+                token = await this.TokenHandler.EncryptAsync(token);
+                refreshToken = await this.TokenHandler.EncryptAsync(refreshToken);
+            }
+            else
+            {
+                token = null;
+                refreshToken = null;
+            }
+
             var user = await this.Database.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
             if (user == null)
                 return;
@@ -146,6 +163,11 @@ namespace RosettaCTF
 
             this.Database.Users.Update(user);
             await this.Database.SaveChangesAsync(cancellationToken);
+        }
+
+        public void Initialize()
+        {
+            this.Database.Database.Migrate();
         }
     }
 }

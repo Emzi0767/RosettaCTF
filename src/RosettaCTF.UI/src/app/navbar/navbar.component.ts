@@ -39,8 +39,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private component: ComponentRef<any>;
 
     configuration$: Observable<IApiEventConfiguration>;
+    configuration: IApiEventConfiguration;
 
     session$: Observable<ISession>;
+    session: ISession;
 
     constructor(private router: Router,
                 private resolver: ComponentFactoryResolver,
@@ -70,6 +72,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
                     this.component = this.container.createComponent(factory);
                 }
             });
+
+        this.configuration$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(x => { console.log(this); this.configuration = x; });
+
+        this.session$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(x => { console.log(this); this.session = x; });
     }
 
     ngOnDestroy(): void {

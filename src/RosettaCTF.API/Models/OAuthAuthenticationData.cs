@@ -14,28 +14,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using RosettaCTF.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace RosettaCTF.Models
 {
-    internal sealed class PostgresTeam : ITeam
+    /// <summary>
+    /// Contains arguments for PUT /session
+    /// </summary>
+    public sealed class OAuthAuthenticationData
     {
-        public long Id { get; set; }
+        /// <summary>
+        /// OAuth authentication code to exchange for a token.
+        /// </summary>
+        [Required]
+        public string Code { get; set; }
 
-        public string Name { get; set; }
-
-        public string AvatarUrlInternal { get; set; }
-
-        public Uri AvatarUrl 
-        {
-            get => this.AvatarUrlInternal != null ? new Uri(this.AvatarUrlInternal) : null;
-            set => this.AvatarUrlInternal = value?.ToString();
-        }
-
-        public IEnumerable<PostgresUser> MembersInternal { get; set; }
-
-        public IEnumerable<IUser> Members => this.MembersInternal;
+        /// <summary>
+        /// OAuth state to validate.
+        /// </summary>
+        [Required]
+        public string State { get; set; }
     }
 }

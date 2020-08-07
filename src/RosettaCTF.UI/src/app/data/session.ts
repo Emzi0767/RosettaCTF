@@ -66,7 +66,7 @@ export interface ISession {
     /**
      * Gets whether the current user has successfully authenticated.
      */
-    authenticated: boolean;
+    isAuthenticated: boolean;
 
     /**
      * Gets the currently-authenticated user.

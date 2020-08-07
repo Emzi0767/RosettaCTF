@@ -50,12 +50,25 @@ export class RosettaApiService {
 
         return {
             isSuccess: false
-        }
+        };
     }
 
     async getLoginUrl(): Promise<IApiResult<string>> {
         try {
             const response = await this.http.get<IApiResult<string>>("/api/session/endpoint", { responseType: "json" }).toPromise();
+            return response;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    async completeLogin(code: string, state: string): Promise<IApiResult<ISession>> {
+        try {
+            const response = await this.http.put<IApiResult<ISession>>("/api/session",
+                { code, state },
+                { responseType: "json" }).toPromise();
             return response;
         } catch (ex) { }
 

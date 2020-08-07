@@ -28,10 +28,9 @@ export class SessionProviderService {
 
     constructor(private api: RosettaApiService) {
         this.sessionChange.next({
-            authenticated: false,
+            isAuthenticated: false,
             token: null,
-            user: null,
-            team: null
+            user: null
         });
     }
 

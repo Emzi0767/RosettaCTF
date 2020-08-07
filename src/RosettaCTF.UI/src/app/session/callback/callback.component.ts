@@ -37,7 +37,7 @@ export class CallbackComponent implements OnInit {
 
     ngOnInit(): void {
         const args = this.currentRoute.snapshot.queryParamMap;
-        if (args.has("error")) {
+        if (args.has("error") || !args.has("code") || !args.has("state")) {
             this.eventDispatcher.emit("dialog",
                 {
                     componentType: ErrorDialogComponent,
@@ -51,5 +51,25 @@ export class CallbackComponent implements OnInit {
             this.router.navigate(["/"]);
             return;
         }
+
+        this.api.completeLogin(args.get("code"), args.get("state")).then(x => {
+            if (!x.isSuccess) {
+                this.eventDispatcher.emit("dialog",
+                    {
+                        componentType: ErrorDialogComponent,
+                        defaults:
+                        {
+                            message: !!x.error?.message
+                                ? `Discord login failed. Please try again. Error message: ${x.error.message}`
+                                : "Discord login failed. Please try again. If the problem persists, contact the organizers."
+                        }
+                    });
+                this.router.navigate(["/"]);
+                return;
+            }
+
+            this.sessionProvider.updateSession(x.result);
+            this.router.navigate(["/"]);
+        });
     }
 }
