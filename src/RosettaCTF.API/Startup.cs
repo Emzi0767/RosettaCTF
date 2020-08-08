@@ -145,12 +145,7 @@ namespace RosettaCTF.API
             services.AddAuthentication(JwtAuthenticationOptions.SchemeName)
                 .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(JwtAuthenticationOptions.SchemeName, opts => { });
 
-            services.AddAuthorization(x =>
-            {
-
-            });
-
-            
+            services.AddAuthorization();
 
             // Configure datastore providers
             var dsiSelector = new DatastoreImplementationSelector();

@@ -64,8 +64,8 @@ export class LoginComponent implements OnInit, OnDestroy {
                     defaults:
                     {
                         message: !!endpoint.error?.message
-                            ? `Could not retrieve login data. Please try again. If the problem persists, contact the organizers, with the following error message: ${endpoint.error.message} (${endpoint.error.code})`
-                            : "Could not retrieve login data. Please try again. If the problem persists, contact the organizers."
+                            ? `Could not retrieve login data. Please try again.\n\nIf the problem persists, contact the organizers, with the following error message: ${endpoint.error.message} (${endpoint.error.code})`
+                            : "Could not retrieve login data. Please try again.\n\nIf the problem persists, contact the organizers."
                     }
                 });
 

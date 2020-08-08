@@ -54,8 +54,8 @@ export class LogoutComponent implements OnInit, OnDestroy {
                     defaults:
                     {
                         message: !!x.error?.message
-                            ? `Failed to log out. Please try again. If the problem persists, contact the organizers, with the following error message: ${x.error.message} (${x.error.code})`
-                            : "Failed to log out. Please try again. If the problem persists, contact the organizers."
+                            ? `Failed to log out. Please try again.\n\nIf the problem persists, contact the organizers, with the following error message: ${x.error.message} (${x.error.code})`
+                            : "Failed to log out. Please try again.\n\nIf the problem persists, contact the organizers."
                     }
                 });
             }
