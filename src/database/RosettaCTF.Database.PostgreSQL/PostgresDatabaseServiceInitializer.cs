@@ -17,6 +17,7 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using RosettaCTF;
 using RosettaCTF.Attributes;
 using RosettaCTF.Data;
@@ -29,6 +30,9 @@ namespace RosettaCTF
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<CtfChallengeDifficulty>("challenge_difficulty");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<CtfChallengeEndpointType>("challenge_endpoint_type");
+
             services.AddSingleton<PostgresConfigurationProvider>();
             services.AddDbContext<PostgresDbContext>((srv, opts) =>
             {

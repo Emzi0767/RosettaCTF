@@ -70,6 +70,11 @@ namespace RosettaCTF.Services
             };
         }
 
+        /// <summary>
+        /// Issues a new token for given user.
+        /// </summary>
+        /// <param name="user">User to issue token for.</param>
+        /// <returns>The issued token and its expiration time.</returns>
         public JwtTokenData IssueToken(UserPreview user)
         {
             var claims = new[]
@@ -93,6 +98,11 @@ namespace RosettaCTF.Services
             };
         }
 
+        /// <summary>
+        /// Validates given token and returns the user ID it's for.
+        /// </summary>
+        /// <param name="token">Token to validate and extract user ID from.</param>
+        /// <returns>Extracted user ID, if the token validation was successful.</returns>
         public long? ValidateToken(string token)
         {
             var jwth = new JwtSecurityTokenHandler();
