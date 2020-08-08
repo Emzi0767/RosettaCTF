@@ -25,7 +25,7 @@ namespace RosettaCTF.Converters
     internal sealed class YamlTimeSpanConverter : ScalarSerializerBase, IYamlSerializableFactory
     {
         public override object ConvertFrom(ref ObjectContext context, Scalar fromScalar)
-            => TimeSpan.FromSeconds(long.Parse(fromScalar.Value, NumberStyles.Integer, CultureInfo.InvariantCulture));
+            => TimeSpan.FromSeconds(fromScalar.Value.ParseAsLong());
 
         public override string ConvertTo(ref ObjectContext objectContext)
             => ((long)((TimeSpan)objectContext.Instance).TotalSeconds).ToString(CultureInfo.InvariantCulture);

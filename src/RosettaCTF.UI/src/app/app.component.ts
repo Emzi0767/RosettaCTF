@@ -51,13 +51,21 @@ export class AppComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.api.testApi().then(x => {
-            this.sessionProvider.init().then(() => {
-                if (!x.isSuccess) {
-                    this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message: "Could not establish a connection with the API." } });
-                    return;
-                }
+            if (!x.isSuccess) {
+                this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message: "Could not establish a connection with the API." } });
+                return;
+            }
 
-                this.configurationProvider.updateConfiguration(x.result);
+            this.configurationProvider.updateConfiguration(x.result);
+            if (!this.sessionProvider.shouldInitialize()) {
+                return;
+            }
+
+            this.api.getSession().then(y => {
+                if (y.isSuccess) {
+                    this.sessionProvider.updateSession(y.result);
+                    this.api.refreshXsrf();
+                }
             });
         });
     }

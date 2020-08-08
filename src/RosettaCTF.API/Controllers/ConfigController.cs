@@ -33,5 +33,9 @@ namespace RosettaCTF.Controllers
         [HttpGet]
         public ActionResult<ApiResult<ICtfEvent>> Get()
             => ApiResult.FromResult(this.ConfigurationLoader.LoadEventData());
+
+        [HttpGet, Route("wiggle")]
+        public ActionResult<ApiResult<object>> Wiggle()
+            => ApiResult.FromResult<object>(null);
     }
 }

@@ -16,7 +16,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -56,6 +56,14 @@ namespace RosettaCTF
             CurrentDirectory = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             LoadableAssemblies = CurrentDirectory.GetFiles("*.dll", SearchOption.TopDirectoryOnly);
         }
+
+        /// <summary>
+        /// Parses a numeric string as long.
+        /// </summary>
+        /// <param name="str">String to parse.</param>
+        /// <returns>Parsed long.</returns>
+        public static long ParseAsLong(this string str)
+            => long.Parse(str, NumberStyles.Integer, CultureInfo.InvariantCulture);
 
         private static void ForceLoadAssemblies()
         {

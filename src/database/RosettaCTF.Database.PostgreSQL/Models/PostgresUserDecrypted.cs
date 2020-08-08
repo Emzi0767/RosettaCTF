@@ -55,8 +55,11 @@ namespace RosettaCTF.Models
 
         public async Task<PostgresUserDecrypted> DecryptTokensAsync(DiscordTokenHandler tokenHandler)
         {
-            this.Token = await tokenHandler.DecryptAsync(this.Token);
-            this.RefreshToken = await tokenHandler.DecryptAsync(this.RefreshToken);
+            if (this.Token != null)
+                this.Token = await tokenHandler.DecryptAsync(this.Token);
+
+            if (this.RefreshToken != null)
+                this.RefreshToken = await tokenHandler.DecryptAsync(this.RefreshToken);
 
             return this;
         }

@@ -30,27 +30,33 @@ namespace RosettaCTF.Data
         public string EventConfiguration { get; set; }
 
         /// <summary>
-        /// Gets the persistent datastore configuration.
+        /// Gets or sets the persistent datastore configuration.
         /// </summary>
         [Required]
         public RosettaConfigurationDatastore Database { get; set; }
 
         /// <summary>
-        /// Gets the cache datastore configuration.
+        /// Gets or sets the cache datastore configuration.
         /// </summary>
         [Required]
         public RosettaConfigurationCache Cache { get; set; }
 
         /// <summary>
-        /// Gets the HTTP configuration.
+        /// Gets or sets the HTTP configuration.
         /// </summary>
         [Required]
         public RosettaConfigurationHttp Http { get; set; }
 
         /// <summary>
-        /// Gets the Discord OAuth configuration.
+        /// Gets or sets the Discord OAuth configuration.
         /// </summary>
         [Required]
         public RosettaConfigurationDiscord Discord { get; set; }
+
+        /// <summary>
+        /// Gets or sets the application token configuration.
+        /// </summary>
+        [Required]
+        public RosettaConfigurationTokens Tokens { get; set; }
     }
 }

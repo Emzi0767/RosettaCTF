@@ -19,17 +19,32 @@ import { HttpClient } from "@angular/common/http";
 
 import { IApiResult, IApiEventConfiguration, IApiFlag } from "../data/api";
 import { ISession } from "../data/session";
+import { SessionProviderService } from "./session-provider.service";
+
+interface IHttpOptions {
+    headers?: {
+        [header: string]: string | string[];
+    };
+    observe?: "body";
+    params?: {
+        [param: string]: string | string[];
+    };
+    reportProgress?: boolean;
+    responseType?: "json";
+    withCredentials?: boolean;
+}
 
 @Injectable({
     providedIn: "root"
 })
 export class RosettaApiService {
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient,
+                private sessionProvider: SessionProviderService) { }
 
     async testApi(): Promise<IApiResult<IApiEventConfiguration>> {
         try {
-            const response = await this.http.get<IApiResult<IApiEventConfiguration>>("/api/config", { responseType: "json" }).toPromise();
+            const response = await this.http.get<IApiResult<IApiEventConfiguration>>("/api/config", this.getOptions()).toPromise();
             return response;
         } catch (ex) { }
 
@@ -38,13 +53,9 @@ export class RosettaApiService {
         };
     }
 
-    async getSession(token: string): Promise<IApiResult<ISession>> {
+    async getSession(): Promise<IApiResult<ISession>> {
         try {
-            const headers = !!token
-                ? { Authorization: token }
-                : null;
-
-            const response = await this.http.get<IApiResult<ISession>>("/api/session", { headers, responseType: "json" }).toPromise();
+            const response = await this.http.get<IApiResult<ISession>>("/api/session", this.getOptions()).toPromise();
             return response;
         } catch (ex) { }
 
@@ -55,7 +66,7 @@ export class RosettaApiService {
 
     async getLoginUrl(): Promise<IApiResult<string>> {
         try {
-            const response = await this.http.get<IApiResult<string>>("/api/session/endpoint", { responseType: "json" }).toPromise();
+            const response = await this.http.get<IApiResult<string>>("/api/session/endpoint", this.getOptions()).toPromise();
             return response;
         } catch (ex) { }
 
@@ -68,12 +79,53 @@ export class RosettaApiService {
         try {
             const response = await this.http.put<IApiResult<ISession>>("/api/session",
                 { code, state },
-                { responseType: "json" }).toPromise();
+                this.getOptions()).toPromise();
             return response;
         } catch (ex) { }
 
         return {
             isSuccess: false
         };
+    }
+
+    async logout(): Promise<IApiResult<ISession>> {
+        try {
+            const response = await this.http.delete<IApiResult<ISession>>("/api/session", this.getOptions()).toPromise();
+            return response;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    async refreshXsrf(): Promise<IApiResult<null>> {
+        try {
+            const response = await this.http.get<IApiResult<null>>("/api/config/wiggle", this.getOptions()).toPromise();
+            return response;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    private getHeaders(): { [header: string]: string | string[] } {
+        const token = this.sessionProvider.getToken();
+        if (!!token) {
+            return {
+                Authorization: token
+            };
+        } else {
+            return { };
+        }
+    }
+
+    private getOptions(): IHttpOptions {
+        return {
+            headers: this.getHeaders(),
+            observe: "body",
+            responseType: "json"
+        }
     }
 }

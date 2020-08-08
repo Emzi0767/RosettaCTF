@@ -18,36 +18,35 @@ import { Injectable } from "@angular/core";
 import { ReplaySubject } from "rxjs";
 
 import { ISession } from "../data/session";
-import { RosettaApiService } from "./rosetta-api.service";
 
 @Injectable({
     providedIn: "root"
 })
 export class SessionProviderService {
     sessionChange: ReplaySubject<ISession> = new ReplaySubject<ISession>(1);
+    private currentSession: ISession;
 
-    constructor(private api: RosettaApiService) {
-        this.sessionChange.next({
+    constructor() {
+        this.currentSession = {
             isAuthenticated: false,
-            token: null,
+            token: this.getStoredToken(),
             user: null
-        });
-    }
-
-    async init(): Promise<void> {
-        const token = this.getStoredToken();
-        if (!!token) {
-            const response = await this.api.getSession(token);
-            if (response.isSuccess) {
-                this.updateSession(response.result);
-                return;
-            }
-        }
+        };
+        this.sessionChange.next(this.currentSession);
     }
 
     updateSession(data: ISession): void {
+        this.currentSession = data;
         this.sessionChange.next(data);
         this.updateStoredToken(data.token);
+    }
+
+    getToken(): string | null {
+        return this.currentSession?.token;
+    }
+
+    shouldInitialize(): boolean {
+        return !!this.currentSession?.token;
     }
 
     private updateStoredToken(token: string): void {

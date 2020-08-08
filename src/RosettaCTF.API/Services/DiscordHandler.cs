@@ -30,7 +30,7 @@ using RosettaCTF.Data;
 using RosettaCTF.Filters;
 using RosettaCTF.Models;
 
-namespace RosettaCTF.Discord
+namespace RosettaCTF.Services
 {
     public sealed class DiscordHandler
     {

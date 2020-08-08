@@ -69,7 +69,7 @@ export class CallbackComponent implements OnInit {
             }
 
             this.sessionProvider.updateSession(x.result);
-            this.router.navigate(["/"]);
+            this.api.refreshXsrf().then(_ => { this.router.navigate(["/"]); });
         });
     }
 }

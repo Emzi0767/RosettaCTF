@@ -19,7 +19,6 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Emzi0767;
-using Konscious.Security.Cryptography;
 using Microsoft.Extensions.Options;
 using RosettaCTF.Data;
 
@@ -30,14 +29,19 @@ namespace RosettaCTF
     /// </summary>
     public sealed class DiscordTokenHandler
     {
+        private Argon2idKeyDeriver KeyDeriver { get; }
+
         private byte[] Key { get; }
 
         /// <summary>
         /// Instantiates the handler and configures the encryption key.
         /// </summary>
         /// <param name="cfg">Configuration for the handler.</param>
-        public DiscordTokenHandler(IOptions<RosettaConfigurationDiscord> cfg)
+        public DiscordTokenHandler(
+            IOptions<RosettaConfigurationDiscord> cfg,
+            Argon2idKeyDeriver keyDeriver)
         {
+            this.KeyDeriver = keyDeriver;
             this.Key = AbstractionUtilities.UTF8.GetBytes(cfg.Value.TokenKey);
         }
 
@@ -116,20 +120,6 @@ namespace RosettaCTF
         }
 
         private async Task<byte[]> DeriveKeyAsync(byte[] salt)
-        {
-            // just to be safe
-            var k = new byte[this.Key.Length];
-            this.Key.AsSpan().CopyTo(k);
-
-            var argon2 = new Argon2id(k)
-            {
-                DegreeOfParallelism = Environment.ProcessorCount * 2,
-                MemorySize = 16384, /* 16 MiB */
-                Iterations = 8,
-                Salt = salt
-            };
-
-            return await argon2.GetBytesAsync(256 / 8);
-        }
+            => await this.KeyDeriver.DeriveKeyAsync(this.Key, salt, 256 / 8);
     }
 }

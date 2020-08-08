@@ -23,6 +23,7 @@ import { EventDispatcherService } from "src/app/services/event-dispatcher.servic
 import { RosettaApiService } from "src/app/services/rosetta-api.service";
 import { SessionProviderService } from "src/app/services/session-provider.service";
 import { ISession } from "src/app/data/session";
+import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
 
 @Component({
     selector: "app-logout",
@@ -42,6 +43,25 @@ export class LogoutComponent implements OnInit, OnDestroy {
         this.sessionProvider.sessionChange
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(x => this.beginLogout(x));
+
+        this.api.logout().then(x => {
+            if (x.isSuccess) {
+                this.sessionProvider.updateSession(x.result);
+            } else {
+                this.eventDispatcher.emit("dialog",
+                {
+                    componentType: ErrorDialogComponent,
+                    defaults:
+                    {
+                        message: !!x.error?.message
+                            ? `Failed to log out. Please try again. If the problem persists, contact the organizers, with the following error message: ${x.error.message} (${x.error.code})`
+                            : "Failed to log out. Please try again. If the problem persists, contact the organizers."
+                    }
+                });
+            }
+
+            this.api.refreshXsrf().then(_ => { this.router.navigate(["/"]); });
+        });
     }
 
     ngOnDestroy(): void {

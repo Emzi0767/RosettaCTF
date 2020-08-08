@@ -75,11 +75,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
         this.configuration$
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(x => { console.log(this); this.configuration = x; });
+            .subscribe(x => { this.configuration = x; });
 
         this.session$
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(x => { console.log(this); this.session = x; });
+            .subscribe(x => { this.session = x; });
     }
 
     ngOnDestroy(): void {

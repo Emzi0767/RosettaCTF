@@ -44,9 +44,18 @@ namespace RosettaCTF.Data
         /// <summary>
         /// Gets a session from a principal.
         /// </summary>
-        /// <param name="claimsPrincipal">Principal to encapsulate state for.</param>
-        /// <returns>Encapsulated state.</returns>
+        /// <param name="user">User to encapsulate session for.</param>
+        /// <returns>Encapsulated session.</returns>
         public SessionPreview GetSession(UserPreview user)
             => new SessionPreview(user);
+
+        /// <summary>
+        /// Gets a session from a principal and updates the token.
+        /// </summary>
+        /// <param name="user">User to encapsulate session for.</param>
+        /// <param name="token">Token to send along.</param>
+        /// <returns>Encapsulated session.</returns>
+        public SessionPreview GetSession(UserPreview user, string token)
+            => new SessionPreview(user, token);
     }
 }

@@ -31,7 +31,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RosettaCTF.Data;
-using RosettaCTF.Discord;
+using RosettaCTF.Services;
 using RosettaCTF.Filters;
 
 namespace RosettaCTF.API
@@ -138,15 +138,19 @@ namespace RosettaCTF.API
                 .Bind(this.Configuration.GetSection("Discord"))
                 .ValidateDataAnnotations();
 
-            services.AddAuthentication(x =>
-            {
+            services.AddOptions<RosettaConfigurationTokens>()
+                .Bind(this.Configuration.GetSection("Tokens"))
+                .ValidateDataAnnotations();
 
-            });
+            services.AddAuthentication(JwtAuthenticationOptions.SchemeName)
+                .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(JwtAuthenticationOptions.SchemeName, opts => { });
 
             services.AddAuthorization(x =>
             {
 
             });
+
+            
 
             // Configure datastore providers
             var dsiSelector = new DatastoreImplementationSelector();
@@ -157,7 +161,9 @@ namespace RosettaCTF.API
             services.AddTransient<UserPreviewRepository>()
                 .AddSingleton<DiscordTokenHandler>()
                 .AddSingleton<HttpClient>()
-                .AddScoped<DiscordHandler>();
+                .AddScoped<DiscordHandler>()
+                .AddSingleton<JwtHandler>()
+                .AddTransient<Argon2idKeyDeriver>();
 
 #if !DEBUG
             services.AddControllers();
