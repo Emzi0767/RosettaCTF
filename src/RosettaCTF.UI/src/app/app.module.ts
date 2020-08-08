@@ -28,6 +28,7 @@ import { AppComponent } from "./app.component";
 import { ConfigurationProviderService } from "./services/configuration-provider.service";
 import { SessionProviderService } from "./services/session-provider.service";
 import { RosettaHttpInterceptor } from "./services/rosetta-http-interceptor.service";
+import { SessionRefreshManagerService } from "./services/session-refresh-manager.service";
 
 import { NavbarComponent } from "./navbar/navbar.component";
 import { FooterComponent } from "./footer/footer.component";
@@ -71,6 +72,7 @@ import { CallbackComponent } from "./session/callback/callback.component";
     providers: [
         ConfigurationProviderService,
         SessionProviderService,
+        SessionRefreshManagerService,
         { provide: HTTP_INTERCEPTORS, useClass: RosettaHttpInterceptor, multi: true }
     ],
     bootstrap: [AppComponent],

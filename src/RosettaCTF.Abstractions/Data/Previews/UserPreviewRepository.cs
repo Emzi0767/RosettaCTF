@@ -14,6 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace RosettaCTF.Data
 {
     /// <summary>
@@ -54,8 +56,9 @@ namespace RosettaCTF.Data
         /// </summary>
         /// <param name="user">User to encapsulate session for.</param>
         /// <param name="token">Token to send along.</param>
+        /// <param name="expiresAt">The timestamp at which the token expires.</param>
         /// <returns>Encapsulated session.</returns>
-        public SessionPreview GetSession(UserPreview user, string token)
-            => new SessionPreview(user, token);
+        public SessionPreview GetSession(UserPreview user, string token, DateTimeOffset expiresAt)
+            => new SessionPreview(user, token, expiresAt);
     }
 }

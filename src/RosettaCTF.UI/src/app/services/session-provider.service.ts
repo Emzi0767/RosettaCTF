@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy } from "@angular/core";
 import { ReplaySubject } from "rxjs";
 
 import { ISession } from "../data/session";
@@ -22,7 +22,7 @@ import { ISession } from "../data/session";
 @Injectable({
     providedIn: "root"
 })
-export class SessionProviderService {
+export class SessionProviderService implements OnDestroy {
     sessionChange: ReplaySubject<ISession> = new ReplaySubject<ISession>(1);
     private currentSession: ISession;
 
@@ -47,6 +47,10 @@ export class SessionProviderService {
 
     shouldInitialize(): boolean {
         return !!this.currentSession?.token;
+    }
+
+    ngOnDestroy(): void {
+        this.sessionChange.complete();
     }
 
     private updateStoredToken(token: string): void {

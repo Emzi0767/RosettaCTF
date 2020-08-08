@@ -1,4 +1,4 @@
-// This file is part of RosettaCTF project.
+﻿// This file is part of RosettaCTF project.
 //
 // Copyright 2020 Emzi0767
 //
@@ -14,22 +14,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Injectable, OnDestroy } from "@angular/core";
-import { ReplaySubject } from "rxjs";
+using System;
 
-import { IApiEventConfiguration } from "../data/api";
+namespace RosettaCTF.Models
+{
+    /// <summary>
+    /// Contains a token and expiration time.
+    /// </summary>
+    public struct JwtTokenData
+    {
+        /// <summary>
+        /// Gets or sets the token.
+        /// </summary>
+        public string Token { get; set; }
 
-@Injectable({
-    providedIn: "root"
-})
-export class ConfigurationProviderService implements OnDestroy {
-    configurationChange: ReplaySubject<IApiEventConfiguration> = new ReplaySubject<IApiEventConfiguration>(1);
-
-    updateConfiguration(data: IApiEventConfiguration): void {
-        this.configurationChange.next(data);
-    }
-
-    ngOnDestroy(): void {
-        this.configurationChange.complete();
+        /// <summary>
+        /// Gets or sets the token's expiration time.
+        /// </summary>
+        public DateTimeOffset ExpiresAt { get; set; }
     }
 }

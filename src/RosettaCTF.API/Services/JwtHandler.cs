@@ -23,6 +23,7 @@ using Emzi0767.Utilities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RosettaCTF.Data;
+using RosettaCTF.Models;
 
 namespace RosettaCTF.Services
 {
@@ -64,11 +65,12 @@ namespace RosettaCTF.Services
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = this.Configuration.Issuer,
                 ValidAudience = this.Configuration.Issuer,
-                IssuerSigningKey = this.Key
+                IssuerSigningKey = this.Key,
+                ClockSkew = TimeSpan.FromSeconds(1)
             };
         }
 
-        public string IssueToken(UserPreview user)
+        public JwtTokenData IssueToken(UserPreview user)
         {
             var claims = new[]
             {
@@ -76,14 +78,19 @@ namespace RosettaCTF.Services
                 new Claim(JwtRegisteredClaimNames.NameId, user.Username)
             };
 
+            var expires = DateTime.UtcNow.AddHours(2);
             var token = new JwtSecurityToken(
                 this.Configuration.Issuer,
                 this.Configuration.Issuer,
                 claims,
-                expires: DateTime.UtcNow.AddHours(2),
+                expires: expires,
                 signingCredentials: this.Credentials);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtTokenData
+            {
+                Token = new JwtSecurityTokenHandler().WriteToken(token),
+                ExpiresAt = expires
+            };
         }
 
         public long? ValidateToken(string token)

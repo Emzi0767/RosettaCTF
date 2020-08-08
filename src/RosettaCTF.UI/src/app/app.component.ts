@@ -23,6 +23,7 @@ import { EventDispatcherService, EventHandler, IEventTriple } from "./services/e
 import { RosettaApiService } from "./services/rosetta-api.service";
 import { ConfigurationProviderService } from "./services/configuration-provider.service";
 import { SessionProviderService } from "./services/session-provider.service";
+import { SessionRefreshManagerService } from "./services/session-refresh-manager.service";
 
 @Component({
     selector: "app-root",
@@ -37,7 +38,8 @@ export class AppComponent implements OnInit, OnDestroy {
                 private router: Router,
                 private api: RosettaApiService,
                 private configurationProvider: ConfigurationProviderService,
-                private sessionProvider: SessionProviderService) {
+                private sessionProvider: SessionProviderService,
+                private sessionRefresh: SessionRefreshManagerService) {
         if (!!this.eventHandlerQueue) {
             for (const handler of this.eventHandlerQueue) {
                 this.eventDispatcher.register(handler.name, handler.handler.bind(this), handler.tag);
@@ -50,6 +52,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.sessionRefresh.start();
         this.api.testApi().then(x => {
             if (!x.isSuccess) {
                 this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message: "Could not establish a connection with the API." } });

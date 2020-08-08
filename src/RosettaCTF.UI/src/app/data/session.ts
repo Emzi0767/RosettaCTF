@@ -77,4 +77,9 @@ export interface ISession {
      * Gets the token issued to the caller.
      */
     token?: string;
+
+    /**
+     * Gets the datetime string at which the token expires.
+     */
+    expiresAt?: string;
 }

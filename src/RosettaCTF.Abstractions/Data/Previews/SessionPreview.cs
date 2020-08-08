@@ -14,6 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace RosettaCTF.Data
 {
     /// <summary>
@@ -36,15 +38,21 @@ namespace RosettaCTF.Data
         /// </summary>
         public string Token { get; }
 
+        /// <summary>
+        /// Gets the expiration timestamp of the token.
+        /// </summary>
+        public string ExpiresAt { get; }
+
         internal SessionPreview(UserPreview user)
-            : this(user, null)
+            : this(user, null, null)
         { }
 
-        internal SessionPreview(UserPreview user, string token)
+        internal SessionPreview(UserPreview user, string token, DateTimeOffset? expiresAt)
         {
             this.IsAuthenticated = user != null;
             this.User = user;
             this.Token = token;
+            this.ExpiresAt = expiresAt?.ToString("yyyy-MM-ddTHH:mm:sszzz");
         }
     }
 }

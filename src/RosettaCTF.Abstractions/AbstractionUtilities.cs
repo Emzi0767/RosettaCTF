@@ -65,6 +65,14 @@ namespace RosettaCTF
         public static long ParseAsLong(this string str)
             => long.Parse(str, NumberStyles.Integer, CultureInfo.InvariantCulture);
 
+        /// <summary>
+        /// Parses a numeric string as ulong.
+        /// </summary>
+        /// <param name="str">String to parse.</param>
+        /// <returns>Parsed string.</returns>
+        public static ulong ParseAsUlong(this string str)
+            => ulong.Parse(str, NumberStyles.Integer, CultureInfo.InvariantCulture);
+
         private static void ForceLoadAssemblies()
         {
             var asns = new HashSet<string>(AppDomain.CurrentDomain
