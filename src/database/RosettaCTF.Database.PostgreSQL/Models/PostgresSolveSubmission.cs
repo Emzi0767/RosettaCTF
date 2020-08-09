@@ -15,29 +15,36 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using RosettaCTF.Data;
 
 namespace RosettaCTF.Models
 {
-    internal sealed class PostgresTeam : ITeam
+    internal sealed class PostgresSolveSubmission : ICtfSolveSubmission
     {
         public long Id { get; set; }
 
-        public string Name { get; set; }
+        public string Contents { get; set; }
 
-        public string AvatarUrlInternal { get; set; }
+        public bool IsValid { get; set; }
 
-        public Uri AvatarUrl 
-        {
-            get => this.AvatarUrlInternal != null ? new Uri(this.AvatarUrlInternal) : null;
-            set => this.AvatarUrlInternal = value?.ToString();
-        }
+        public string ChallengeId { get; set; }
 
-        public IEnumerable<PostgresUser> MembersInternal { get; set; }
+        public PostgresChallenge ChallengeInternal { get; set; }
 
-        public IEnumerable<IUser> Members => this.MembersInternal;
+        public ICtfChallenge Challenge => this.ChallengeInternal;
 
-        public IEnumerable<PostgresSolveSubmission> SolvesInternal { get; set; }
+        public long UserId { get; set; }
+
+        public PostgresUser UserInternal { get; set; }
+
+        public IUser User => this.UserInternal;
+
+        public long TeamId { get; set; }
+
+        public PostgresTeam TeamInternal { get; set; }
+
+        public ITeam Team => this.TeamInternal;
+
+        public DateTimeOffset Timestamp { get; set; }
     }
 }

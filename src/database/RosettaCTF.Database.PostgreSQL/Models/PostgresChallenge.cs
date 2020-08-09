@@ -54,5 +54,7 @@ namespace RosettaCTF.Models
         public bool IsHidden { get; set; }
 
         public int BaseScore { get; set; }
+
+        public IEnumerable<PostgresSolveSubmission> SolvesInternal { get; set; }
     }
 }

@@ -322,6 +322,70 @@ namespace RosettaCTF
                 e.HasKey(m => m.Id)
                     .HasName("challenge_category_id");
             });
+
+            // Challenge solve
+            modelBuilder.Entity<PostgresSolveSubmission>(e =>
+            {
+                e.ToTable("solves")
+                    .Ignore(m => m.Challenge)
+                    .Ignore(m => m.Team)
+                    .Ignore(m => m.User);
+
+                e.Property(m => m.Id)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
+
+                e.Property(m => m.Contents)
+                    .IsRequired()
+                    .HasColumnName("contents");
+
+                e.Property(m => m.IsValid)
+                    .IsRequired()
+                    .HasColumnName("valid");
+
+                e.Property(m => m.ChallengeId)
+                    .IsRequired()
+                    .HasColumnName("challenge_id");
+
+                e.Property(m => m.UserId)
+                    .IsRequired()
+                    .HasColumnName("user_id");
+
+                e.Property(m => m.TeamId)
+                    .IsRequired()
+                    .HasColumnName("team_id");
+
+                e.Property(m => m.Timestamp)
+                    .IsRequired()
+                    .HasColumnName("timestamp")
+                    .HasColumnType("timestamptz");
+
+                e.HasIndex(m => m.Id)
+                    .HasName("pkey_solve_id");
+
+                e.HasIndex(m => new { m.ChallengeId, m.TeamId, m.IsValid })
+                    .IsUnique(true)
+                    .HasFilter("valid = true");
+
+                e.HasOne(m => m.ChallengeInternal)
+                    .WithMany(m => m.SolvesInternal)
+                    .HasForeignKey(m => m.ChallengeId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("fkey_solve_challenge");
+
+                e.HasOne(m => m.UserInternal)
+                    .WithMany(m => m.SolvesInternal)
+                    .HasForeignKey(m => m.UserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("fkey_solve_user");
+
+                e.HasOne(m => m.TeamInternal)
+                    .WithMany(m => m.SolvesInternal)
+                    .HasForeignKey(m => m.TeamId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("fkey_solve_team");
+            });
         }
     }
 }

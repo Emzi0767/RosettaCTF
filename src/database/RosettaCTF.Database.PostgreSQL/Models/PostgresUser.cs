@@ -15,6 +15,8 @@
 // limitations under the License.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using RosettaCTF.Data;
 
 namespace RosettaCTF.Models
@@ -54,5 +56,7 @@ namespace RosettaCTF.Models
         public PostgresTeam TeamInternal { get; set; }
 
         public ITeam Team => this.TeamInternal;
+
+        public IEnumerable<PostgresSolveSubmission> SolvesInternal { get; set; }
     }
 }
