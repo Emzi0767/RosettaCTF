@@ -70,7 +70,8 @@ namespace RosettaCTF
                 TokenExpirationTime = token != null && refreshToken != null
                     ? tokenExpiresAt as DateTimeOffset?
                     : null,
-                IsAuthorized = isAuthorized
+                IsAuthorized = isAuthorized,
+                HasHiddenAccess = false
             };
 
             await this.Database.Users.AddAsync(user, cancellationToken);
@@ -165,9 +166,16 @@ namespace RosettaCTF
             await this.Database.SaveChangesAsync(cancellationToken);
         }
 
-        public void Initialize()
+        public async Task EnableHiddenChallengesAsync(long userId, bool enable, CancellationToken cancellationToken = default)
         {
-            this.Database.Database.Migrate();
+            var user = await this.Database.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
+            if (user == null)
+                return;
+
+            user.HasHiddenAccess = enable;
+
+            this.Database.Users.Update(user);
+            await this.Database.SaveChangesAsync(cancellationToken);
         }
     }
 }

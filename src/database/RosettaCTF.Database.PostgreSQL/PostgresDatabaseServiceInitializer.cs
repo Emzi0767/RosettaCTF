@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,9 +31,6 @@ namespace RosettaCTF
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<CtfChallengeDifficulty>("challenge_difficulty");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<CtfChallengeEndpointType>("challenge_endpoint_type");
-
             services.AddSingleton<PostgresConfigurationProvider>();
             services.AddDbContext<PostgresDbContext>((srv, opts) =>
             {
@@ -42,6 +40,26 @@ namespace RosettaCTF
                         .MigrationsHistoryTable("efcore_migrations"));
             }, contextLifetime: ServiceLifetime.Scoped, optionsLifetime: ServiceLifetime.Singleton);
             services.AddScoped<IUserRepository, PostgresUserRepository>();
+            services.AddScoped<ICtfChallengeRepository, PostgresChallengeRepository>();
+        }
+
+        public void InitializeServices(IServiceProvider services)
+        {
+            using (var scope = services.CreateScope())
+            {
+                var srvs = scope.ServiceProvider;
+                using (var db = srvs.GetRequiredService<PostgresDbContext>())
+                {
+                    db.Database.Migrate();
+
+                    using (var conn = db.Database.GetDbConnection() as NpgsqlConnection)
+                    {
+                        conn.Open();
+                        conn.ReloadTypes();
+                        conn.Close();
+                    }
+                }
+            }
         }
     }
 }

@@ -74,6 +74,17 @@ namespace RosettaCTF
         }
 
         /// <summary>
+        /// Performs necessary service initialization tasks for the database provider.
+        /// </summary>
+        /// <param name="id">Id of the database implementation provider.</param>
+        /// <param name="services">Service provider containing services to initialize.</param>
+        public void InitializeDatabaseProvider(string id, IServiceProvider services)
+        {
+            if (this._databaseProviders.TryGetValue(id, out var dpa))
+                dpa.GetServiceInitializer().InitializeServices(services);
+        }
+
+        /// <summary>
         /// Initializes and configures the selected cache provider by registering appropriate services in the DB collection.
         /// </summary>
         /// <param name="id">Id of the cache implementation provider.</param>
@@ -85,6 +96,17 @@ namespace RosettaCTF
         }
 
         /// <summary>
+        /// Performs necessary service initialization tasks for the cache provider.
+        /// </summary>
+        /// <param name="id">Id of the cache implementation provider.</param>
+        /// <param name="services">Service provider containing services to initialize.</param>
+        public void InitializeCacheProvider(string id, IServiceProvider services)
+        {
+            if (this._cacheProviders.TryGetValue(id, out var cpa))
+                cpa.GetServiceInitializer().InitializeServices(services);
+        }
+
+        /// <summary>
         /// Initializes and configures the selected CTF configuration loader provider by registering appropriate services in the DB collection.
         /// </summary>
         /// <param name="id">Id of the CTF configuration loader implementation provider.</param>
@@ -93,6 +115,17 @@ namespace RosettaCTF
         {
             if (this._configurationLoaderProviders.TryGetValue(id, out var clpa))
                 clpa.GetServiceInitializer().ConfigureServices(services);
+        }
+
+        /// <summary>
+        /// Performs necessary service initialization tasks for the CTF configuration loader provider.
+        /// </summary>
+        /// <param name="id">Id of the CTF configuration loader implementation provider.</param>
+        /// <param name="services">Service provider containing services to initialize.</param>
+        public void InitializeCtfConfigurationLoaderProvider(string id, IServiceProvider services)
+        {
+            if (this._configurationLoaderProviders.TryGetValue(id, out var clpa))
+                clpa.GetServiceInitializer().InitializeServices(services);
         }
     }
 }

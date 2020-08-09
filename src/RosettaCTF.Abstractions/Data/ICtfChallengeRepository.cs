@@ -15,6 +15,8 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RosettaCTF.Data
 {
@@ -26,55 +28,39 @@ namespace RosettaCTF.Data
         /// <summary>
         /// Gets all available challenge categories.
         /// </summary>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
         /// <returns>An enumerable of <see cref="ICtfChallengeCategory"/> instances.</returns>
-        IEnumerable<ICtfChallengeCategory> GetCategories();
+        Task<IEnumerable<ICtfChallengeCategory>> GetCategoriesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets a specified challenge category by ID.
         /// </summary>
         /// <param name="id">ID of the category to retrieve.</param>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
         /// <returns>Requested challenge category or <see langword="null"/> if the category does not exist.</returns>
-        ICtfChallengeCategory GetCategory(string id);
+        Task<ICtfChallengeCategory> GetCategoryAsync(string id, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets all available challenges.
         /// </summary>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
         /// <returns>An enumerable of <see cref="ICtfChallenge"/> instances.</returns>
-        IEnumerable<ICtfChallenge> GetChallenges();
+        Task<IEnumerable<ICtfChallenge>> GetChallengesAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets a specified challenge by ID.
         /// </summary>
         /// <param name="id">ID of the challenge to retrieve.</param>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
         /// <returns>Requested challenge or <see langword="null"/> if the category does not exist.</returns>
-        ICtfChallenge GetChallenge(string id);
-
-        // TODO: Context
+        Task<ICtfChallenge> GetChallengeAsync(string id, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Gets all challenge category previews available in specified context.
+        /// Performs first-time installation steps for all challenges.
         /// </summary>
-        /// <returns>An enumerable of <see cref="IChallengeCategoryPreview"/> instances available in given context.</returns>
-        IEnumerable<IChallengeCategoryPreview> GetCategoryPreviews();
-
-        /// <summary>
-        /// Gets a preview of specified challenge category by ID in specified context.
-        /// </summary>
-        /// <param name="id">ID of the challenge category to retrieve.</param>
-        /// <returns>Requested challenge category preview or <see langword="null"/> if the category does not exist or is not available in the given context.</returns>
-        IChallengeCategoryPreview GetCategoryPreview(string id);
-
-        /// <summary>
-        /// Gets previews of all available challenges in specified context.
-        /// </summary>
-        /// <returns>An enumerable of <see cref="IChallengePreview"/> instances available in given context.</returns>
-        IEnumerable<IChallengePreview> GetChallengePreviews();
-
-        /// <summary>
-        /// Gets a preview of specified challenge by ID in specified context.
-        /// </summary>
-        /// <param name="id">ID of the challenge to retrieve.</param>
-        /// <returns>Requested challenge preview or <see langword="null"/> if the challenge does not exist or is not available in the given context.</returns>
-        IChallengePreview GetChallengePreview(string id);
+        /// <param name="categories">Categories to install.</param>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
+        /// <returns>A task encapsulating the operation.</returns>
+        Task InstallAsync(IEnumerable<ICtfChallengeCategory> categories, CancellationToken cancellationToken = default);
     }
 }

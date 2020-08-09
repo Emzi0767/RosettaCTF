@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace RosettaCTF
@@ -28,5 +29,11 @@ namespace RosettaCTF
         /// </summary>
         /// <param name="services">Service collection to configure.</param>
         void ConfigureServices(IServiceCollection services);
+
+        /// <summary>
+        /// Initializes services in the supplied provider.
+        /// </summary>
+        /// <param name="services">Service provider to initialize services in.</param>
+        void InitializeServices(IServiceProvider services);
     }
 }

@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using RosettaCTF;
 using RosettaCTF.Attributes;
@@ -25,6 +26,11 @@ namespace RosettaCTF
     internal sealed class RedisCacheServiceInitializer : ICacheServiceInitializer
     {
         public void ConfigureServices(IServiceCollection services)
+        {
+            
+        }
+
+        public void InitializeServices(IServiceProvider services)
         {
             
         }

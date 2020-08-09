@@ -20,12 +20,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using RosettaCTF.Data;
 
 namespace RosettaCTF.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20200808213057_M02_Challenges")]
-    partial class M02_Challenges
+    [Migration("20200809185753_M01_Initialize")]
+    partial class M01_Initialize
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -57,9 +58,9 @@ namespace RosettaCTF.Migrations
                         .HasColumnName("description")
                         .HasColumnType("text");
 
-                    b.Property<int>("Difficulty")
+                    b.Property<CtfChallengeDifficulty>("Difficulty")
                         .HasColumnName("difficulty")
-                        .HasColumnType("integer");
+                        .HasColumnType("ctf_challenge_difficulty");
 
                     b.Property<long?>("EndpointId")
                         .HasColumnName("endpoint_id")
@@ -110,7 +111,6 @@ namespace RosettaCTF.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("DownloadUriInternal")
-                        .IsRequired()
                         .HasColumnName("download_url")
                         .HasColumnType("text");
 
@@ -189,9 +189,9 @@ namespace RosettaCTF.Migrations
                         .HasColumnName("port")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Type")
+                    b.Property<CtfChallengeEndpointType>("Type")
                         .HasColumnName("type")
-                        .HasColumnType("integer");
+                        .HasColumnType("ctf_challenge_endpoint_type");
 
                     b.HasKey("Id");
 
@@ -228,6 +228,57 @@ namespace RosettaCTF.Migrations
                     b.HasIndex("ChallengeId");
 
                     b.ToTable("challenge_hints");
+                });
+
+            modelBuilder.Entity("RosettaCTF.Models.PostgresSolveSubmission", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("ChallengeId")
+                        .IsRequired()
+                        .HasColumnName("challenge_id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Contents")
+                        .IsRequired()
+                        .HasColumnName("contents")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsValid")
+                        .HasColumnName("valid")
+                        .HasColumnType("boolean");
+
+                    b.Property<long>("TeamId")
+                        .HasColumnName("team_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("Timestamp")
+                        .HasColumnName("timestamp")
+                        .HasColumnType("timestamptz");
+
+                    b.Property<long>("UserId")
+                        .HasColumnName("user_id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .HasName("pkey_solve_id");
+
+                    b.HasIndex("TeamId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("ChallengeId", "TeamId", "IsValid")
+                        .IsUnique()
+                        .HasName("ix_solve_unique_valids")
+                        .HasFilter("valid = true");
+
+                    b.ToTable("solves");
                 });
 
             modelBuilder.Entity("RosettaCTF.Models.PostgresTeam", b =>
@@ -271,6 +322,10 @@ namespace RosettaCTF.Migrations
                     b.Property<long>("DiscordIdInternal")
                         .HasColumnName("discord_id")
                         .HasColumnType("bigint");
+
+                    b.Property<bool>("HasHiddenAccess")
+                        .HasColumnName("access_hidden")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsAuthorized")
                         .HasColumnName("authorized")
@@ -351,6 +406,30 @@ namespace RosettaCTF.Migrations
                         .WithMany("HintsInternal")
                         .HasForeignKey("ChallengeId")
                         .HasConstraintName("fkey_challenge_hints_challenge")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RosettaCTF.Models.PostgresSolveSubmission", b =>
+                {
+                    b.HasOne("RosettaCTF.Models.PostgresChallenge", "ChallengeInternal")
+                        .WithMany("SolvesInternal")
+                        .HasForeignKey("ChallengeId")
+                        .HasConstraintName("fkey_solve_challenge")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RosettaCTF.Models.PostgresTeam", "TeamInternal")
+                        .WithMany("SolvesInternal")
+                        .HasForeignKey("TeamId")
+                        .HasConstraintName("fkey_solve_team")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RosettaCTF.Models.PostgresUser", "UserInternal")
+                        .WithMany("SolvesInternal")
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("fkey_solve_user")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

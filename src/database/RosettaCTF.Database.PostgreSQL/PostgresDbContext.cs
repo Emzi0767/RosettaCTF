@@ -15,6 +15,7 @@
 // limitations under the License.
 
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using RosettaCTF.Data;
 using RosettaCTF.Models;
 
@@ -24,6 +25,18 @@ namespace RosettaCTF
     {
         public DbSet<PostgresUser> Users { get; set; }
         public DbSet<PostgresTeam> Teams { get; set; }
+        public DbSet<PostgresChallenge> Challenges { get; set; }
+        public DbSet<PostgresChallengeCategory> ChallengeCategories { get; set; }
+        public DbSet<PostgresChallengeHint> ChallengeHints { get; set; }
+        public DbSet<PostgresChallengeEndpoint> ChallengeEndpoints { get; set; }
+        public DbSet<PostgresChallengeAttachment> ChallengeAttachments { get; set; }
+        public DbSet<PostgresSolveSubmission> Solves { get; set; }
+
+        static PostgresDbContext()
+        {
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<CtfChallengeDifficulty>("ctf_challenge_difficulty");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<CtfChallengeEndpointType>("ctf_challenge_endpoint_type");
+        }
 
         public PostgresDbContext(DbContextOptions<PostgresDbContext> opts)
             : base(opts)
@@ -77,6 +90,10 @@ namespace RosettaCTF
                 e.Property(m => m.IsAuthorized)
                     .IsRequired()
                     .HasColumnName("authorized");
+
+                e.Property(m => m.HasHiddenAccess)
+                    .IsRequired()
+                    .HasColumnName("access_hidden");
 
                 e.Property(m => m.TeamId)
                     .HasColumnName("team_id")
@@ -186,7 +203,6 @@ namespace RosettaCTF
                     .HasColumnName("sha1");
 
                 e.Property(m => m.DownloadUriInternal)
-                    .IsRequired()
                     .HasColumnName("download_url");
 
                 e.Property(m => m.DecompressedAttachmentId)
@@ -366,7 +382,8 @@ namespace RosettaCTF
 
                 e.HasIndex(m => new { m.ChallengeId, m.TeamId, m.IsValid })
                     .IsUnique(true)
-                    .HasFilter("valid = true");
+                    .HasFilter("valid = true")
+                    .HasName("ix_solve_unique_valids");
 
                 e.HasOne(m => m.ChallengeInternal)
                     .WithMany(m => m.SolvesInternal)

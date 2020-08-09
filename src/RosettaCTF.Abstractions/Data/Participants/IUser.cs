@@ -64,6 +64,11 @@ namespace RosettaCTF.Data
         bool IsAuthorized { get; }
 
         /// <summary>
+        /// Gets whether the user has access to hidden challenges and categories.
+        /// </summary>
+        bool HasHiddenAccess { get; }
+
+        /// <summary>
         /// Gets the team this user belongs to.
         /// </summary>
         ITeam Team { get; }

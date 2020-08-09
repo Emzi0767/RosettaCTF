@@ -99,8 +99,12 @@ namespace RosettaCTF.Data
         Task UpdateTokensAsync(long userId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Performs any initialization tasks for the underlying datastores.
+        /// Updates a user's ability to view hidden challenges and categories.
         /// </summary>
-        void Initialize();
+        /// <param name="userId">ID of the user to update the relevant flags for.</param>
+        /// <param name="enable">Whether hidden challenges should be visible or not.</param>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
+        /// <returns>A task encapsulating the operation.</returns>
+        Task EnableHiddenChallengesAsync(long userId, bool enable, CancellationToken cancellationToken = default);
     }
 }

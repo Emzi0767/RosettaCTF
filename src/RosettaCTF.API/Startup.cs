@@ -33,6 +33,7 @@ using Microsoft.Extensions.Hosting;
 using RosettaCTF.Data;
 using RosettaCTF.Services;
 using RosettaCTF.Filters;
+using Microsoft.Extensions.Options;
 
 namespace RosettaCTF.API
 {
@@ -149,6 +150,7 @@ namespace RosettaCTF.API
 
             // Configure datastore providers
             var dsiSelector = new DatastoreImplementationSelector();
+            services.AddSingleton(dsiSelector);
             dsiSelector.ConfigureCtfConfigurationLoaderProvider("yaml", services);
             dsiSelector.ConfigureDatabaseProvider(this.Configuration["Database:Type"], services);
             dsiSelector.ConfigureCacheProvider(this.Configuration["Cache:Type"], services);
@@ -159,6 +161,8 @@ namespace RosettaCTF.API
                 .AddScoped<DiscordHandler>()
                 .AddSingleton<JwtHandler>()
                 .AddTransient<Argon2idKeyDeriver>();
+
+            services.AddHostedService<ChallengeBootstrapperService>();
 
 #if !DEBUG
             services.AddControllers();
@@ -202,12 +206,6 @@ namespace RosettaCTF.API
                 x.UseAngularCliServer(npmScript: "start");
             });
 #endif
-
-            using (var scope = app.ApplicationServices.CreateScope())
-            {
-                var users = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-                users.Initialize();
-            }
         }
 
         private Task RenderStatusCode(StatusCodeContext ctx)
