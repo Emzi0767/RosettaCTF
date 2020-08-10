@@ -15,7 +15,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -142,5 +141,12 @@ namespace RosettaCTF.Data
         /// <param name="cancellationToken">Token to cancel any pending operation.</param>
         /// <returns>The created <see cref="ITeamInvite"/>.</returns>
         Task<ITeamInvite> CreateTeamInviteAsync(long userId, long teamId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets the number of teams which solved the baseline challenge. A baseline challenge is the challenge with a base score of 1. This is used to compute solve rate.
+        /// </summary>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
+        /// <returns>Number of teams that successfully solved the baseline challenge, and are therefore considered active.</returns>
+        Task<int> GetBaselineSolveCount(CancellationToken cancellationToken = default);
     }
 }

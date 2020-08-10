@@ -210,5 +210,16 @@ namespace RosettaCTF
 
             return await this.Database.TeamInvites.SingleOrDefaultAsync(x => x.UserId == userId && x.TeamId == teamId, cancellationToken);
         }
+
+        public async Task<int> GetBaselineSolveCount(CancellationToken cancellationToken = default)
+        {
+            var baseline = await this.Database.Challenges
+                .Include(x => x.SolvesInternal)
+                .SingleOrDefaultAsync(x => x.BaseScore == 1, default);
+            if (baseline == null)
+                return -1;
+
+            return baseline.SolvesInternal.Count(x => x.IsValid);
+        }
     }
 }

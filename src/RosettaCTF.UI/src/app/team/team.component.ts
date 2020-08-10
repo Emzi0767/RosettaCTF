@@ -17,8 +17,6 @@
 import { Component, OnInit } from "@angular/core";
 
 import { RosettaApiService } from "../services/rosetta-api.service";
-import { SessionProviderService } from "../services/session-provider.service";
-import { SessionRefreshManagerService } from "../services/session-refresh-manager.service";
 import { ITeam } from "../data/session";
 
 @Component({
@@ -31,9 +29,7 @@ export class TeamComponent implements OnInit {
     hasTeam: boolean | null = null;
     team: ITeam | null = null;
 
-    constructor(private api: RosettaApiService,
-                private sessionProvider: SessionProviderService,
-                private sessionRefresh: SessionRefreshManagerService) { }
+    constructor(private api: RosettaApiService) { }
 
     ngOnInit(): void {
         this.doInit();
