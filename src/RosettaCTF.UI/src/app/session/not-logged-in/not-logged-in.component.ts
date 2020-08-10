@@ -1,4 +1,4 @@
-﻿// This file is part of RosettaCTF project.
+// This file is part of RosettaCTF project.
 //
 // Copyright 2020 Emzi0767
 //
@@ -14,16 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.AspNetCore.Authentication;
+import { Component } from "@angular/core";
 
-namespace RosettaCTF.Services
-{
-    internal sealed class JwtAuthenticationOptions : AuthenticationSchemeOptions
-    {
-        public const string SchemeName = "RosettaJWT";
-
-        public const string RoleParticipant = "Participant";
-        public const string RoleTeamMember = "TeamMember";
-        public const string RoleUnteamed = "Unteamed";
-    }
-}
+@Component({
+    selector: "app-not-logged-in",
+    templateUrl: "./not-logged-in.component.html",
+    styleUrls: ["./not-logged-in.component.less"]
+})
+export class NotLoggedInComponent { }

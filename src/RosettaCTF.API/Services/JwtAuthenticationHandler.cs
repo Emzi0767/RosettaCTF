@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
@@ -58,14 +59,20 @@ namespace RosettaCTF.Services
             if (user == null)
                 return AuthenticateResult.Fail("Invalid user ID.");
 
-            var claims = new[]
+            var claims = new List<Claim>(4)
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString(CultureInfo.InvariantCulture)),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.IsAuthorized 
-                    ? JwtAuthenticationOptions.RoleParticipant
-                    : JwtAuthenticationOptions.RoleObserver)
+                new Claim(ClaimTypes.Name, user.Username)
             };
+
+            if (user.IsAuthorized)
+                claims.Add(new Claim(ClaimTypes.Role, JwtAuthenticationOptions.RoleParticipant));
+
+            if (user.Team != null)
+                claims.Add(new Claim(ClaimTypes.Role, JwtAuthenticationOptions.RoleTeamMember));
+            else
+                claims.Add(new Claim(ClaimTypes.Role, JwtAuthenticationOptions.RoleUnteamed));
+
             var identity = new ClaimsIdentity(claims, this.Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, this.Scheme.Name);

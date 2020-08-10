@@ -14,16 +14,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.AspNetCore.Authentication;
+using RosettaCTF.Data;
 
-namespace RosettaCTF.Services
+namespace RosettaCTF.Models
 {
-    internal sealed class JwtAuthenticationOptions : AuthenticationSchemeOptions
+    internal sealed class PostgresTeamInvite : ITeamInvite
     {
-        public const string SchemeName = "RosettaJWT";
+        public long Id { get; set; }
 
-        public const string RoleParticipant = "Participant";
-        public const string RoleTeamMember = "TeamMember";
-        public const string RoleUnteamed = "Unteamed";
+        public long UserId { get; set; }
+
+        public PostgresUser UserInternal { get; set; }
+
+        public IUser User => this.UserInternal;
+
+        public long TeamId { get; set; }
+
+        public PostgresTeam TeamInternal { get; set; }
+
+        public ITeam Team => this.TeamInternal;
     }
 }

@@ -40,6 +40,10 @@ export class SessionRefreshManagerService implements OnDestroy {
             .subscribe(x => this.updateTimer(x));
     }
 
+    async forceUpdate(): Promise<void> {
+        await this.doRefresh();
+    }
+
     ngOnDestroy(): void {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();

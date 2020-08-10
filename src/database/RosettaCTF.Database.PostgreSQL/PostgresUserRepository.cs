@@ -15,6 +15,8 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -176,6 +178,37 @@ namespace RosettaCTF
 
             this.Database.Users.Update(user);
             await this.Database.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<IEnumerable<ITeamInvite>> GetTeamInvitesAsync(long userId, CancellationToken cancellationToken = default)
+            => await this.Database.TeamInvites
+                .Where(x => x.UserId == userId)
+                .ToListAsync(cancellationToken);
+
+        public async Task<ITeamInvite> GetTeamInviteAsync(long userId, long teamId, CancellationToken cancellationToken = default)
+            => await this.Database.TeamInvites
+                .SingleOrDefaultAsync(x => x.UserId == userId && x.TeamId == teamId, cancellationToken);
+
+        public async Task ClearTeamInvitesAsync(long userId, CancellationToken cancellationToken = default)
+        {
+            var invites = this.Database.TeamInvites
+                .Where(x => x.UserId == userId);
+
+            this.Database.TeamInvites.RemoveRange(invites);
+            await this.Database.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<ITeamInvite> CreateTeamInviteAsync(long userId, long teamId, CancellationToken cancellationToken = default)
+        {
+            var invite = new PostgresTeamInvite
+            {
+                TeamId = teamId,
+                UserId = userId
+            };
+            await this.Database.TeamInvites.AddAsync(invite, cancellationToken);
+            await this.Database.SaveChangesAsync(cancellationToken);
+
+            return await this.Database.TeamInvites.SingleOrDefaultAsync(x => x.UserId == userId && x.TeamId == teamId, cancellationToken);
         }
     }
 }

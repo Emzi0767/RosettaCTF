@@ -31,6 +31,7 @@ namespace RosettaCTF
         public DbSet<PostgresChallengeEndpoint> ChallengeEndpoints { get; set; }
         public DbSet<PostgresChallengeAttachment> ChallengeAttachments { get; set; }
         public DbSet<PostgresSolveSubmission> Solves { get; set; }
+        public DbSet<PostgresTeamInvite> TeamInvites { get; set; }
 
         static PostgresDbContext()
         {
@@ -138,6 +139,45 @@ namespace RosettaCTF
 
                 e.HasAlternateKey(m => m.Name)
                     .HasName("ukey_team_name");
+            });
+
+            // Team invite
+            modelBuilder.Entity<PostgresTeamInvite>(e =>
+            {
+                e.ToTable("team_invites")
+                    .Ignore(m => m.Team)
+                    .Ignore(m => m.User);
+
+                e.Property(m => m.Id)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("id");
+
+                e.Property(m => m.UserId)
+                    .IsRequired()
+                    .HasColumnName("user_id");
+
+                e.Property(m => m.TeamId)
+                    .IsRequired()
+                    .HasColumnName("team_id");
+
+                e.HasIndex(m => m.Id)
+                    .HasName("pkey_team_invite_id");
+
+                e.HasAlternateKey(m => new { m.UserId, m.TeamId })
+                    .HasName("ukey_team_invite_uniq_user_team");
+
+                e.HasOne(m => m.UserInternal)
+                    .WithMany(m => m.InvitesInternal)
+                    .HasForeignKey(m => m.UserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("fkey_team_invite_user");
+
+                e.HasOne(m => m.TeamInternal)
+                    .WithMany(m => m.InvitesInternal)
+                    .HasForeignKey(m => m.TeamId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("fkey_team_invite_team");
             });
 
             // Challenge / Hint

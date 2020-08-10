@@ -15,6 +15,8 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RosettaCTF.Data
 {
@@ -60,5 +62,13 @@ namespace RosettaCTF.Data
         /// <returns>Encapsulated session.</returns>
         public SessionPreview GetSession(UserPreview user, string token, DateTimeOffset expiresAt)
             => new SessionPreview(user, token, expiresAt);
+
+        /// <summary>
+        /// Gets redacted versions of team invites.
+        /// </summary>
+        /// <param name="invites">Team invites to transform.</param>
+        /// <returns>An enumerable of abridged invites.</returns>
+        public IEnumerable<TeamInvitePreview> GetInvites(IEnumerable<ITeamInvite> invites)
+            => invites.Select(x => new TeamInvitePreview(x)).ToList();
     }
 }

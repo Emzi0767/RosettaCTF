@@ -14,8 +14,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Linq;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RosettaCTF.Data;
 
 // All controllers defined herein are API controllers
 [assembly: ApiController]
@@ -25,10 +30,30 @@ namespace RosettaCTF.Controllers
     public abstract class RosettaControllerBase : ControllerBase
     {
         protected ILoggerFactory LoggerFactory { get; }
+        protected IUserRepository UserRepository { get; }
+        protected UserPreviewRepository UserPreviewRepository { get; }
+        protected ICtfEvent EventConfiguration { get; }
 
-        protected RosettaControllerBase(ILoggerFactory loggerFactory)
+        protected RosettaControllerBase(
+            ILoggerFactory loggerFactory,
+            IUserRepository userRepository,
+            UserPreviewRepository userPreviewRepository,
+            ICtfConfigurationLoader ctfConfigurationLoader)
         {
             this.LoggerFactory = loggerFactory;
+            this.UserRepository = userRepository;
+            this.UserPreviewRepository = userPreviewRepository;
+            this.EventConfiguration = ctfConfigurationLoader.LoadEventData();
+        }
+
+        protected async Task<IUser> GetCurrentUserAsync(CancellationToken cancellationToken)
+        {
+            var uids = this.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (uids == null)
+                return null;
+
+            var uid = uids.ParseAsLong();
+            return await this.UserRepository.GetUserAsync(uid, cancellationToken);
         }
     }
 }

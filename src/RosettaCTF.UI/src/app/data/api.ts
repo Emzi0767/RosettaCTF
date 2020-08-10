@@ -74,6 +74,11 @@ export enum ApiErrorCode {
      */
     TeamNotFound = 2002,
 
+    /**
+     * Requested user does not exist.
+     */
+    UserNotFound = 2003,
+
     // --------------------------------------------------------------------------------------------
     // 3xxx - creation errors
 
@@ -101,6 +106,16 @@ export enum ApiErrorCode {
      * Specified user already exists.
      */
     UserExists = 3004,
+
+    /**
+     * Event has started. Team creation is disabled.
+     */
+    EventStarted = 3005,
+
+    /**
+     * Specified user already has a team.
+     */
+    UserAlreadyOnTeam = 3006,
 
     // --------------------------------------------------------------------------------------------
     // 4xxx - generic errors

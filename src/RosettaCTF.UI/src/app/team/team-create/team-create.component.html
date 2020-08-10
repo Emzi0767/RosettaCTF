@@ -1,0 +1,40 @@
+<!-- 
+
+  This file is part of RosettaCTF project.
+  
+  Copyright 2020 Emzi0767
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ 
+-->
+
+<h1>You are not a part of a team yet</h1>
+
+<p>
+    Before you can participate, you have to join a team or create one.
+</p>
+
+<h2>Outstanding team invites</h2>
+
+<p *ngIf="invites === null else invitesElseBlock">Fetching invites...</p>
+<ng-template #invitesElseBlock>
+    <p *ngIf="!invites.length else invitesAnyBlock">You have not been invited to any team yet.</p>
+    <ng-template #invitesAnyBlock>
+        <p>You have been invited to the following teams:</p>
+        <ul>
+            <li *ngFor="let invite of invites">{{ invite.name }} <a href="#">accept</a></li>
+        </ul>
+    </ng-template>
+</ng-template>
+
+<h2>Create a new team</h2>

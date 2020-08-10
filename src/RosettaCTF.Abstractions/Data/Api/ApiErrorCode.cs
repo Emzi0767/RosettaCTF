@@ -75,6 +75,11 @@ namespace RosettaCTF.Data
         /// </summary>
         TeamNotFound = 2002,
 
+        /// <summary>
+        /// Requested user does not exist.
+        /// </summary>
+        UserNotFound = 2003,
+
         // 3xxx - creation errors
 
         /// <summary>
@@ -101,6 +106,16 @@ namespace RosettaCTF.Data
         /// Specified user already exists.
         /// </summary>
         UserExists = 3004,
+
+        /// <summary>
+        /// Event has started. Team creation is disabled.
+        /// </summary>
+        EventStarted = 3005,
+
+        /// <summary>
+        /// Specified user already has a team.
+        /// </summary>
+        UserAlreadyOnTeam = 3006,
 
         // 4xxx - generic errors
 

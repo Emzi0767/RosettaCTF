@@ -15,6 +15,8 @@
 // limitations under the License.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -106,5 +108,39 @@ namespace RosettaCTF.Data
         /// <param name="cancellationToken">Token to cancel any pending operation.</param>
         /// <returns>A task encapsulating the operation.</returns>
         Task EnableHiddenChallengesAsync(long userId, bool enable, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets outstanding team invites for a given user.
+        /// </summary>
+        /// <param name="userId">ID of the user to get invites for.</param>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
+        /// <returns>An enumerable of <see cref="ITeamInvite"/>.</returns>
+        Task<IEnumerable<ITeamInvite>> GetTeamInvitesAsync(long userId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets an outstanding team invite for specified team and user combo.
+        /// </summary>
+        /// <param name="userId">ID of the user to get the invite for.</param>
+        /// <param name="teamId">ID of the team to get the invite for.</param>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
+        /// <returns>The requested invite.</returns>
+        Task<ITeamInvite> GetTeamInviteAsync(long userId, long teamId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Clears any outstanding invites for a given user.
+        /// </summary>
+        /// <param name="userId">ID of the user to clear invites for.</param>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
+        /// <returns>A task encapsulating the operation.</returns>
+        Task ClearTeamInvitesAsync(long userId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Creates an outstanding team invite for a given user.
+        /// </summary>
+        /// <param name="userId">ID of the user to create an invite for.</param>
+        /// <param name="teamId">ID of the team to invite the user to.</param>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
+        /// <returns>The created <see cref="ITeamInvite"/>.</returns>
+        Task<ITeamInvite> CreateTeamInviteAsync(long userId, long teamId, CancellationToken cancellationToken = default);
     }
 }

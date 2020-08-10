@@ -39,5 +39,7 @@ namespace RosettaCTF.Models
         public IEnumerable<IUser> Members => this.MembersInternal;
 
         public IEnumerable<PostgresSolveSubmission> SolvesInternal { get; set; }
+
+        public IEnumerable<PostgresTeamInvite> InvitesInternal { get; set; }
     }
 }

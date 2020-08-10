@@ -14,16 +14,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.AspNetCore.Authentication;
-
-namespace RosettaCTF.Services
+namespace RosettaCTF.Data
 {
-    internal sealed class JwtAuthenticationOptions : AuthenticationSchemeOptions
+    /// <summary>
+    /// Represents an invitation to join a <see cref="ITeam"/>.
+    /// </summary>
+    public interface ITeamInvite
     {
-        public const string SchemeName = "RosettaJWT";
+        /// <summary>
+        /// Gets the user this invite is for.
+        /// </summary>
+        IUser User { get; }
 
-        public const string RoleParticipant = "Participant";
-        public const string RoleTeamMember = "TeamMember";
-        public const string RoleUnteamed = "Unteamed";
+        /// <summary>
+        /// Gets the team the user is invited to.
+        /// </summary>
+        ITeam Team { get; }
     }
 }

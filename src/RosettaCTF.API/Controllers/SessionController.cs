@@ -15,8 +15,6 @@
 // limitations under the License.
 
 using System;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -31,21 +29,18 @@ namespace RosettaCTF.Controllers
     [Route("api/[controller]"), ValidateAntiForgeryToken]
     public class SessionController : RosettaControllerBase
     {
-        private IUserRepository UserRepository { get; }
-        private UserPreviewRepository UserPreviewRepository { get; }
         private DiscordHandler Discord { get; }
         private JwtHandler Jwt { get; }
 
         public SessionController(
             ILoggerFactory loggerFactory,
             IUserRepository userRepository,
+            ICtfConfigurationLoader ctfConfigurationLoader,
             UserPreviewRepository userPreviewRepository,
             DiscordHandler discord,
             JwtHandler jwt)
-            : base(loggerFactory)
+            : base(loggerFactory, userRepository, userPreviewRepository, ctfConfigurationLoader)
         {
-            this.UserRepository = userRepository;
-            this.UserPreviewRepository = userPreviewRepository;
             this.Discord = discord;
             this.Jwt = jwt;
         }
@@ -114,16 +109,6 @@ namespace RosettaCTF.Controllers
 
             await this.UserRepository.UpdateTokensAsync(user.Id, null, null, DateTimeOffset.MinValue, cancellationToken);
             return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(null)));
-        }
-
-        private async Task<IUser> GetCurrentUserAsync(CancellationToken cancellationToken)
-        {
-            var uids = this.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (uids == null)
-                return null;
-
-            var uid = uids.ParseAsLong();
-            return await this.UserRepository.GetUserAsync(uid, cancellationToken);
         }
     }
 }

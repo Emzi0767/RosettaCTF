@@ -17,12 +17,16 @@
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 
+import { AuthenticationGuardService } from "./services/authentication-guard.service";
+
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { LandingComponent } from "./landing/landing.component";
 import { KonamiComponent } from "./konami/konami.component";
 import { LoginComponent } from "./session/login/login.component";
 import { LogoutComponent } from "./session/logout/logout.component";
 import { CallbackComponent } from "./session/callback/callback.component";
+import { NotLoggedInComponent } from "./session/not-logged-in/not-logged-in.component";
+import { TeamComponent } from "./team/team.component";
 
 const routes: Routes = [
     {
@@ -38,8 +42,17 @@ const routes: Routes = [
         component: LogoutComponent
     },
     {
+        path: "session/unauthorized",
+        component: NotLoggedInComponent
+    },
+    {
         path: "session/callback",
         component: CallbackComponent
+    },
+    {
+        path: "team",
+        component: TeamComponent,
+        canActivate: [ AuthenticationGuardService ]
     },
     {
         path: "",

@@ -61,6 +61,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
             this.configurationProvider.updateConfiguration(x.result);
             if (!this.sessionProvider.shouldInitialize()) {
+                this.sessionProvider.manuallyFinishInit();
                 return;
             }
 

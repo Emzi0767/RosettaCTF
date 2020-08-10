@@ -44,6 +44,11 @@ export interface IUser {
  */
 export interface ITeam {
     /**
+     * Gets the ID of the team.
+     */
+    id: string;
+
+    /**
      * Gets the name of the team.
      */
     name: string;
@@ -57,6 +62,26 @@ export interface ITeam {
      * Gets the users who belong to this team.
      */
     members: IUser[];
+}
+
+/**
+ * Represents an invite to a team.
+ */
+export interface ITeamInvite {
+    /**
+     * Gets the ID of the team.
+     */
+    id: string;
+
+    /**
+     * Gets the name of the team.
+     */
+    name: string;
+
+    /**
+     * Gets the URL of the team's avatar. Usually a Piroxy URL.
+     */
+    avatarUrl: string | null;
 }
 
 /**

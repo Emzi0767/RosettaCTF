@@ -25,8 +25,11 @@ import { ISession } from "../data/session";
 export class SessionProviderService implements OnDestroy {
     sessionChange: ReplaySubject<ISession> = new ReplaySubject<ISession>(1);
     private currentSession: ISession;
+    private init$: Promise<void>;
+    private initResolve;
 
     constructor() {
+        this.init$ = new Promise<void>((resolve, reject) => { this.initResolve = resolve; });
         this.currentSession = {
             isAuthenticated: false,
             token: this.getStoredToken(),
@@ -35,10 +38,20 @@ export class SessionProviderService implements OnDestroy {
         this.sessionChange.next(this.currentSession);
     }
 
+    async isAuthenticated(): Promise<boolean> {
+        await this.init$;
+        return this.currentSession.isAuthenticated;
+    }
+
     updateSession(data: ISession): void {
         this.currentSession = data;
         this.sessionChange.next(data);
         this.updateStoredToken(data.token);
+
+        if (!!this.initResolve) {
+            this.initResolve();
+            this.initResolve = null;
+        }
     }
 
     getToken(): string | null {
@@ -47,6 +60,13 @@ export class SessionProviderService implements OnDestroy {
 
     shouldInitialize(): boolean {
         return !!this.currentSession?.token;
+    }
+
+    manuallyFinishInit(): void {
+        if (!!this.initResolve) {
+            this.initResolve();
+            this.initResolve = null;
+        }
     }
 
     ngOnDestroy(): void {
