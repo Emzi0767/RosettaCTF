@@ -367,4 +367,9 @@ export interface ISolve {
      * Gets the ordinal of this submission. This determines placing.
      */
     ordinal: number;
+
+    /**
+     * Gets the amount of time taken to solve.
+     */
+    timeTaken: number;
 }

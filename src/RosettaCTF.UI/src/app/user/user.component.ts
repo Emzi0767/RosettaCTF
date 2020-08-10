@@ -20,6 +20,7 @@ import { takeUntil } from "rxjs/operators";
 
 import { SessionProviderService } from "../services/session-provider.service";
 import { ISession } from "../data/session";
+import { ISolve } from "../data/api";
 
 @Component({
     selector: "app-user",
@@ -32,6 +33,8 @@ export class UserComponent implements OnInit, OnDestroy {
 
     session$: Observable<ISession>;
     session: ISession;
+
+    submissions: ISolve[] | null = null;
 
     constructor(private sessionProvider: SessionProviderService) {
         this.session$ = this.sessionProvider.sessionChange;
