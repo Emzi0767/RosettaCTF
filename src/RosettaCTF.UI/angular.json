@@ -15,7 +15,7 @@
             "prefix": "app",
             "architect": {
                 "build": {
-                    "builder": "@angular-devkit/build-angular:browser",
+                    "builder": "@angular-builders/custom-webpack:browser",
                     "options": {
                         "outputPath": "dist/RosettaCTF-UI",
                         "index": "src/index.html",
@@ -34,6 +34,12 @@
                     },
                     "configurations": {
                         "production": {
+                            "customWebpackConfig": {
+                                "path": "./webpack-obfuscate-prod.js",
+                                "mergeStrategies": {
+                                    "externals": "append"
+                                }
+                            },
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
