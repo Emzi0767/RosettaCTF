@@ -417,6 +417,9 @@ namespace RosettaCTF
                     .HasColumnName("timestamp")
                     .HasColumnType("timestamptz");
 
+                e.Property(m => m.Score)
+                    .HasColumnName("score");
+
                 e.HasIndex(m => m.Id)
                     .HasName("pkey_solve_id");
 

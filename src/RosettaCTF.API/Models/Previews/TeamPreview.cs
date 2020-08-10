@@ -15,13 +15,16 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using RosettaCTF.Data;
 
-namespace RosettaCTF.Data
+namespace RosettaCTF.Models
 {
     /// <summary>
-    /// Provides an abridged view of <see cref="ITeamInvite"/>.
+    /// Represents a brief, abridged view of <see cref="ITeam"/>.
     /// </summary>
-    public sealed class TeamInvitePreview
+    public sealed class TeamPreview
     {
         /// <summary>
         /// Gets the ID of the team.
@@ -38,13 +41,18 @@ namespace RosettaCTF.Data
         /// </summary>
         public Uri AvatarUrl { get; }
 
-        internal TeamInvitePreview(ITeamInvite teamInvite)
-        {
-            var team = teamInvite.Team;
+        /// <summary>
+        /// Gets the members of this team.
+        /// </summary>
+        public IEnumerable<UserPreview> Members { get; }
 
+        internal TeamPreview(ITeam team)
+        {
             this.Id = team.Id;
             this.Name = team.Name;
             this.AvatarUrl = team.AvatarUrl;
+            this.Members = team.Members.Select(x => new UserPreview(x, this))
+                .ToList();
         }
     }
 }

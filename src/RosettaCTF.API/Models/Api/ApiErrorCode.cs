@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace RosettaCTF.Data
+namespace RosettaCTF.Models
 {
     /// <summary>
     /// Defines various error codes returned as part of an API operation.

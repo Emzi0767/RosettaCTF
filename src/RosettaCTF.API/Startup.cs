@@ -33,6 +33,7 @@ using Microsoft.Extensions.Hosting;
 using RosettaCTF.Data;
 using RosettaCTF.Services;
 using RosettaCTF.Filters;
+using RosettaCTF.Models;
 
 namespace RosettaCTF.API
 {

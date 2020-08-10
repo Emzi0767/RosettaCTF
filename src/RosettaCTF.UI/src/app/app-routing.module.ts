@@ -27,6 +27,7 @@ import { LogoutComponent } from "./session/logout/logout.component";
 import { CallbackComponent } from "./session/callback/callback.component";
 import { NotLoggedInComponent } from "./session/not-logged-in/not-logged-in.component";
 import { TeamComponent } from "./team/team.component";
+import { UserComponent } from "./user/user.component";
 
 const routes: Routes = [
     {
@@ -52,6 +53,11 @@ const routes: Routes = [
     {
         path: "team",
         component: TeamComponent,
+        canActivate: [ AuthenticationGuardService ]
+    },
+    {
+        path: "profile",
+        component: UserComponent,
         canActivate: [ AuthenticationGuardService ]
     },
     {

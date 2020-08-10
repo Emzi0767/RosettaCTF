@@ -14,6 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { IUser, ITeam } from './session';
+
 /**
  * Error codes that can be returned from the API.
  */
@@ -225,4 +227,144 @@ export interface IApiEventConfiguration {
      * Gets the scoring mode for this event.
      */
     scoring: ApiEventScoringMode;
+}
+
+/**
+ * Represents a challenge category.
+ */
+export interface IChallengeCategory {
+    /**
+     * Gets the ID of the category.
+     */
+    id: string;
+
+    /**
+     * Gets the name of the category.
+     */
+    name: string;
+
+    /**
+     * Gets the challenges in this category.
+     */
+    challenges: IChallenge[];
+}
+
+/**
+ * Represents a challenge.
+ */
+export interface IChallenge {
+    /**
+     * Gets the ID of the challenge.
+     */
+    id: string;
+
+    /**
+     * Gets the title of the challenge.
+     */
+    title: string;
+
+    /**
+     * Gets the difficulty of the challenge.
+     */
+    difficulty: string;
+
+    /**
+     * Gets the description of the challenge.
+     */
+    description: string;
+
+    /**
+     * Gets the available hints, if any.
+     */
+    hints?: string[];
+
+    /**
+     * Gets the available attachments, if any.
+     */
+    attachments?: IChallengeAttachment[];
+
+    /**
+     * Gets the endpoint of the challenge, if any.
+     */
+    endpoint?: string;
+
+    /**
+     * Gets the point value of this challenge.
+     */
+    score: number;
+}
+
+/**
+ * Represents a file attached to a challenge.
+ */
+export interface IChallengeAttachment {
+    /**
+     * Gets the name of the attached file.
+     */
+    name: string;
+
+    /**
+     * Gets the type of the attached file.
+     */
+    type: string;
+
+    /**
+     * Gets the size of the attached file.
+     */
+    length: string;
+
+    /**
+     * Gets the SHA256 checksum of the attached file.
+     */
+    sha256: string;
+
+    /**
+     * Gets the SHA1 checksum of the attached file.
+     */
+    sha1: string;
+
+    /**
+     * Gets the download URI of the attached file.
+     */
+    uri?: string;
+
+    /**
+     * Gets the information about decompressed version of the attachment, if applicable.
+     */
+    decompressedAttachment?: IChallengeAttachment | null;
+}
+
+/**
+ * Represents a submitted solution.
+ */
+export interface ISolve {
+    /**
+     * Gets the challenge the submission was for.
+     */
+    challenge: IChallenge;
+
+    /**
+     * Gets the category the submission was for.
+     */
+    category: IChallengeCategory;
+
+    /**
+     * Gets the author of the submission.
+     */
+    user: IUser;
+
+    /**
+     * Gets the team the submission was for.
+     */
+    team: ITeam;
+
+    /**
+     * Gets the points received for the submission.
+     */
+    score: number;
+
+    /**
+     * Gets the ordinal of this submission. This determines placing.
+     */
+    ordinal: number;
 }

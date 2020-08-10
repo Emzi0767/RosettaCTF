@@ -17,8 +17,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RosettaCTF.Data;
+using RosettaCTF.Models;
 
-namespace RosettaCTF.Data
+namespace RosettaCTF.Services
 {
     /// <summary>
     /// Provides the ability to transform <see cref="IUser"/> and <see cref="ITeam"/> instances to their abridged variants.

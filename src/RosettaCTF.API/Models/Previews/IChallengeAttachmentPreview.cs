@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace RosettaCTF.Data
+namespace RosettaCTF.Models
 {
     /// <summary>
     /// Represents a preview version of a challenge attachment, that is, a simplified version, produced by the API for consumption.

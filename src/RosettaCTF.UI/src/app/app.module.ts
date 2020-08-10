@@ -45,6 +45,7 @@ import { CallbackComponent } from "./session/callback/callback.component";
 import { TeamComponent } from "./team/team.component";
 import { TeamCreateComponent } from "./team/team-create/team-create.component";
 import { NotLoggedInComponent } from "./session/not-logged-in/not-logged-in.component";
+import { UserComponent } from "./user/user.component";
 
 @NgModule({
     declarations: [
@@ -62,7 +63,8 @@ import { NotLoggedInComponent } from "./session/not-logged-in/not-logged-in.comp
         CallbackComponent,
         TeamComponent,
         TeamCreateComponent,
-        NotLoggedInComponent
+        NotLoggedInComponent,
+        UserComponent
     ],
     imports: [
         BrowserModule,

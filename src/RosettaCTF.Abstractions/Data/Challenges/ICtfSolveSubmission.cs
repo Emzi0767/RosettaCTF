@@ -52,5 +52,10 @@ namespace RosettaCTF.Data
         /// Gets the timestamp at which the submission was created.
         /// </summary>
         DateTimeOffset Timestamp { get; }
+
+        /// <summary>
+        /// Gets the frozen score, if the scoring freezes them.
+        /// </summary>
+        int? Score { get; }
     }
 }

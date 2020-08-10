@@ -14,41 +14,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
-namespace RosettaCTF.Data
+namespace RosettaCTF.Models
 {
     /// <summary>
-    /// Represents a brief, abridged view of <see cref="IUser"/>.
+    /// Represents an error as returned from the API.
     /// </summary>
-    public sealed class UserPreview
+    public sealed class ApiError
     {
         /// <summary>
-        /// Gets the ID of the user.
+        /// Gets the code of the result.
         /// </summary>
-        public long Id { get; }
+        public ApiErrorCode Code { get; }
 
         /// <summary>
-        /// Gets the username of the user.
+        /// Gets the result message.
         /// </summary>
-        public string Username { get; }
+        public string Message { get; }
 
         /// <summary>
-        /// Gets the avatar url of the user.
+        /// Creates new error information wrapper.
         /// </summary>
-        public Uri AvatarUrl { get; }
-
-        /// <summary>
-        /// Gets the team the user belongs to.
-        /// </summary>
-        public TeamPreview Team { get; }
-
-        internal UserPreview(IUser user, TeamPreview team)
+        /// <param name="code">Code of the error that occured.</param>
+        /// <param name="message">Optional message of the error.</param>
+        public ApiError(ApiErrorCode code, string message)
         {
-            this.Id = user.Id;
-            this.Username = user.Username;
-            this.AvatarUrl = user.AvatarUrl;
-            this.Team = team;
+            this.Code = code;
+            this.Message = message;
         }
     }
 }

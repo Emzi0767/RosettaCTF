@@ -15,44 +15,41 @@
 // limitations under the License.
 
 using System;
+using RosettaCTF.Data;
 
-namespace RosettaCTF.Data
+namespace RosettaCTF.Models
 {
     /// <summary>
-    /// Represents a session.
+    /// Represents a brief, abridged view of <see cref="IUser"/>.
     /// </summary>
-    public sealed class SessionPreview
+    public sealed class UserPreview
     {
         /// <summary>
-        /// Gets whether this session is authenticated.
+        /// Gets the ID of the user.
         /// </summary>
-        public bool IsAuthenticated { get; }
+        public long Id { get; }
 
         /// <summary>
-        /// Gets the currently authenticated user.
+        /// Gets the username of the user.
         /// </summary>
-        public UserPreview User { get; }
+        public string Username { get; }
 
         /// <summary>
-        /// Gets the token issued to the session's holder.
+        /// Gets the avatar url of the user.
         /// </summary>
-        public string Token { get; }
+        public Uri AvatarUrl { get; }
 
         /// <summary>
-        /// Gets the expiration timestamp of the token.
+        /// Gets the team the user belongs to.
         /// </summary>
-        public string ExpiresAt { get; }
+        public TeamPreview Team { get; }
 
-        internal SessionPreview(UserPreview user)
-            : this(user, null, null)
-        { }
-
-        internal SessionPreview(UserPreview user, string token, DateTimeOffset? expiresAt)
+        internal UserPreview(IUser user, TeamPreview team)
         {
-            this.IsAuthenticated = user != null;
-            this.User = user;
-            this.Token = token;
-            this.ExpiresAt = expiresAt?.ToString("yyyy-MM-ddTHH:mm:sszzz");
+            this.Id = user.Id;
+            this.Username = user.Username;
+            this.AvatarUrl = user.AvatarUrl;
+            this.Team = team;
         }
     }
 }

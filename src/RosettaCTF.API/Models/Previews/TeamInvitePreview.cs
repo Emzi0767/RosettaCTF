@@ -14,32 +14,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace RosettaCTF.Data
+using System;
+using RosettaCTF.Data;
+
+namespace RosettaCTF.Models
 {
     /// <summary>
-    /// Represents an error as returned from the API.
+    /// Provides an abridged view of <see cref="ITeamInvite"/>.
     /// </summary>
-    public sealed class ApiError
+    public sealed class TeamInvitePreview
     {
         /// <summary>
-        /// Gets the code of the result.
+        /// Gets the ID of the team.
         /// </summary>
-        public ApiErrorCode Code { get; }
+        public long Id { get; }
 
         /// <summary>
-        /// Gets the result message.
+        /// Gets the name of the team.
         /// </summary>
-        public string Message { get; }
+        public string Name { get; }
 
         /// <summary>
-        /// Creates new error information wrapper.
+        /// Gets the avatar url of the team.
         /// </summary>
-        /// <param name="code">Code of the error that occured.</param>
-        /// <param name="message">Optional message of the error.</param>
-        public ApiError(ApiErrorCode code, string message)
+        public Uri AvatarUrl { get; }
+
+        internal TeamInvitePreview(ITeamInvite teamInvite)
         {
-            this.Code = code;
-            this.Message = message;
+            var team = teamInvite.Team;
+
+            this.Id = team.Id;
+            this.Name = team.Name;
+            this.AvatarUrl = team.AvatarUrl;
         }
     }
 }

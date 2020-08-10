@@ -16,7 +16,7 @@
 
 using System.Collections.Generic;
 
-namespace RosettaCTF.Data
+namespace RosettaCTF.Models
 {
     /// <summary>
     /// Represents a preview version of a challenge, that is, a simplified version, produced by the API for consumption.

@@ -46,5 +46,7 @@ namespace RosettaCTF.Models
         public ITeam Team => this.TeamInternal;
 
         public DateTimeOffset Timestamp { get; set; }
+
+        public int? Score { get; set; }
     }
 }
