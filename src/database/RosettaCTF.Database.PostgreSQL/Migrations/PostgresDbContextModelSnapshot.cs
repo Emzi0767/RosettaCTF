@@ -31,7 +31,7 @@ namespace RosettaCTF.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:Enum:ctf_challenge_difficulty", "none,very_easy,easy,medium,hard,very_hard,ultra_nightmare")
-                .HasAnnotation("Npgsql:Enum:ctf_challenge_endpoint_type", "unknown,netcat,http,ssh,ssl")
+                .HasAnnotation("Npgsql:Enum:ctf_challenge_endpoint_type", "unknown,netcat,http,ssh,ssl,https")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
                 .HasAnnotation("ProductVersion", "3.1.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);

@@ -14,28 +14,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using RosettaCTF.Data;
 
 namespace RosettaCTF.Models
 {
     /// <summary>
     /// Represents a preview version of a challenge category, that is, a simplified version, produced by the API for consumption.
     /// </summary>
-    public interface IChallengeCategoryPreview
+    public sealed class ChallengeCategoryPreview
     {
         /// <summary>
         /// Gets the ID of this category.
         /// </summary>
-        string Id { get; }
+        public string Id { get; }
 
         /// <summary>
         /// Gets the name of this category.
         /// </summary>
-        string Name { get; }
+        public string Name { get; }
 
         /// <summary>
         /// Gets the challenges in this category.
         /// </summary>
-        IEnumerable<IChallengePreview> Challenges { get; }
+        public IEnumerable<ChallengePreview> Challenges { get; }
+
+        internal ChallengeCategoryPreview(ICtfChallengeCategory category, TimeSpan elapsed, EnumDisplayConverter enumCv, bool includeHidden)
+        {
+            this.Id = category.Id;
+            this.Name = category.Name;
+            this.Challenges = category.Challenges
+                .Where(x => !x.IsHidden || includeHidden)
+                .Select(x => new ChallengePreview(x, elapsed, enumCv))
+                .ToList();
+        }
     }
 }

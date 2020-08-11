@@ -156,13 +156,21 @@ namespace RosettaCTF.API
             dsiSelector.ConfigureCacheProvider(this.Configuration["Cache:Type"], services);
 
             services.AddTransient<UserPreviewRepository>()
+                .AddTransient<ChallengePreviewRepository>()
                 .AddSingleton<DiscordTokenHandler>()
                 .AddSingleton<HttpClient>()
                 .AddScoped<DiscordHandler>()
                 .AddSingleton<JwtHandler>()
-                .AddTransient<Argon2idKeyDeriver>();
+                .AddTransient<Argon2idKeyDeriver>()
+                .AddSingleton<EnumDisplayConverter>();
 
             services.AddHostedService<ChallengeBootstrapperService>();
+
+            // filters
+            services.AddScoped<ValidRosettaUserFilter>()
+                .AddScoped<EventNotStartedFilter>()
+                .AddScoped<EventStartedFilter>()
+                .AddScoped<EventNotOverFilter>();
 
 #if !DEBUG
             services.AddControllers();

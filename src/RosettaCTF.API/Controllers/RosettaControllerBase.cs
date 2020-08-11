@@ -14,13 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Linq;
-using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RosettaCTF.Data;
+using RosettaCTF.Filters;
 using RosettaCTF.Services;
 
 // All controllers defined herein are API controllers
@@ -28,12 +26,15 @@ using RosettaCTF.Services;
 
 namespace RosettaCTF.Controllers
 {
+    [RosettaUserPopulatorFilter]
     public abstract class RosettaControllerBase : ControllerBase
     {
         protected ILoggerFactory LoggerFactory { get; }
         protected IUserRepository UserRepository { get; }
         protected UserPreviewRepository UserPreviewRepository { get; }
         protected ICtfEvent EventConfiguration { get; }
+        protected IUser RosettaUser { get; private set; }
+        protected TimeSpan Elapsed { get; private set; }
 
         protected RosettaControllerBase(
             ILoggerFactory loggerFactory,
@@ -47,14 +48,17 @@ namespace RosettaCTF.Controllers
             this.EventConfiguration = ctfConfigurationLoader.LoadEventData();
         }
 
-        protected async Task<IUser> GetCurrentUserAsync(CancellationToken cancellationToken)
+        public void SetUser(IUser user)
         {
-            var uids = this.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (uids == null)
-                return null;
+            if (this.RosettaUser != null)
+                throw new InvalidOperationException("User should not be set multiple times.");
 
-            var uid = uids.ParseAsLong();
-            return await this.UserRepository.GetUserAsync(uid, cancellationToken);
+            this.RosettaUser = user;
+        }
+
+        public void SetElapsed(TimeSpan elapsed)
+        {
+            this.Elapsed = elapsed;
         }
     }
 }

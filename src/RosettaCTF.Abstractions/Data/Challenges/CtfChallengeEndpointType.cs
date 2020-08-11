@@ -34,9 +34,9 @@ namespace RosettaCTF.Data
         Netcat = 1,
 
         /// <summary>
-        /// The endpoint is an HTTP or HTTPS endpoint.
+        /// The endpoint is an HTTP endpoint.
         /// </summary>
-        [EnumDisplayName("HTTP(S)")]
+        [EnumDisplayName("HTTP")]
         Http = 2,
 
         /// <summary>
@@ -49,6 +49,12 @@ namespace RosettaCTF.Data
         /// The endpoint is a SSL/TLS over TCP endpoint.
         /// </summary>
         [EnumDisplayName("SSL")]
-        Ssl = 4
+        Ssl = 4,
+
+        /// <summary>
+        /// The endpoint is an HTTPS endpoint.
+        /// </summary>
+        [EnumDisplayName("HTTPS")]
+        Https = 5,
     }
 }

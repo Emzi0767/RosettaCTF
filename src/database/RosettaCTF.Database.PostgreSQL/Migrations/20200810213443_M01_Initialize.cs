@@ -27,7 +27,7 @@ namespace RosettaCTF.Migrations
         {
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:Enum:ctf_challenge_difficulty", "none,very_easy,easy,medium,hard,very_hard,ultra_nightmare")
-                .Annotation("Npgsql:Enum:ctf_challenge_endpoint_type", "unknown,netcat,http,ssh,ssl");
+                .Annotation("Npgsql:Enum:ctf_challenge_endpoint_type", "unknown,netcat,http,ssh,ssl,https");
 
             migrationBuilder.CreateTable(
                 name: "challenge_categories",
@@ -193,7 +193,8 @@ namespace RosettaCTF.Migrations
                     challenge_id = table.Column<string>(nullable: false),
                     user_id = table.Column<long>(nullable: false),
                     team_id = table.Column<long>(nullable: false),
-                    timestamp = table.Column<DateTimeOffset>(type: "timestamptz", nullable: false)
+                    timestamp = table.Column<DateTimeOffset>(type: "timestamptz", nullable: false),
+                    score = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -212,6 +213,33 @@ namespace RosettaCTF.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "fkey_solve_user",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "team_invites",
+                columns: table => new
+                {
+                    id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    user_id = table.Column<long>(nullable: false),
+                    team_id = table.Column<long>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_team_invites", x => x.id);
+                    table.UniqueConstraint("ukey_team_invite_uniq_user_team", x => new { x.user_id, x.team_id });
+                    table.ForeignKey(
+                        name: "fkey_team_invite_team",
+                        column: x => x.team_id,
+                        principalTable: "teams",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fkey_team_invite_user",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -283,6 +311,16 @@ namespace RosettaCTF.Migrations
                 filter: "valid = true");
 
             migrationBuilder.CreateIndex(
+                name: "pkey_team_invite_id",
+                table: "team_invites",
+                column: "id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_team_invites_team_id",
+                table: "team_invites",
+                column: "team_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_users_team_id",
                 table: "users",
                 column: "team_id");
@@ -298,6 +336,9 @@ namespace RosettaCTF.Migrations
 
             migrationBuilder.DropTable(
                 name: "solves");
+
+            migrationBuilder.DropTable(
+                name: "team_invites");
 
             migrationBuilder.DropTable(
                 name: "challenges");

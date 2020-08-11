@@ -21,12 +21,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RosettaCTF.Data;
+using RosettaCTF.Filters;
 using RosettaCTF.Models;
 using RosettaCTF.Services;
 
 namespace RosettaCTF.Controllers
 {
-    [Route("api/[controller]"), ValidateAntiForgeryToken]
+    [Route("api/[controller]")]
+    [ValidateAntiForgeryToken]
     public class SessionController : RosettaControllerBase
     {
         private DiscordHandler Discord { get; }
@@ -45,35 +47,35 @@ namespace RosettaCTF.Controllers
             this.Jwt = jwt;
         }
 
-        [HttpGet, AllowAnonymous, Route("endpoint")]
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("endpoint")]
         public ActionResult<ApiResult<string>> Endpoint()
             => ApiResult.FromResult(this.Discord.GetAuthenticationUrl(this.HttpContext));
 
-        [HttpGet, Authorize, Route("refresh")]
-        public async Task<ActionResult<ApiResult<SessionPreview>>> Refresh(CancellationToken cancellationToken = default)
+        [HttpGet]
+        [Authorize]
+        [ServiceFilter(typeof(ValidRosettaUserFilter))]
+        [Route("refresh")]
+        public ActionResult<ApiResult<SessionPreview>> Refresh()
         {
-            var user = await this.GetCurrentUserAsync(cancellationToken);
-            if (user == null)
-                this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.NotLoggedIn, "User is not logged in.")));
-
-            var ruser = this.UserPreviewRepository.GetUser(user);
+            var ruser = this.UserPreviewRepository.GetUser(this.RosettaUser);
             var token = this.Jwt.IssueToken(ruser);
             return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(ruser, token.Token, token.ExpiresAt)));
         }
 
-        [HttpGet, Authorize]
-        public async Task<ActionResult<ApiResult<SessionPreview>>> GetCurrent(CancellationToken cancellationToken = default)
+        [HttpGet]
+        [Authorize]
+        [ServiceFilter(typeof(ValidRosettaUserFilter))]
+        public ActionResult<ApiResult<SessionPreview>> GetCurrent()
         {
-            var user = await this.GetCurrentUserAsync(cancellationToken);
-            if (user == null)
-                this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.NotLoggedIn, "User is not logged in.")));
-
-            var ruser = this.UserPreviewRepository.GetUser(user);
+            var ruser = this.UserPreviewRepository.GetUser(this.RosettaUser);
             var token = this.Jwt.IssueToken(ruser);
             return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(ruser, token.Token, token.ExpiresAt)));
         }
 
-        [HttpPost, AllowAnonymous]
+        [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<ApiResult<SessionPreview>>> Login([FromBody] OAuthAuthenticationData data, CancellationToken cancellationToken = default)
         {
             var tokens = await this.Discord.CompleteLoginAsync(this.HttpContext, data, cancellationToken);
@@ -97,17 +99,15 @@ namespace RosettaCTF.Controllers
             return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(ruser, token.Token, token.ExpiresAt)));
         }
 
-        [HttpDelete, Authorize]
+        [HttpDelete]
+        [Authorize]
+        [ServiceFilter(typeof(ValidRosettaUserFilter))]
         public async Task<ActionResult<ApiResult<SessionPreview>>> Logout(CancellationToken cancellationToken = default)
         {
-            var user = await this.GetCurrentUserAsync(cancellationToken);
-            if (user == null)
-                this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.NotLoggedIn, "User is not logged in.")));
+            if (!await this.Discord.LogoutAsync(this.HttpContext, this.RosettaUser.Token, cancellationToken))
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.NotLoggedIn, "User is not logged in.")));
 
-            if (!await this.Discord.LogoutAsync(this.HttpContext, user.Token, cancellationToken))
-                this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.NotLoggedIn, "User is not logged in.")));
-
-            await this.UserRepository.UpdateTokensAsync(user.Id, null, null, DateTimeOffset.MinValue, cancellationToken);
+            await this.UserRepository.UpdateTokensAsync(this.RosettaUser.Id, null, null, DateTimeOffset.MinValue, cancellationToken);
             return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(null)));
         }
     }

@@ -104,7 +104,8 @@ namespace RosettaCTF.Services
                     ["token_type_hint"] = RevokeTypeHint
                 });
 
-                this.AddToken(post, token);
+                post.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(
+                    AbstractionUtilities.UTF8.GetBytes($"{this.Configuration.ClientId}:{this.Configuration.Secret}")));
 
                 using (var res = await this.Http.SendAsync(post, cancellationToken))
                     return res.IsSuccessStatusCode;

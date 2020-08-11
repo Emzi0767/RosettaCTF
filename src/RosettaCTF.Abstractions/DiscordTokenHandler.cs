@@ -102,6 +102,7 @@ namespace RosettaCTF
             {
                 var bsize = aes.BlockSize / 8;
                 var output = new byte[(int)ms.Length - s.Length - aes.IV.Length];
+                var olen = 0;
 
                 var iv = new byte[bsize];
                 ms.Read(iv);
@@ -113,9 +114,9 @@ namespace RosettaCTF
 
                 using (var dec = aes.CreateDecryptor())
                 using (var cs = new CryptoStream(ms, dec, CryptoStreamMode.Read))
-                    cs.Read(output);
+                    olen = cs.Read(output);
 
-                return AbstractionUtilities.UTF8.GetString(output);
+                return AbstractionUtilities.UTF8.GetString(output.AsSpan().Slice(0, olen));
             }
         }
 

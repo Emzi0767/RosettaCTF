@@ -78,7 +78,7 @@ namespace RosettaCTF.Data
                     .GetFields(BindingFlags.Public | BindingFlags.Static)
                     .Select(x => new { Field = x, Value = (T)x.GetValue(null), Display = x.GetCustomAttribute<EnumDisplayNameAttribute>() })
                     .Where(x => x.Display != null)
-                    .ToDictionary(x => x.Value, x => x.Display.DisplayName);
+                    .ToDictionary(x => x.Value, x => x.Display.DisplayName ?? x.Value.ToString());
 
                 return new NameCache<T>(lookup);
             }
