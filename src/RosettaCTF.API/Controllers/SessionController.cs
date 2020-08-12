@@ -110,5 +110,16 @@ namespace RosettaCTF.Controllers
             await this.UserRepository.UpdateTokensAsync(this.RosettaUser.Id, null, null, DateTimeOffset.MinValue, cancellationToken);
             return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(null)));
         }
+
+        [HttpPost]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant + "," + JwtAuthenticationOptions.RoleTeamMember)]
+        [ServiceFilter(typeof(ValidRosettaUserFilter))]
+        [Route("unhide")]
+        public async Task<ActionResult<ApiResult<object>>> Unhide(CancellationToken cancellationToken = default)
+        {
+            await this.UserRepository.EnableHiddenChallengesAsync(this.RosettaUser.Id, true, cancellationToken);
+
+            return this.Ok(ApiResult.FromResult<object>(null));
+        }
     }
 }

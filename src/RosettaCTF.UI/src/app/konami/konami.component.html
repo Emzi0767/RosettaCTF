@@ -11,6 +11,11 @@
     <i class="material-icons">&#xe167;</i>&nbsp;
 </h1>
 
-<p>
-    Congratulations, you activated the secret challenge category!
+<p *ngIf="enabling else enablingElseBlock">
+    Enabling hidden challenges...
 </p>
+<ng-template #enablingElseBlock>
+    <p>
+        Congratulations, you activated the secret challenge category! <a [routerLink]="['/']">Return to landing page</a>.
+    </p>
+</ng-template>

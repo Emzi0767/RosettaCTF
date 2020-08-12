@@ -32,7 +32,8 @@ import { UserComponent } from "./user/user.component";
 const routes: Routes = [
     {
         path: "konami",
-        component: KonamiComponent
+        component: KonamiComponent,
+        canActivate: [ AuthenticationGuardService ]
     },
     {
         path: "session/login",

@@ -70,7 +70,7 @@ export class TeamManageComponent {
             if (team.isSuccess) {
                 this.team = team.result;
             }
-            
+
             this.kickingMember = false;
             return;
         }

@@ -191,6 +191,18 @@ export class RosettaApiService {
         };
     }
 
+    // SUPRISE -------------------------------------------------------
+    async enableHidden(): Promise<IApiResult<void>> {
+        try {
+            const response = await this.http.post<IApiResult<void>>("/api/session/unhide", null, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
     // HELPERS -------------------------------------------------------
     private getHeaders(): { [header: string]: string | string[] } {
         const token = this.sessionProvider.getToken();
