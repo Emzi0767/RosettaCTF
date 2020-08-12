@@ -78,7 +78,7 @@ namespace RosettaCTF.Controllers
             await this.UserRepository.AssignTeamMembershipAsync(this.RosettaUser.Id, team.Id, cancellationToken);
 
             var rteam = this.UserPreviewRepository.GetTeam(team);
-            return this.Ok(ApiResult.FromResult(rteam));
+            return this.StatusCode(201, ApiResult.FromResult(rteam));
         }
 
         [HttpDelete]
@@ -115,7 +115,7 @@ namespace RosettaCTF.Controllers
 
             var tuser = await this.UserRepository.GetUserAsync(userId, cancellationToken);
             if (tuser == null)
-                this.NotFound(ApiResult.FromError<TeamPreview>(new ApiError(ApiErrorCode.UserNotFound, "Specified user does not exist.")));
+                return this.NotFound(ApiResult.FromError<TeamPreview>(new ApiError(ApiErrorCode.UserNotFound, "Specified user does not exist.")));
 
             if (!tuser.IsAuthorized)
                 return this.StatusCode(403, ApiResult.FromError<TeamPreview>(new ApiError(ApiErrorCode.MissingPermissions, "User is not allowed to participate.")));

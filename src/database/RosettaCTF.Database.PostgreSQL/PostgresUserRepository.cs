@@ -182,11 +182,15 @@ namespace RosettaCTF
 
         public async Task<IEnumerable<ITeamInvite>> GetTeamInvitesAsync(long userId, CancellationToken cancellationToken = default)
             => await this.Database.TeamInvites
+                .Include(x => x.TeamInternal)
+                .Include(x => x.UserInternal)
                 .Where(x => x.UserId == userId)
                 .ToListAsync(cancellationToken);
 
         public async Task<ITeamInvite> GetTeamInviteAsync(long userId, long teamId, CancellationToken cancellationToken = default)
             => await this.Database.TeamInvites
+                .Include(x => x.TeamInternal)
+                .Include(x => x.UserInternal)
                 .SingleOrDefaultAsync(x => x.UserId == userId && x.TeamId == teamId, cancellationToken);
 
         public async Task ClearTeamInvitesAsync(long userId, CancellationToken cancellationToken = default)

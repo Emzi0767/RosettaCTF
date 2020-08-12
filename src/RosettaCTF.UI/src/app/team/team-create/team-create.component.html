@@ -18,7 +18,7 @@
  
 -->
 
-<h1>You are not a part of a team yet</h1>
+<h1>You are not part of a team yet</h1>
 
 <p>
     Before you can participate, you have to join a team or create one.
@@ -32,9 +32,25 @@
     <ng-template #invitesAnyBlock>
         <p>You have been invited to the following teams:</p>
         <ul>
-            <li *ngFor="let invite of invites">{{ invite.name }} <a href="#">accept</a></li>
+            <li *ngFor="let invite of invites"><button (click)="acceptInvite(invite.id)" type="button" [disabled]="acceptingInvite">Accept</button> <strong>{{ invite.name }}</strong></li>
         </ul>
     </ng-template>
 </ng-template>
 
 <h2>Create a new team</h2>
+<form (ngSubmit)="createSubmit()" #createForm="ngForm" [hidden]="hideForm || acceptingInvite">
+    <div class="form-group">
+        <label for="createTeamName">Team name</label>
+        <input type="text" 
+            minlength="2" maxlength="48" pattern="^[a-zA-Z0-9!@#$%^&*()\-_+=;:'&quot;\\|,&lt;.&gt;\/?€~` ]{2,48}$"
+            placeholder="Name of your new team"
+            [(ngModel)]="model.name" name="name" #name="ngModel" />
+        <div class="validation-error" [hidden]="name.valid || name.pristine">
+            Invalid team name. A team name can only consist of any character present on standard US-ASCII keyboard. The name must consist of no less than 2, and no more than 48 characters.
+        </div>
+    </div>
+
+    <button type="submit" [disabled]="!createForm.form.valid || createForm.form.pristine">Create</button>
+</form>
+<p *ngIf="hideForm">Submitting...</p>
+<p *ngIf="acceptingInvite">Cannot create a team while accepting an invite...</p>

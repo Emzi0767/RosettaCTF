@@ -15,7 +15,6 @@
 // limitations under the License.
 
 using System;
-using System.Globalization;
 using SharpYaml.Events;
 using SharpYaml.Serialization;
 using SharpYaml.Serialization.Serializers;
@@ -28,7 +27,7 @@ namespace RosettaCTF.Converters
             => TimeSpan.FromSeconds(fromScalar.Value.ParseAsLong());
 
         public override string ConvertTo(ref ObjectContext objectContext)
-            => ((long)((TimeSpan)objectContext.Instance).TotalSeconds).ToString(CultureInfo.InvariantCulture);
+            => ((long)((TimeSpan)objectContext.Instance).TotalSeconds).AsString();
 
         public IYamlSerializable TryCreate(SerializerContext context, ITypeDescriptor typeDescriptor)
             => typeDescriptor.Type == typeof(TimeSpan)

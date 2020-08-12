@@ -22,6 +22,6 @@
 <ng-template #elseBlock>
     <app-team-create *ngIf="!team else teamElseBlock"></app-team-create>
     <ng-template #teamElseBlock>
-        
+        <app-team-manage [team]="team"></app-team-manage>
     </ng-template>
 </ng-template>

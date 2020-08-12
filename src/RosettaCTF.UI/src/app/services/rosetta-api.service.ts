@@ -25,7 +25,7 @@ interface IHttpOptions {
     headers?: {
         [header: string]: string | string[];
     };
-    observe?: "body";
+    observe: "response";
     params?: {
         [param: string]: string | string[];
     };
@@ -45,7 +45,7 @@ export class RosettaApiService {
     async testApi(): Promise<IApiResult<IApiEventConfiguration>> {
         try {
             const response = await this.http.get<IApiResult<IApiEventConfiguration>>("/api/config", this.getOptions()).toPromise();
-            return response;
+            return response.body;
         } catch (ex) { }
 
         return {
@@ -57,7 +57,7 @@ export class RosettaApiService {
     async getSession(): Promise<IApiResult<ISession>> {
         try {
             const response = await this.http.get<IApiResult<ISession>>("/api/session", this.getOptions()).toPromise();
-            return response;
+            return response.body;
         } catch (ex) { }
 
         return {
@@ -68,7 +68,7 @@ export class RosettaApiService {
     async getLoginUrl(): Promise<IApiResult<string>> {
         try {
             const response = await this.http.get<IApiResult<string>>("/api/session/endpoint", this.getOptions()).toPromise();
-            return response;
+            return response.body;
         } catch (ex) { }
 
         return {
@@ -81,7 +81,7 @@ export class RosettaApiService {
             const response = await this.http.post<IApiResult<ISession>>("/api/session",
                 { code, state },
                 this.getOptions()).toPromise();
-            return response;
+            return response.body;
         } catch (ex) { }
 
         return {
@@ -92,7 +92,7 @@ export class RosettaApiService {
     async logout(): Promise<IApiResult<ISession>> {
         try {
             const response = await this.http.delete<IApiResult<ISession>>("/api/session", this.getOptions()).toPromise();
-            return response;
+            return response.body;
         } catch (ex) { }
 
         return {
@@ -104,7 +104,7 @@ export class RosettaApiService {
     async refreshToken(): Promise<IApiResult<ISession>> {
         try {
             const response = await this.http.get<IApiResult<ISession>>("/api/session/refresh", this.getOptions()).toPromise();
-            return response;
+            return response.body;
         } catch (ex) { }
 
         return {
@@ -115,7 +115,7 @@ export class RosettaApiService {
     async refreshXsrf(): Promise<IApiResult<null>> {
         try {
             const response = await this.http.get<IApiResult<null>>("/api/config/wiggle", this.getOptions()).toPromise();
-            return response;
+            return response.body;
         } catch (ex) { }
 
         return {
@@ -128,7 +128,7 @@ export class RosettaApiService {
         try {
             const uri = !!id ? `/api/team/${id}` : "/api/team";
             const response = await this.http.get<IApiResult<ITeam>>(uri, this.getOptions()).toPromise();
-            return response;
+            return response.body;
         } catch (ex) { }
 
         return {
@@ -139,7 +139,7 @@ export class RosettaApiService {
     async createTeam(name: string): Promise<IApiResult<ITeam>> {
         try {
             const response = await this.http.post<IApiResult<ITeam>>("/api/team", { name }, this.getOptions()).toPromise();
-            return response;
+            return response.body;
         } catch (ex) { }
 
         return {
@@ -150,7 +150,7 @@ export class RosettaApiService {
     async kickTeamMember(userId: string): Promise<IApiResult<ITeam>> {
         try {
             const response = await this.http.delete<IApiResult<ITeam>>(`/api/team/members/${userId}`, this.getOptions()).toPromise();
-            return response;
+            return response.body;
         } catch (ex) { }
 
         return {
@@ -160,8 +160,8 @@ export class RosettaApiService {
 
     async inviteMember(userId: string): Promise<IApiResult<ITeam>> {
         try {
-            const response = await this.http.post<IApiResult<ITeam>>(`/api/team/invite/${userId}`, this.getOptions()).toPromise();
-            return response;
+            const response = await this.http.post<IApiResult<ITeam>>(`/api/team/invite/${userId}`, null, this.getOptions()).toPromise();
+            return response.body;
         } catch (ex) { }
 
         return {
@@ -171,8 +171,8 @@ export class RosettaApiService {
 
     async acceptInvite(teamId: string): Promise<IApiResult<ITeam>> {
         try {
-            const response = await this.http.patch<IApiResult<ITeam>>(`/api/team/invite/${teamId}`, this.getOptions()).toPromise();
-            return response;
+            const response = await this.http.patch<IApiResult<ITeam>>(`/api/team/invite/${teamId}`, null, this.getOptions()).toPromise();
+            return response.body;
         } catch (ex) { }
 
         return {
@@ -183,7 +183,7 @@ export class RosettaApiService {
     async getInvites(): Promise<IApiResult<ITeamInvite[]>> {
         try {
             const response = await this.http.get<IApiResult<ITeamInvite[]>>("/api/team/invite", this.getOptions()).toPromise();
-            return response;
+            return response.body;
         } catch (ex) { }
 
         return {
@@ -206,8 +206,8 @@ export class RosettaApiService {
     private getOptions(): IHttpOptions {
         return {
             headers: this.getHeaders(),
-            observe: "body",
+            observe: "response",
             responseType: "json"
-        }
+        };
     }
 }

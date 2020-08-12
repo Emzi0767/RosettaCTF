@@ -155,6 +155,27 @@ export interface IApiFlag {
     flag: string;
 }
 
+/**
+ * Contains information necessary to create a team.
+ */
+export interface ICreateTeam {
+
+    /**
+     * Gets or sets the name for the new team.
+     */
+    name: string;
+}
+
+/**
+ * Contains information necessary to invite a team member.
+ */
+export interface ICreateTeamInvite {
+
+    /**
+     * Gets or sets the ID of the user to invite.
+     */
+    id: string;
+}
 
 /**
  * Contains information about a result from an API request.
@@ -181,6 +202,7 @@ export interface IApiResult<T> {
  * Represents the event-configured scoring type.
  */
 export enum ApiEventScoringMode {
+
     /**
      * Static jeopardy-style scoring mode (i.e. all challenges have static amount of points).
      */
@@ -203,6 +225,7 @@ export enum ApiEventScoringMode {
  * Represents an API connection test response.
  */
 export interface IApiEventConfiguration {
+
     /**
      * Gets the name of the event.
      */
@@ -233,6 +256,7 @@ export interface IApiEventConfiguration {
  * Represents a challenge category.
  */
 export interface IChallengeCategory {
+
     /**
      * Gets the ID of the category.
      */
@@ -253,6 +277,7 @@ export interface IChallengeCategory {
  * Represents a challenge.
  */
 export interface IChallenge {
+
     /**
      * Gets the ID of the challenge.
      */
@@ -298,6 +323,7 @@ export interface IChallenge {
  * Represents a file attached to a challenge.
  */
 export interface IChallengeAttachment {
+
     /**
      * Gets the name of the attached file.
      */
@@ -338,6 +364,7 @@ export interface IChallengeAttachment {
  * Represents a submitted solution.
  */
 export interface ISolve {
+
     /**
      * Gets the challenge the submission was for.
      */

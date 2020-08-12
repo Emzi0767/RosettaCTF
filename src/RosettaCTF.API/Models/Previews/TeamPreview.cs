@@ -29,7 +29,7 @@ namespace RosettaCTF.Models
         /// <summary>
         /// Gets the ID of the team.
         /// </summary>
-        public long Id { get; }
+        public string Id { get; }
 
         /// <summary>
         /// Gets the name of the team.
@@ -48,10 +48,10 @@ namespace RosettaCTF.Models
 
         internal TeamPreview(ITeam team)
         {
-            this.Id = team.Id;
+            this.Id = team.Id.AsString();
             this.Name = team.Name;
             this.AvatarUrl = team.AvatarUrl;
-            this.Members = team.Members.Select(x => new UserPreview(x, this))
+            this.Members = team.Members.Select(x => new UserPreview(x, null /* this - object cycle */))
                 .ToList();
         }
     }

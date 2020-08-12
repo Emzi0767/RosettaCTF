@@ -20,7 +20,7 @@ namespace RosettaCTF.Models
 {
     public sealed class TeamCreateModel
     {
-        [Required]
+        [Required, MinLength(2), MaxLength(48), RegularExpression(@"^[a-zA-Z0-9!@#$%^&*()\-_+=;:'""\\|,<.>\/?€~` ]{2,48}$")]
         public string Name { get; set; }
     }
 }

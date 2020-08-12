@@ -66,12 +66,28 @@ namespace RosettaCTF
             => long.Parse(str, NumberStyles.Integer, CultureInfo.InvariantCulture);
 
         /// <summary>
+        /// Converts a long to a string.
+        /// </summary>
+        /// <param name="l">Long to convert.</param>
+        /// <returns>Converted long.</returns>
+        public static string AsString(this long l)
+            => l.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
         /// Parses a numeric string as ulong.
         /// </summary>
         /// <param name="str">String to parse.</param>
         /// <returns>Parsed string.</returns>
         public static ulong ParseAsUlong(this string str)
             => ulong.Parse(str, NumberStyles.Integer, CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Converts a ulong to a string.
+        /// </summary>
+        /// <param name="l">Ulong to convert.</param>
+        /// <returns>Converted ulong.</returns>
+        public static string AsString(this ulong l)
+            => l.ToString(CultureInfo.InvariantCulture);
 
         private static void ForceLoadAssemblies()
         {

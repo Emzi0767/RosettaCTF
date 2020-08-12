@@ -15,7 +15,6 @@
 // limitations under the License.
 
 using System;
-using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -79,7 +78,7 @@ namespace RosettaCTF.Services
         {
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString(CultureInfo.InvariantCulture)),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim(JwtRegisteredClaimNames.NameId, user.Username)
             };
 

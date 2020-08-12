@@ -15,8 +15,9 @@
 // limitations under the License.
 
 import { Injectable } from "@angular/core";
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpXsrfTokenExtractor } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpXsrfTokenExtractor, HttpErrorResponse, HttpResponse } from "@angular/common/http";
+import { Observable, of, throwError } from "rxjs";
+import { catchError } from "rxjs/operators";
 
 @Injectable({
     providedIn: "root"
@@ -32,6 +33,15 @@ export class RosettaHttpInterceptor implements HttpInterceptor {
             req = req.clone({ headers: req.headers.set(header, token) });
         }
 
-        return next.handle(req);
+        return next.handle(req)
+            .pipe(catchError(this.catchHttpError));
+    }
+
+    private catchHttpError(ev: HttpEvent<any>): Observable<HttpEvent<any>> {
+        if (ev instanceof HttpErrorResponse) {
+            return of(new HttpResponse({ body: ev.error, ...ev }));
+        }
+
+        throwError(ev);
     }
 }

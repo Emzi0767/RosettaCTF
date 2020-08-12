@@ -48,6 +48,7 @@ namespace RosettaCTF.Controllers
             this.EventConfiguration = ctfConfigurationLoader.LoadEventData();
         }
 
+        [NonAction]
         public void SetUser(IUser user)
         {
             if (this.RosettaUser != null)
@@ -56,6 +57,7 @@ namespace RosettaCTF.Controllers
             this.RosettaUser = user;
         }
 
+        [NonAction]
         public void SetElapsed(TimeSpan elapsed)
         {
             this.Elapsed = elapsed;

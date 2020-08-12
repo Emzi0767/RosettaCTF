@@ -1,0 +1,43 @@
+<!-- 
+
+  This file is part of RosettaCTF project.
+  
+  Copyright 2020 Emzi0767
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ 
+-->
+
+<h1>{{ team.name }}</h1>
+<h2>Members</h2>
+<ul>
+    <li *ngFor="let member of team.members"><button (click)="kickMember(member.id)" type="button" [disabled]="kickingMember">Remove</button> {{ member.username }}</li>
+</ul>
+
+<h2>Invite a user</h2>
+<form (ngSubmit)="createSubmit()" #inviteForm="ngForm" [hidden]="hideForm || kickingMember">
+    <div class="form-group">
+        <label for="inviteUserId">User ID</label>
+        <input type="text" 
+            minlength="1" maxlength="20" pattern="^-?[0-9]+$"
+            placeholder="ID of the user to invite"
+            [(ngModel)]="model.id" name="id" #id="ngModel" />
+        <div class="validation-error" [hidden]="id.valid || id.pristine">
+            Invalid user ID. User ID can only consist of digits 0 through 9, and optionally a negative sign in front.
+        </div>
+    </div>
+
+    <button type="submit" [disabled]="!inviteForm.form.valid || inviteForm.form.pristine">Invite</button>
+</form>
+<p *ngIf="hideForm">Inviting...</p>
+<p *ngIf="kickingMember">Cannot invite members while removing one...</p>

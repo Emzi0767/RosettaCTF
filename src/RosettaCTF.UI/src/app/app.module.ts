@@ -17,6 +17,7 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { HttpClientModule, HttpClientXsrfModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { MarkdownModule } from "ngx-markdown";
 
@@ -46,6 +47,7 @@ import { TeamComponent } from "./team/team.component";
 import { TeamCreateComponent } from "./team/team-create/team-create.component";
 import { NotLoggedInComponent } from "./session/not-logged-in/not-logged-in.component";
 import { UserComponent } from "./user/user.component";
+import { TeamManageComponent } from './team/team-manage/team-manage.component';
 
 @NgModule({
     declarations: [
@@ -64,10 +66,12 @@ import { UserComponent } from "./user/user.component";
         TeamComponent,
         TeamCreateComponent,
         NotLoggedInComponent,
-        UserComponent
+        UserComponent,
+        TeamManageComponent
     ],
     imports: [
         BrowserModule,
+        FormsModule,
         AppRoutingModule,
         KonamiModule,
         BrowserAnimationsModule,

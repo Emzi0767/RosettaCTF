@@ -15,7 +15,6 @@
 // limitations under the License.
 
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
@@ -61,7 +60,7 @@ namespace RosettaCTF.Services
 
             var claims = new List<Claim>(4)
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString(CultureInfo.InvariantCulture)),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.AsString()),
                 new Claim(ClaimTypes.Name, user.Username)
             };
 

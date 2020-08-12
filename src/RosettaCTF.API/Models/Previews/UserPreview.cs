@@ -27,7 +27,7 @@ namespace RosettaCTF.Models
         /// <summary>
         /// Gets the ID of the user.
         /// </summary>
-        public long Id { get; }
+        public string Id { get; }
 
         /// <summary>
         /// Gets the username of the user.
@@ -46,7 +46,7 @@ namespace RosettaCTF.Models
 
         internal UserPreview(IUser user, TeamPreview team)
         {
-            this.Id = user.Id;
+            this.Id = user.Id.AsString();
             this.Username = user.Username;
             this.AvatarUrl = user.AvatarUrl;
             this.Team = team;

@@ -16,7 +16,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -81,7 +80,7 @@ namespace RosettaCTF.Services
         public string GetAuthenticationUrl(HttpContext ctx)
             => QueryHelpers.AddQueryString(this.GetDiscordUrl(EndpointAuthorize).ToString(), new Dictionary<string, string>(5)
             {
-                ["client_id"] = this.Configuration.ClientId.ToString(CultureInfo.InvariantCulture),
+                ["client_id"] = this.Configuration.ClientId.AsString(),
                 ["redirect_uri"] = this.GetRedirectUrl(ctx),
                 ["response_type"] = ResponseType,
                 ["scope"] = Scopes,
@@ -155,8 +154,8 @@ namespace RosettaCTF.Services
             {
                 var postData = new Dictionary<string, string>(6)
                 {
-                    ["client_id"] = this.Configuration.ClientId.ToString(CultureInfo.InvariantCulture),
-                    ["client_secret"] = this.Configuration.Secret.ToString(CultureInfo.InvariantCulture),
+                    ["client_id"] = this.Configuration.ClientId.AsString(),
+                    ["client_secret"] = this.Configuration.Secret,
                     ["grant_type"] = grantType,
                     ["redirect_uri"] = this.GetRedirectUrl(ctx),
                     ["scope"] = Scopes

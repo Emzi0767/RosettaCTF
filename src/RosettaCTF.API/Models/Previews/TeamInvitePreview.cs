@@ -27,7 +27,7 @@ namespace RosettaCTF.Models
         /// <summary>
         /// Gets the ID of the team.
         /// </summary>
-        public long Id { get; }
+        public string Id { get; }
 
         /// <summary>
         /// Gets the name of the team.
@@ -43,7 +43,7 @@ namespace RosettaCTF.Models
         {
             var team = teamInvite.Team;
 
-            this.Id = team.Id;
+            this.Id = team.Id.AsString();
             this.Name = team.Name;
             this.AvatarUrl = team.AvatarUrl;
         }
