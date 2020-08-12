@@ -58,7 +58,7 @@ namespace RosettaCTF.Services
             if (user == null)
                 return AuthenticateResult.Fail("Invalid user ID.");
 
-            var claims = new List<Claim>(4)
+            var claims = new List<Claim>(5)
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.AsString()),
                 new Claim(ClaimTypes.Name, user.Username)
@@ -71,6 +71,9 @@ namespace RosettaCTF.Services
                 claims.Add(new Claim(ClaimTypes.Role, JwtAuthenticationOptions.RoleTeamMember));
             else
                 claims.Add(new Claim(ClaimTypes.Role, JwtAuthenticationOptions.RoleUnteamed));
+
+            if (user.HasHiddenAccess)
+                claims.Add(new Claim(ClaimTypes.Role, JwtAuthenticationOptions.RoleHiddenAccess));
 
             var identity = new ClaimsIdentity(claims, this.Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
