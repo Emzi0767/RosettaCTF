@@ -73,6 +73,10 @@ namespace RosettaCTF.Models
         public int Score { get; }
 
         internal ChallengePreview(ICtfChallenge challenge, TimeSpan elapsed, EnumDisplayConverter enumCv)
+            : this(challenge, elapsed, enumCv, null)
+        { }
+
+        internal ChallengePreview(ICtfChallenge challenge, TimeSpan elapsed, EnumDisplayConverter enumCv, int? score)
         {
             this.Id = challenge.Id;
             this.Title = challenge.Title;
@@ -92,6 +96,8 @@ namespace RosettaCTF.Models
 
             if (challenge.Endpoint != null)
                 this.Endpoint = EndpointToString(challenge.Endpoint);
+
+            this.Score = score ?? challenge.BaseScore;
         }
 
         private static string EndpointToString(ICtfChallengeEndpoint endpoint)

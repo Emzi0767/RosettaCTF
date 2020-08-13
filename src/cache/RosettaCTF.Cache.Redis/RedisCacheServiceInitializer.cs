@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using RosettaCTF;
 using RosettaCTF.Attributes;
+using RosettaCTF.Data;
 
 [assembly: CacheProvider("redis", typeof(RedisCacheServiceInitializer))]
 
@@ -29,7 +30,9 @@ namespace RosettaCTF
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<RedisClient>();
+            services.AddSingleton<RedisClient>()
+                .AddScoped<ICtfChallengeCacheRepository, RedisChallengeCacheRepository>()
+                .AddScoped<IOAuthStateRepository, RedisOAuthStateRepository>();
         }
 
         public async Task InitializeServicesAsync(IServiceProvider services, CancellationToken cancellationToken = default)

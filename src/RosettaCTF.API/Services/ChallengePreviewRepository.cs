@@ -45,7 +45,17 @@ namespace RosettaCTF.Services
         /// <param name="elapsed">Time elapsed since the beginning of the event.</param>
         /// <returns>An abridged challenge.</returns>
         public ChallengePreview GetChallenge(ICtfChallenge challenge, TimeSpan elapsed)
-            => new ChallengePreview(challenge, elapsed, this.EnumDisplayConverter);
+            => this.GetChallenge(challenge, elapsed, null);
+
+        /// <summary>
+        /// Converts a <see cref="ICtfChallenge"/> to its abridged variant.
+        /// </summary>
+        /// <param name="challenge">Challenge to convert.</param>
+        /// <param name="elapsed">Time elapsed since the beginning of the event.</param>
+        /// <param name="score">Current score for this challenge.</param>
+        /// <returns>An abridged challenge.</returns>
+        public ChallengePreview GetChallenge(ICtfChallenge challenge, TimeSpan elapsed, int? score)
+            => new ChallengePreview(challenge, elapsed, this.EnumDisplayConverter, score);
 
         /// <summary>
         /// Converts a <see cref="ICtfChallengeCategory"/> to its abridged variant.
@@ -55,8 +65,19 @@ namespace RosettaCTF.Services
         /// <param name="includeHidden">Whether to include hidden challenges in the listing.</param>
         /// <returns>An abridged challenge category.</returns>
         public ChallengeCategoryPreview GetChallengeCategory(ICtfChallengeCategory category, TimeSpan elapsed, bool includeHidden)
+            => this.GetChallengeCategory(category, elapsed, includeHidden, null);
+
+        /// <summary>
+        /// Converts a <see cref="ICtfChallengeCategory"/> to its abridged variant with specified scoring.
+        /// </summary>
+        /// <param name="category">Category to convert.</param>
+        /// <param name="elapsed">Time elapsed since the beginning of the event.</param>
+        /// <param name="includeHidden">Whether to include hidden challenges in the listing.</param>
+        /// <param name="scores">Scores for the challenges herein.</param>
+        /// <returns>An abridged challenge category.</returns>
+        public ChallengeCategoryPreview GetChallengeCategory(ICtfChallengeCategory category, TimeSpan elapsed, bool includeHidden, IReadOnlyDictionary<string, int> scores)
             => !category.IsHidden || includeHidden
-                ? new ChallengeCategoryPreview(category, elapsed, this.EnumDisplayConverter, includeHidden)
+                ? new ChallengeCategoryPreview(category, elapsed, this.EnumDisplayConverter, includeHidden, scores)
                 : null;
 
         /// <summary>
@@ -67,8 +88,19 @@ namespace RosettaCTF.Services
         /// <param name="includeHidden">Whether to include hidden challenges and categories in the listing.</param>
         /// <returns>An enumerable of abridged challenge categories.</returns>
         public IEnumerable<ChallengeCategoryPreview> GetChallengeCategories(IEnumerable<ICtfChallengeCategory> categories, TimeSpan elapsed, bool includeHidden)
+            => this.GetChallengeCategories(categories, elapsed, includeHidden, null);
+
+        /// <summary>
+        /// Converts an enumerable of <see cref="ICtfChallengeCategory"/> to an enumerable of its abridged variants with specified scoring.
+        /// </summary>
+        /// <param name="categories">Enumerable of categories to convert.</param>
+        /// <param name="elapsed">Time elapsed since the beginning of the event.</param>
+        /// <param name="includeHidden">Whether to include hidden challenges and categories in the listing.</param>
+        /// <param name="scores">Scores for the challenges herein.</param>
+        /// <returns>An enumerable of abridged challenge categories.</returns>
+        public IEnumerable<ChallengeCategoryPreview> GetChallengeCategories(IEnumerable<ICtfChallengeCategory> categories, TimeSpan elapsed, bool includeHidden, IReadOnlyDictionary<string, int> scores)
             => categories.Where(x => !x.IsHidden || includeHidden)
-                .Select(x => this.GetChallengeCategory(x, elapsed, includeHidden))
+                .Select(x => this.GetChallengeCategory(x, elapsed, includeHidden, scores))
                 .ToList();
     }
 }

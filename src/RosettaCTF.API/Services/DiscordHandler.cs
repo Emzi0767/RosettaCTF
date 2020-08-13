@@ -77,14 +77,14 @@ namespace RosettaCTF.Services
                 Path = "/session/callback"
             }.Uri.ToString();
 
-        public string GetAuthenticationUrl(HttpContext ctx)
+        public string GetAuthenticationUrl(HttpContext ctx, string state)
             => QueryHelpers.AddQueryString(this.GetDiscordUrl(EndpointAuthorize).ToString(), new Dictionary<string, string>(5)
             {
                 ["client_id"] = this.Configuration.ClientId.AsString(),
                 ["redirect_uri"] = this.GetRedirectUrl(ctx),
                 ["response_type"] = ResponseType,
                 ["scope"] = Scopes,
-                ["state"] = Guid.NewGuid().ToString() // TODO: STATE
+                ["state"] = state
             });
 
         public async Task<OAuthAuthenticationResponse> CompleteLoginAsync(HttpContext ctx, OAuthAuthenticationData authData, CancellationToken cancellationToken = default)

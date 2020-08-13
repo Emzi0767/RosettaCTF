@@ -80,6 +80,42 @@ namespace RosettaCTF
             await db.StringSetAsync(key, Convert.ChangeType(value, TypeCode.String, CultureInfo.InvariantCulture) as string);
         }
 
+        public async Task CreateValueAsync<T>(T value, params string[] keyIndices)
+        {
+            var db = this.ConnectionMultiplexer.GetDatabase(this.Configuration.Index);
+            var key = FormatKey(keyIndices);
+
+            this.Logger.LogDebug("Creating value '{0}'", key);
+            await db.StringSetAsync(key, Convert.ChangeType(value, TypeCode.String, CultureInfo.InvariantCulture) as string, when: When.NotExists);
+        }
+
+        public async Task<long> IncrementValueAsync(params string[] keyIndices)
+        {
+            var db = this.ConnectionMultiplexer.GetDatabase(this.Configuration.Index);
+            var key = FormatKey(keyIndices);
+
+            this.Logger.LogDebug("Incrementing value '{0}'", key);
+            return await db.StringIncrementAsync(key);
+        }
+
+        public async Task DeleteValueAsync(params string[] keyIndices)
+        {
+            var db = this.ConnectionMultiplexer.GetDatabase(this.Configuration.Index);
+            var key = FormatKey(keyIndices);
+
+            this.Logger.LogDebug("Deleting value '{0}'", key);
+            await db.KeyDeleteAsync(key);
+        }
+
+        public async Task CreateTemporaryValueAsync<T>(T value, TimeSpan ttl, params string[] keyIndices)
+        {
+            var db = this.ConnectionMultiplexer.GetDatabase(this.Configuration.Index);
+            var key = FormatKey(keyIndices);
+
+            this.Logger.LogDebug("Creating temporary value '{0}'", key);
+            await db.StringSetAsync(key, Convert.ChangeType(value, TypeCode.String, CultureInfo.InvariantCulture) as string, ttl, when: When.NotExists);
+        }
+
         public void Dispose()
         {
             this.ConnectionMultiplexer.Dispose();

@@ -62,5 +62,18 @@ namespace RosettaCTF.Data
         /// <param name="cancellationToken">Token to cancel any pending operation.</param>
         /// <returns>A task encapsulating the operation.</returns>
         Task InstallAsync(IEnumerable<ICtfChallengeCategory> categories, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Records a solve submission being made.
+        /// </summary>
+        /// <param name="flag">Flag entry that was submitted.</param>
+        /// <param name="isValid">Whether the submission is valid.</param>
+        /// <param name="challengeId">ID of the challenge the submission is for.</param>
+        /// <param name="userId">ID of the submitting user.</param>
+        /// <param name="teamId">ID of the submitting team.</param>
+        /// <param name="score">Frozen score, if applicable.</param>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
+        /// <returns>The created solution.</returns>
+        Task<ICtfSolveSubmission> SubmitSolveAsync(string flag, bool isValid, string challengeId, long userId, long teamId, int? score, CancellationToken cancellationToken = default);
     }
 }

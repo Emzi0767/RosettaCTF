@@ -15,12 +15,14 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RosettaCTF.Data;
+using RosettaCTF.Data.Scoring;
 using RosettaCTF.Filters;
 using RosettaCTF.Models;
 using RosettaCTF.Services;
@@ -37,6 +39,8 @@ namespace RosettaCTF.Controllers
     {
         private ICtfChallengeRepository ChallengeRepository { get; }
         private ChallengePreviewRepository ChallengePreviewRepository { get; }
+        private ICtfChallengeCacheRepository ChallengeCacheRepository { get; }
+        private IScoringModel ScoringModel { get; }
 
         public ChallengeController(
             ILoggerFactory loggerFactory,
@@ -44,11 +48,15 @@ namespace RosettaCTF.Controllers
             UserPreviewRepository userPreviewRepository,
             ICtfConfigurationLoader ctfConfigurationLoader,
             ICtfChallengeRepository challengeRepository,
-            ChallengePreviewRepository challengePreviewRepository)
+            ChallengePreviewRepository challengePreviewRepository,
+            ICtfChallengeCacheRepository challengeCacheRepository,
+            IScoringModel scoringModel)
             : base(loggerFactory, userRepository, userPreviewRepository, ctfConfigurationLoader)
         {
             this.ChallengeRepository = challengeRepository;
             this.ChallengePreviewRepository = challengePreviewRepository;
+            this.ChallengeCacheRepository = challengeCacheRepository;
+            this.ScoringModel = scoringModel;
         }
 
         [HttpGet]
@@ -56,10 +64,13 @@ namespace RosettaCTF.Controllers
         public async Task<ActionResult<ApiResult<IEnumerable<ChallengeCategoryPreview>>>> GetCategories(CancellationToken cancellationToken = default)
         {
             var categories = await this.ChallengeRepository.GetCategoriesAsync(cancellationToken);
-            var rcategories = this.ChallengePreviewRepository.GetChallengeCategories(categories, this.Elapsed, this.RosettaUser.HasHiddenAccess);
-            return this.Ok(rcategories);
+            var challengeIds = categories.SelectMany(x => x.Challenges)
+                .Select(x => x.Id);
 
-            // TODO: update scoring
+            var scores = await this.ChallengeCacheRepository.GetScoresAsync(challengeIds, cancellationToken);
+
+            var rcategories = this.ChallengePreviewRepository.GetChallengeCategories(categories, this.Elapsed, this.RosettaUser.HasHiddenAccess, scores);
+            return this.Ok(rcategories);
         }
 
         [HttpGet]
@@ -67,10 +78,10 @@ namespace RosettaCTF.Controllers
         public async Task<ActionResult<ApiResult<ChallengePreview>>> GetChallenge(string id, CancellationToken cancellationToken = default)
         {
             var challenge = await this.ChallengeRepository.GetChallengeAsync(id, cancellationToken);
-            var rchallenge = this.ChallengePreviewRepository.GetChallenge(challenge, this.Elapsed);
-            return this.Ok(rchallenge);
+            var score = await this.ChallengeCacheRepository.GetScoreAsync(id, cancellationToken);
 
-            // TODO: update scoring
+            var rchallenge = this.ChallengePreviewRepository.GetChallenge(challenge, this.Elapsed, score);
+            return this.Ok(rchallenge);
         }
 
         [HttpPost]
@@ -79,8 +90,26 @@ namespace RosettaCTF.Controllers
         {
             var challenge = await this.ChallengeRepository.GetChallengeAsync(id, cancellationToken);
             var flag = challengeFlag.Flag;
+            var valid = flag == challenge.Flag;
 
-            return this.Forbid();
+            if (valid)
+            {
+                var solves = await this.ChallengeCacheRepository.IncrementSolveCountAsync(challenge.Id, cancellationToken);
+                var baseline = await this.ChallengeCacheRepository.GetBaselineSolveCountAsync(cancellationToken);
+                var rate = solves / (double)baseline;
+                var score = this.ScoringModel.ComputeScore(challenge.BaseScore, rate);
+
+                await this.ChallengeCacheRepository.UpdateScoreAsync(challenge.Id, score, cancellationToken);
+            }
+
+            try
+            {
+                await this.ChallengeRepository.SubmitSolveAsync(flag, valid, challenge.Id, this.RosettaUser.Id, this.RosettaUser.Team.Id, null, cancellationToken);
+            }
+            catch
+            { return this.Conflict(ApiResult.FromError<bool>(new ApiError(ApiErrorCode.AlreadySolved, "Your team already solved this challenge."))); }
+
+            return this.Ok(ApiResult.FromResult(valid));
         }
     }
 }

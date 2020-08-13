@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -178,6 +179,25 @@ namespace RosettaCTF
             await this.Database.ChallengeAttachments.AddRangeAsync(atcs, cancellationToken);
             await this.Database.ChallengeEndpoints.AddRangeAsync(enps, cancellationToken);
             await this.Database.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<ICtfSolveSubmission> SubmitSolveAsync(string flag, bool isValid, string challengeId, long userId, long teamId, int? score, CancellationToken cancellationToken = default)
+        {
+            var solve = new PostgresSolveSubmission
+            {
+                Contents = flag,
+                IsValid = isValid,
+                ChallengeId = challengeId,
+                UserId = userId,
+                TeamId = teamId,
+                Timestamp = DateTimeOffset.UtcNow,
+                Score = score
+            };
+
+            await this.Database.Solves.AddAsync(solve, cancellationToken);
+            await this.Database.SaveChangesAsync(cancellationToken);
+
+            return solve;
         }
     }
 }

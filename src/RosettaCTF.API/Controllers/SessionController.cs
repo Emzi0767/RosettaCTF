@@ -33,6 +33,7 @@ namespace RosettaCTF.Controllers
     {
         private DiscordHandler Discord { get; }
         private JwtHandler Jwt { get; }
+        private IOAuthStateRepository OAuthStateRepository { get; }
 
         public SessionController(
             ILoggerFactory loggerFactory,
@@ -40,18 +41,23 @@ namespace RosettaCTF.Controllers
             ICtfConfigurationLoader ctfConfigurationLoader,
             UserPreviewRepository userPreviewRepository,
             DiscordHandler discord,
-            JwtHandler jwt)
+            JwtHandler jwt,
+            IOAuthStateRepository oAuthStateRepository)
             : base(loggerFactory, userRepository, userPreviewRepository, ctfConfigurationLoader)
         {
             this.Discord = discord;
             this.Jwt = jwt;
+            this.OAuthStateRepository = oAuthStateRepository;
         }
 
         [HttpGet]
         [AllowAnonymous]
         [Route("endpoint")]
-        public ActionResult<ApiResult<string>> Endpoint()
-            => ApiResult.FromResult(this.Discord.GetAuthenticationUrl(this.HttpContext));
+        public async Task<ActionResult<ApiResult<string>>> Endpoint(CancellationToken cancellationToken = default)
+        {
+            var state = await this.OAuthStateRepository.GenerateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), cancellationToken);
+            return this.Ok(ApiResult.FromResult(this.Discord.GetAuthenticationUrl(this.HttpContext, state)));
+        }
 
         [HttpGet]
         [Authorize]
@@ -78,6 +84,9 @@ namespace RosettaCTF.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<ApiResult<SessionPreview>>> Login([FromBody] OAuthAuthenticationData data, CancellationToken cancellationToken = default)
         {
+            if (data.State == null || !await this.OAuthStateRepository.ValidateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), data.State, cancellationToken))
+                return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.Unauthorized, "OAuth state validation failed.")));
+
             var tokens = await this.Discord.CompleteLoginAsync(this.HttpContext, data, cancellationToken);
             if (tokens == null)
                 return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.ExternalAuthenticationError, "Failed to authenticate with Discord.")));

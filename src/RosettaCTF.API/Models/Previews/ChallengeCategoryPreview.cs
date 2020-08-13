@@ -42,12 +42,16 @@ namespace RosettaCTF.Models
         public IEnumerable<ChallengePreview> Challenges { get; }
 
         internal ChallengeCategoryPreview(ICtfChallengeCategory category, TimeSpan elapsed, EnumDisplayConverter enumCv, bool includeHidden)
+            : this(category, elapsed, enumCv, includeHidden, null)
+        { }
+
+        internal ChallengeCategoryPreview(ICtfChallengeCategory category, TimeSpan elapsed, EnumDisplayConverter enumCv, bool includeHidden, IReadOnlyDictionary<string, int> scores)
         {
             this.Id = category.Id;
             this.Name = category.Name;
             this.Challenges = category.Challenges
                 .Where(x => !x.IsHidden || includeHidden)
-                .Select(x => new ChallengePreview(x, elapsed, enumCv))
+                .Select(x => scores != null && scores.TryGetValue(x.Id, out var score) ? new ChallengePreview(x, elapsed, enumCv, score) : new ChallengePreview(x, elapsed, enumCv))
                 .ToList();
         }
     }

@@ -34,6 +34,8 @@ using RosettaCTF.Data;
 using RosettaCTF.Services;
 using RosettaCTF.Filters;
 using RosettaCTF.Models;
+using RosettaCTF.Data.Scoring;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace RosettaCTF.API
 {
@@ -162,7 +164,8 @@ namespace RosettaCTF.API
                 .AddScoped<DiscordHandler>()
                 .AddSingleton<JwtHandler>()
                 .AddTransient<Argon2idKeyDeriver>()
-                .AddSingleton<EnumDisplayConverter>();
+                .AddSingleton<EnumDisplayConverter>()
+                .AddTransient<IScoringModel, SlowLogisticDecayScoringModel>();
 
             services.AddHostedService<ChallengeBootstrapperService>();
 
@@ -198,6 +201,7 @@ namespace RosettaCTF.API
             }
 
             app.UseHttpsRedirection()
+                .UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor })
 #if DEBUG
                 .UseStaticFiles()
 #endif

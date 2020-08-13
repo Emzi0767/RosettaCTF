@@ -15,8 +15,10 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Emzi0767.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -51,9 +53,12 @@ namespace RosettaCTF.Services
                 var services = scope.ServiceProvider;
                 var repository = services.GetRequiredService<ICtfChallengeRepository>();
                 var configLoader = services.GetRequiredService<ICtfConfigurationLoader>();
+                var cache = services.GetRequiredService<ICtfChallengeCacheRepository>();
                 var challenges = configLoader.LoadChallenges();
 
                 await repository.InstallAsync(challenges, cancellationToken);
+                await cache.InstallAsync(challenges.SelectMany(x => x.Challenges)
+                    .ToDictionary(x => x.Id, x => x.BaseScore), cancellationToken);
             }
         }
 
