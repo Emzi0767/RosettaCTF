@@ -15,6 +15,8 @@
 // limitations under the License.
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using RosettaCTF;
 using RosettaCTF.Attributes;
@@ -27,12 +29,13 @@ namespace RosettaCTF
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            services.AddSingleton<RedisClient>();
         }
 
-        public void InitializeServices(IServiceProvider services)
+        public async Task InitializeServicesAsync(IServiceProvider services, CancellationToken cancellationToken = default)
         {
-            
+            var redis = services.GetRequiredService<RedisClient>();
+            await redis.InitializeAsync(cancellationToken);
         }
     }
 }

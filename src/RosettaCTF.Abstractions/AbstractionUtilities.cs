@@ -20,6 +20,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace RosettaCTF
@@ -62,6 +63,7 @@ namespace RosettaCTF
         /// </summary>
         /// <param name="str">String to parse.</param>
         /// <returns>Parsed long.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long ParseAsLong(this string str)
             => long.Parse(str, NumberStyles.Integer, CultureInfo.InvariantCulture);
 
@@ -70,6 +72,7 @@ namespace RosettaCTF
         /// </summary>
         /// <param name="l">Long to convert.</param>
         /// <returns>Converted long.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string AsString(this long l)
             => l.ToString(CultureInfo.InvariantCulture);
 
@@ -78,6 +81,7 @@ namespace RosettaCTF
         /// </summary>
         /// <param name="str">String to parse.</param>
         /// <returns>Parsed string.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong ParseAsUlong(this string str)
             => ulong.Parse(str, NumberStyles.Integer, CultureInfo.InvariantCulture);
 
@@ -86,6 +90,7 @@ namespace RosettaCTF
         /// </summary>
         /// <param name="l">Ulong to convert.</param>
         /// <returns>Converted ulong.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string AsString(this ulong l)
             => l.ToString(CultureInfo.InvariantCulture);
 

@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using RosettaCTF.Attributes;
 
@@ -78,10 +80,12 @@ namespace RosettaCTF
         /// </summary>
         /// <param name="id">Id of the database implementation provider.</param>
         /// <param name="services">Service provider containing services to initialize.</param>
-        public void InitializeDatabaseProvider(string id, IServiceProvider services)
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>A task encapsulating the operation.</returns>
+        public async Task InitializeDatabaseProviderAsync(string id, IServiceProvider services, CancellationToken cancellationToken = default)
         {
             if (this._databaseProviders.TryGetValue(id, out var dpa))
-                dpa.GetServiceInitializer().InitializeServices(services);
+                await dpa.GetServiceInitializer().InitializeServicesAsync(services, cancellationToken);
         }
 
         /// <summary>
@@ -100,10 +104,12 @@ namespace RosettaCTF
         /// </summary>
         /// <param name="id">Id of the cache implementation provider.</param>
         /// <param name="services">Service provider containing services to initialize.</param>
-        public void InitializeCacheProvider(string id, IServiceProvider services)
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>A task encapsulating the operation.</returns>
+        public async Task InitializeCacheProviderAsync(string id, IServiceProvider services, CancellationToken cancellationToken = default)
         {
             if (this._cacheProviders.TryGetValue(id, out var cpa))
-                cpa.GetServiceInitializer().InitializeServices(services);
+                await cpa.GetServiceInitializer().InitializeServicesAsync(services, cancellationToken);
         }
 
         /// <summary>
@@ -122,10 +128,12 @@ namespace RosettaCTF
         /// </summary>
         /// <param name="id">Id of the CTF configuration loader implementation provider.</param>
         /// <param name="services">Service provider containing services to initialize.</param>
-        public void InitializeCtfConfigurationLoaderProvider(string id, IServiceProvider services)
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>A task encapsulating the operation.</returns>
+        public async Task InitializeCtfConfigurationLoaderProviderAsync(string id, IServiceProvider services, CancellationToken cancellationToken = default)
         {
             if (this._configurationLoaderProviders.TryGetValue(id, out var clpa))
-                clpa.GetServiceInitializer().InitializeServices(services);
+                await clpa.GetServiceInitializer().InitializeServicesAsync(services, cancellationToken);
         }
     }
 }

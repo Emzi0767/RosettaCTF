@@ -16,6 +16,8 @@
 
 using System;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -43,20 +45,20 @@ namespace RosettaCTF
             services.AddScoped<ICtfChallengeRepository, PostgresChallengeRepository>();
         }
 
-        public void InitializeServices(IServiceProvider services)
+        public async Task InitializeServicesAsync(IServiceProvider services, CancellationToken cancellationToken = default)
         {
             using (var scope = services.CreateScope())
             {
                 var srvs = scope.ServiceProvider;
                 using (var db = srvs.GetRequiredService<PostgresDbContext>())
                 {
-                    db.Database.Migrate();
+                    await db.Database.MigrateAsync(cancellationToken);
 
                     using (var conn = db.Database.GetDbConnection() as NpgsqlConnection)
                     {
-                        conn.Open();
+                        await conn.OpenAsync(cancellationToken);
                         conn.ReloadTypes();
-                        conn.Close();
+                        await conn.CloseAsync();
                     }
                 }
             }

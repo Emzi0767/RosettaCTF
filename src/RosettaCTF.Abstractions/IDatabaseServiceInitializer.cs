@@ -15,6 +15,8 @@
 // limitations under the License.
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace RosettaCTF
@@ -34,6 +36,8 @@ namespace RosettaCTF
         /// Initializes services in the supplied provider.
         /// </summary>
         /// <param name="services">Service provider to initialize services in.</param>
-        void InitializeServices(IServiceProvider services);
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>A task encapsulating the operation.</returns>
+        Task InitializeServicesAsync(IServiceProvider services, CancellationToken cancellationToken = default);
     }
 }

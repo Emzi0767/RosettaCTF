@@ -42,9 +42,9 @@ namespace RosettaCTF.Services
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            this.DatastoreSelector.InitializeCtfConfigurationLoaderProvider("yaml", this.Services);
-            this.DatastoreSelector.InitializeDatabaseProvider(this.Configuration.Database.Type, this.Services);
-            this.DatastoreSelector.InitializeCacheProvider(this.Configuration.Cache.Type, this.Services);
+            await this.DatastoreSelector.InitializeCtfConfigurationLoaderProviderAsync("yaml", this.Services, cancellationToken);
+            await this.DatastoreSelector.InitializeDatabaseProviderAsync(this.Configuration.Database.Type, this.Services, cancellationToken);
+            await this.DatastoreSelector.InitializeCacheProviderAsync(this.Configuration.Cache.Type, this.Services, cancellationToken);
 
             using (var scope = this.Services.CreateScope())
             {

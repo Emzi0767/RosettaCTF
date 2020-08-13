@@ -58,13 +58,29 @@ namespace RosettaCTF.Controllers
             var categories = await this.ChallengeRepository.GetCategoriesAsync(cancellationToken);
             var rcategories = this.ChallengePreviewRepository.GetChallengeCategories(categories, this.Elapsed, this.RosettaUser.HasHiddenAccess);
             return this.Ok(rcategories);
+
+            // TODO: update scoring
         }
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<ApiResult<ChallengePreview>>> GetChallenge(CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResult<ChallengePreview>>> GetChallenge(string id, CancellationToken cancellationToken = default)
         {
-            return this.NotFound();
+            var challenge = await this.ChallengeRepository.GetChallengeAsync(id, cancellationToken);
+            var rchallenge = this.ChallengePreviewRepository.GetChallenge(challenge, this.Elapsed);
+            return this.Ok(rchallenge);
+
+            // TODO: update scoring
+        }
+
+        [HttpPost]
+        [Route("{id}")]
+        public async Task<ActionResult<ApiResult<bool>>> SubmitFlag([FromRoute] string id, [FromBody] ChallengeFlagModel challengeFlag, CancellationToken cancellationToken = default)
+        {
+            var challenge = await this.ChallengeRepository.GetChallengeAsync(id, cancellationToken);
+            var flag = challengeFlag.Flag;
+
+            return this.Forbid();
         }
     }
 }

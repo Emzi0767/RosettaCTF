@@ -15,6 +15,8 @@
 // limitations under the License.
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using RosettaCTF;
 using RosettaCTF.Attributes;
@@ -31,7 +33,7 @@ namespace RosettaCTF
             services.AddSingleton<ICtfConfigurationLoader, YamlCtfConfigurationLoader>();
         }
 
-        public void InitializeServices(IServiceProvider services)
-        { }
+        public Task InitializeServicesAsync(IServiceProvider services, CancellationToken cancellationToken = default)
+            => Task.CompletedTask;
     }
 }
