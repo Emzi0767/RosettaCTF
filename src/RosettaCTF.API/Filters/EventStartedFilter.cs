@@ -43,6 +43,7 @@ namespace RosettaCTF.Filters
                 };
 
             context.HttpContext.Items["RosettaCTF:StartElapsed"] = elapsed;
+            context.HttpContext.Items["RosettaCTF:StartTime"] = eventCfg.StartTime;
             return Task.CompletedTask;
         }
     }

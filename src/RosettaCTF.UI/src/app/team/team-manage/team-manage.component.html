@@ -41,3 +41,25 @@
 </form>
 <p *ngIf="hideForm">Inviting...</p>
 <p *ngIf="kickingMember">Cannot invite members while removing one...</p>
+
+<h2>Solves</h2>
+<p *ngIf="solves === null else solvesElseBlock">Loading...</p>
+<ng-template #solvesElseBlock>
+    <p *ngIf="solves.length === 0 else emptyElseBlock">Your team has not solved any challenges yet!</p>
+</ng-template>
+<ng-template #emptyElseBlock>
+    <p>Total points accumulated: <strong>{{ points }}</strong></p>
+    <div class="solves">
+        <div class="solves-cell header">Challenge</div>
+        <div class="solves-cell header">Member</div>
+        <div class="solves-cell header">Score</div>
+        <div class="solves-cell header">Time taken</div>
+        
+        <ng-container *ngFor="let solve of solves">
+            <div class="solves-cell"><a [routerLink]="['/challenges', solve.challenge.id]">{{ solve.challenge.title }}</a></div>
+            <div class="solves-cell">{{ solve.user?.username }}</div>
+            <div class="solves-cell">{{ solve.score }}</div>
+            <div class="solves-cell">{{ solve.timeTaken }}</div>
+        </ng-container>
+    </div>
+</ng-template>

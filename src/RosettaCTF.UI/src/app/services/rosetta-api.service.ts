@@ -17,7 +17,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { IApiResult, IApiEventConfiguration, IApiFlag, IScoreboardEntry, IChallengeCategory } from "../data/api";
+import { IApiResult, IApiEventConfiguration, IApiFlag, IScoreboardEntry, IChallengeCategory, IChallenge, ISolve } from "../data/api";
 import { ISession, ITeam, ITeamInvite } from "../data/session";
 import { SessionProviderService } from "./session-provider.service";
 
@@ -216,10 +216,45 @@ export class RosettaApiService {
         };
     }
 
+    async getChallenge(id: string): Promise<IApiResult<IChallenge>> {
+        try {
+            const response = await this.http.get<IApiResult<IChallenge>>(`/api/challenge/${id}`, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
     async submitSolve(flag: IApiFlag): Promise<IApiResult<boolean>> {
         try {
             // tslint:disable-next-line: max-line-length
             const response = await this.http.post<IApiResult<boolean>>(`/api/challenge/${flag.id}`, { flag: flag.flag }, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    async getSolves(challengeId: string): Promise<IApiResult<ISolve[]>> {
+        try {
+            // tslint:disable-next-line: max-line-length
+            const response = await this.http.get<IApiResult<ISolve[]>>(`/api/challenge/${challengeId}/solves`, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    async getTeamSolves(teamId: string): Promise<IApiResult<ISolve[]>> {
+        try {
+            // tslint:disable-next-line: max-line-length
+            const response = await this.http.get<IApiResult<ISolve[]>>(`/api/challenge/solves/team/${teamId}`, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 

@@ -33,7 +33,13 @@ namespace RosettaCTF.Filters
             var elapsed = context.HttpContext.Items.TryGetValue("RosettaCTF:StartElapsed", out var e)
                 ? (TimeSpan)e
                 : TimeSpan.MinValue;
+
+            var startTime = context.HttpContext.Items.TryGetValue("RosettaCTF:StartTime", out var s)
+                ? (DateTimeOffset)s
+                : DateTimeOffset.MinValue;
+
             ctl.SetElapsed(elapsed);
+            ctl.SetStartTime(startTime);
         }
     }
 }

@@ -14,11 +14,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, } from "@angular/core";
+import { Component, OnInit, OnDestroy, } from "@angular/core";
+import { Observable, Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+
+import { IApiEventConfiguration } from "../data/api";
+import { ISession } from "../data/session";
+import { SessionProviderService } from "../services/session-provider.service";
+import { ConfigurationProviderService } from "../services/configuration-provider.service";
 
 @Component({
     selector: "app-footer",
     templateUrl: "./footer.component.html",
     styleUrls: ["./footer.component.less"]
 })
-export class FooterComponent { }
+export class FooterComponent implements OnInit, OnDestroy {
+
+    private ngUnsubscribe = new Subject();
+
+    configuration$: Observable<IApiEventConfiguration>;
+    configuration: IApiEventConfiguration;
+
+    session$: Observable<ISession>;
+    session: ISession;
+
+    constructor(private configurationProvider: ConfigurationProviderService,
+                private sessionProvider: SessionProviderService) {
+        this.configuration$ = this.configurationProvider.configurationChange;
+        this.session$ = this.sessionProvider.sessionChange;
+    }
+
+    ngOnInit(): void {
+        this.configuration$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(x => { this.configuration = x; });
+
+        this.session$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(x => { this.session = x; });
+    }
+
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
+}

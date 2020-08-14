@@ -1,0 +1,67 @@
+<!-- 
+
+  This file is part of RosettaCTF project.
+  
+  Copyright 2020 Emzi0767
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ 
+-->
+
+<p *ngIf="challenge === null else loadingElseBlock">Loading...</p>
+<ng-template #loadingElseBlock>
+    <h1 class="challenge-title">{{ challenge.title }}</h1>
+
+    <div class="challenge-element difficulty"><strong>Difficulty:</strong> {{ challenge.difficulty }}</div>
+    <div class="challenge-element point-value"><strong>Point value:</strong> {{ challenge.score }}</div>
+
+    <div class="challenge-element description-header"><strong>Description:</strong></div>
+    <div class="challenge-element description" markdown [data]="challenge.description" ngPreserveWhitespaces></div>
+
+    <div class="challenge-element endpoint" *ngIf="challenge.endpoint !== null"><strong>Endpoint:</strong> {{ challenge.endpoint }}</div>
+
+    <ng-container *ngIf="challenge.attachments !== null && challenge.attachments.length > 0">
+        <div class="challenge-element attachments-header"><strong>Attachments:</strong></div>
+        <div class="challenge-element attachment" *ngFor="let attachment of challenge.attachments">
+            <strong><a [href]="attachment.uri" [title]="'Download ' + attachment.name" target="_blank">{{ attachment.name }}</a></strong><br>
+            <strong>Type:</strong> {{ attachment.type }}<br>
+            <strong>Size:</strong> {{ attachment.length }}<br>
+            <strong>SHA256:</strong> {{ attachment.sha256 }}<br>
+            <strong>SHA1:</strong> {{ attachment.sha1 }}<br>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="challenge.hints !== null && challenge.hints.length > 0">
+        <div class="challenge-element hints-header"><strong>Hints:</strong></div>
+        <div class="challenge-element hint" *ngFor="let hint of challenge.hints">{{ hint }}</div>
+    </ng-container>
+
+    <h2>Solves</h2>
+    <p *ngIf="solves === null else solvesLoadingElseBlock">Loading...</p>
+    <ng-template #solvesLoadingElseBlock>
+        <p *ngIf="solves.length === 0 else solvesEmptyElseBlock">No one solved the challenge yet!</p>
+    </ng-template>
+    <ng-template #solvesEmptyElseBlock>
+        <div class="solves">
+            <div class="solves-cell header">#</div>
+            <div class="solves-cell header">Team</div>
+            <div class="solves-cell header">Time taken</div>
+            
+            <ng-container *ngFor="let solve of solves">
+                <div class="solves-cell">{{ solve.ordinal }}</div>
+                <div class="solves-cell"><a [routerLink]="['/team', solve.team.id]">{{ solve.team.name }}</a></div>
+                <div class="solves-cell">{{ solve.timeTaken }}</div>
+            </ng-container>
+        </div>
+    </ng-template>
+</ng-template>

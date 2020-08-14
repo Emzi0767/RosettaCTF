@@ -21,6 +21,9 @@ import { takeUntil } from "rxjs/operators";
 import { SessionProviderService } from "../services/session-provider.service";
 import { ISession } from "../data/session";
 import { ISolve } from "../data/api";
+import { RosettaApiService } from "../services/rosetta-api.service";
+import { EventDispatcherService } from "../services/event-dispatcher.service";
+import { ErrorDialogComponent } from "../dialog/error-dialog/error-dialog.component";
 
 @Component({
     selector: "app-user",
@@ -34,20 +37,42 @@ export class UserComponent implements OnInit, OnDestroy {
     session$: Observable<ISession>;
     session: ISession;
 
-    submissions: ISolve[] | null = null;
+    solves: ISolve[] | null = null;
 
-    constructor(private sessionProvider: SessionProviderService) {
+    constructor(private sessionProvider: SessionProviderService,
+                private api: RosettaApiService,
+                private eventDispatcher: EventDispatcherService) {
         this.session$ = this.sessionProvider.sessionChange;
     }
 
     ngOnInit(): void {
         this.session$
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(x => { this.session = x; });
+            .subscribe(x => { this.session = x; this.loadSolves(); });
     }
 
     ngOnDestroy(): void {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
+    }
+
+    private async loadSolves(): Promise<void> {
+        const solves = await this.api.getTeamSolves(this.session.user.team.id);
+        if (!solves.isSuccess) {
+            this.eventDispatcher.emit("dialog",
+                {
+                    componentType: ErrorDialogComponent,
+                    defaults:
+                    {
+                        message: !!solves.error?.message
+                            ? `Fetching solves failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${solves.error.message}`
+                            : "Fetching solves failed.\n\nIf the problem persists, contact the organizers."
+                    }
+                });
+            this.solves = [];
+            return;
+        }
+
+        this.solves = solves.result.filter(x => x.user.id === this.session.user.id);
     }
 }

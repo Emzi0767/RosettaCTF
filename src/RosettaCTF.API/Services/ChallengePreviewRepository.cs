@@ -156,18 +156,72 @@ namespace RosettaCTF.Services
         /// <param name="scores">Scores for individual challenges.</param>
         /// <param name="teams">Mapped teams for the scoreboard.</param>
         /// <returns>Constructed scoreboard.</returns>
-        public IEnumerable<ScoreboardEntryPreview> GetScoreboard(IEnumerable<ICtfSolveSubmission> solves, IReadOnlyDictionary<string, int> scores, IReadOnlyDictionary<long, TeamPreview> teams)
+        public IEnumerable<ScoreboardEntryPreview> GetScoreboard(
+            IEnumerable<ICtfSolveSubmission> solves,
+            IReadOnlyDictionary<string, int> scores,
+            IReadOnlyDictionary<long, TeamPreview> teams)
             => solves.GroupBy(x => x.Team.Id)
                 .Select(x =>
                 {
                     var score = x.Sum(x => x.Score);
                     if (score == 0 || score == null)
-                        score = x.Sum(x => scores[x.Challenge.Id]);
+                        score = x.Sum(x => scores?[x.Challenge.Id] ?? 0);
 
                     return new { team = teams[x.Key], score = score.Value };
                 })
                 .OrderByDescending(x => x.score)
-                .Select((x, i) => new ScoreboardEntryPreview(x.team, x.score, i + 1))
+                .Select((x, i) => new ScoreboardEntryPreview(x.team, x.score, i + 1, null))
+                .ToList();
+
+        /// <summary>
+        /// Converts an enumerable of <see cref="ICtfSolveSubmission"/> to a descendingly-ordered scoreboard.
+        /// </summary>
+        /// <param name="solves">Solves to convert into a scoreboard.</param>
+        /// <param name="scores">Scores for individual challenges.</param>
+        /// <param name="teams">Mapped teams for the scoreboard.</param>
+        /// <param name="startTime">Event start time for elapsed computation.</param>
+        /// <returns>Constructed scoreboard.</returns>
+        public IEnumerable<ScoreboardEntryPreview> GetScoreboard(
+            IEnumerable<ICtfSolveSubmission> solves, 
+            IReadOnlyDictionary<string, int> scores, 
+            IReadOnlyDictionary<long, TeamPreview> teams,
+            DateTimeOffset startTime)
+            => solves.GroupBy(x => x.Team.Id)
+                .Select(x =>
+                {
+                    var score = x.Sum(x => x.Score);
+                    if (score == 0 || score == null)
+                        score = x.Sum(x => scores?[x.Challenge.Id] ?? 0);
+
+                    return new { team = teams[x.Key], score = score.Value, timestamp = x.SingleOrDefault()?.Timestamp };
+                })
+                .OrderByDescending(x => x.score)
+                .Select((x, i) => new ScoreboardEntryPreview(x.team, x.score, i + 1, x.timestamp != null ? x.timestamp - startTime : null))
+                .ToList();
+
+        /// <summary>
+        /// Converts an enumerable of <see cref="ICtfSolveSubmission"/> to a descendingly-ordered scoreboard.
+        /// </summary>
+        /// <param name="solves">Solves to convert into a scoreboard.</param>
+        /// <param name="scores">Scores for individual challenges.</param>
+        /// <param name="team">Mapped team for the scoreboard.</param>
+        /// <param name="startTime">Event start time for elapsed computation.</param>
+        /// <returns>Constructed scoreboard.</returns>
+        public IEnumerable<ScoreboardEntryPreview> GetScoreboard(
+            IEnumerable<ICtfSolveSubmission> solves,
+            IReadOnlyDictionary<string, int> scores,
+            DateTimeOffset startTime,
+            IReadOnlyDictionary<long, UserPreview> users)
+            => solves.Select(x =>
+                {
+                    var score = x.Score;
+                    if (score == 0 || score == null)
+                        score = scores?[x.Challenge.Id] ?? 0;
+
+                    return new { score = score.Value, challenge = x.Challenge, timestamp = x.Timestamp, user = users?[x.User.Id] };
+                })
+                .OrderBy(x => x.timestamp)
+                .Select((x, i) => new ScoreboardEntryPreview(this.GetChallenge(x.challenge, TimeSpan.Zero), x.user, x.score, i + 1, x.timestamp - startTime))
                 .ToList();
     }
 }

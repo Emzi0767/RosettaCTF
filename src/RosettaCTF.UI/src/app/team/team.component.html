@@ -20,8 +20,11 @@
 
 <p *ngIf="hasTeam === null else elseBlock">Loading...</p>
 <ng-template #elseBlock>
-    <app-team-create *ngIf="!team else teamElseBlock"></app-team-create>
-    <ng-template #teamElseBlock>
-        <app-team-manage [team]="team"></app-team-manage>
-    </ng-template>
+    <app-team-create *ngIf="!team && !isForeignTeam else teamElseBlock"></app-team-create>
+</ng-template>
+<ng-template #teamElseBlock>
+    <app-team-manage *ngIf="!isForeignTeam else foreignElseBlock" [team]="team"></app-team-manage>
+</ng-template>
+<ng-template #foreignElseBlock>
+    <app-team-detail [team]="team"></app-team-detail>
 </ng-template>

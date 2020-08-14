@@ -87,6 +87,45 @@ namespace RosettaCTF.Controllers
             return this.Ok(ApiResult.FromResult(rchallenge));
         }
 
+        [HttpGet]
+        [Route("{id}/solves")]
+        public async Task<ActionResult<ApiResult<IEnumerable<ScoreboardEntryPreview>>>> GetSolves(string id, CancellationToken cancellationToken = default)
+        {
+            var solves = await this.ChallengeRepository.GetSuccessfulSolvesAsync(id, cancellationToken);
+
+            var rteams = solves.Select(x => x.Team)
+                .Distinct()
+                .Select(x => new { id = x.Id, team = this.UserPreviewRepository.GetTeam(x) })
+                .ToDictionary(x => x.id, x => x.team);
+
+            var scoreboard = this.ChallengePreviewRepository.GetScoreboard(solves, null, rteams, this.StartTime);
+            return this.Ok(ApiResult.FromResult(scoreboard));
+        }
+
+        [HttpGet]
+        [Route("solves/team/{id}")]
+        public async Task<ActionResult<ApiResult<IEnumerable<ScoreboardEntryPreview>>>> GetTeamSolves(long id, CancellationToken cancellationToken = default)
+        {
+            var team = await this.UserRepository.GetTeamAsync(id);
+            if (team == null)
+                return this.NotFound(ApiResult.FromError<IEnumerable<ScoreboardEntryPreview>>(new ApiError(ApiErrorCode.TeamNotFound, "Specified team does not exist.")));
+
+            var solves = await this.ChallengeRepository.GetSuccessfulSolvesAsync(id, cancellationToken);
+            var challengeIds = solves.Select(x => x.Challenge.Id);
+
+            var scores = await this.ChallengeCacheRepository.GetScoresAsync(challengeIds, cancellationToken);
+
+            var rteam = this.UserPreviewRepository.GetTeam(team);
+            var rusers = team.Id == this.RosettaUser.Team.Id
+                ? solves.Select(x => x.User)
+                    .Distinct()
+                    .ToDictionary(x => x.Id, x => this.UserPreviewRepository.GetUser(x))
+                : null;
+
+            var scoreboard = this.ChallengePreviewRepository.GetScoreboard(solves, scores, this.StartTime, rusers);
+            return this.Ok(ApiResult.FromResult(scoreboard));
+        }
+
         [HttpPost]
         [Route("{id}")]
         public async Task<ActionResult<ApiResult<bool>>> SubmitFlag([FromRoute] string id, [FromBody] ChallengeFlagModel challengeFlag, CancellationToken cancellationToken = default)

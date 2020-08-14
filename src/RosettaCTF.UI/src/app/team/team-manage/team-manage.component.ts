@@ -14,10 +14,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 
 import { ITeam } from "src/app/data/session";
-import { ICreateTeamInvite } from "src/app/data/api";
+import { ICreateTeamInvite, ISolve } from "src/app/data/api";
 import { RosettaApiService } from "src/app/services/rosetta-api.service";
 import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
 import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
@@ -27,10 +27,13 @@ import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.c
     templateUrl: "./team-manage.component.html",
     styleUrls: ["./team-manage.component.less"]
 })
-export class TeamManageComponent {
+export class TeamManageComponent implements OnInit {
 
     @Input()
     team: ITeam;
+
+    solves: ISolve[] | null = null;
+    points: number | null = null;
 
     model: ICreateTeamInvite = { id: null };
     hideForm = false;
@@ -39,6 +42,10 @@ export class TeamManageComponent {
 
     constructor(private api: RosettaApiService,
                 private eventDispatcher: EventDispatcherService) { }
+
+    ngOnInit(): void {
+        this.loadSolves();
+    }
 
     async createSubmit(): Promise<void> {
         this.hideForm = true;
@@ -90,5 +97,28 @@ export class TeamManageComponent {
 
     private clearForm(): void {
         this.model.id = null;
+    }
+
+    private async loadSolves(): Promise<void> {
+        const solves = await this.api.getTeamSolves(this.team.id);
+        if (!solves.isSuccess) {
+            this.eventDispatcher.emit("dialog",
+                {
+                    componentType: ErrorDialogComponent,
+                    defaults:
+                    {
+                        message: !!solves.error?.message
+                            ? `Fetching solves failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${solves.error.message}`
+                            : "Fetching solves failed.\n\nIf the problem persists, contact the organizers."
+                    }
+                });
+            this.solves = [];
+            return;
+        }
+
+        this.points = solves.result.map(x => x.score)
+            .reduce((acc: number, current: number) => acc + current);
+
+        this.solves = solves.result;
     }
 }

@@ -16,12 +16,18 @@
  * limitations under the License.
  */
 
-div.scores {
+ul {
+    & > li {
+        margin-top: 6px;
+    }
+}
+
+div.solves {
     display: grid;
-    grid-template-columns: min-content 3fr min-content;
+    grid-template-columns: 3fr min-content 1fr;
     grid-gap: 0;
 
-    & > div.scores-cell {
+    & > div.solves-cell {
         padding: 6px 6px;
 
         font-size: 11pt;

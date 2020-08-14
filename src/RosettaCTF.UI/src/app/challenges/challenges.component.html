@@ -29,7 +29,7 @@
             <div class="challenge" *ngFor="let challenge of category.challenges">
                 <div class="challenge-inner">
                     <h3 [ngClass]="{'solved': !!challenge.isSolved}">
-                        {{ challenge.title }}
+                        <a [routerLink]="['/challenges', challenge.id]" class="challenge-link">{{ challenge.title }}</a>
 
                         <small class="solve-checkmark" *ngIf="!!challenge.isSolved">✔ solved</small>
                         <small class="score">{{ challenge.score }} points</small>
@@ -55,7 +55,7 @@
 
                     <ng-container *ngIf="challenge.hints !== null && challenge.hints.length > 0">
                         <div class="challenge-element hints-header"><strong>Hints:</strong></div>
-                        <div class="challenge-element hint" *ngFor="let hint of challenge.hints" markdown [data]="hint" ngPreserveWhitespace></div>
+                        <div class="challenge-element hint" *ngFor="let hint of challenge.hints">{{ hint }}</div>
                     </ng-container>
 
                     <div class="challenge-element solve-button" *ngIf="!challenge.isSolved">

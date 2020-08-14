@@ -23,4 +23,27 @@ small {
     color: #bbb;
     font-size: 0.66em;
 }
+
+div.solves {
+    display: grid;
+    grid-template-columns: 3fr min-content 1fr;
+    grid-gap: 0;
+
+    & > div.solves-cell {
+        padding: 6px 6px;
+
+        font-size: 11pt;
+
+        &.header {
+            border-bottom: 1px solid #222;
+            font-weight: 600;
+        }
+
+        &:nth-child(6n + 1):not(:nth-child(1)),
+        &:nth-child(6n + 2):not(:nth-child(2)),
+        &:nth-child(6n + 3):not(:nth-child(3)) {
+            background: #444;
+        }
+    }
+}
  

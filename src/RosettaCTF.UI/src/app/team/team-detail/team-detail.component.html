@@ -18,18 +18,19 @@
  
 -->
 
-<h1>{{ session.user.username }} <small>ID: {{ session.user.id }}</small></h1>
-<p *ngIf="!!session.user.team else teamElseBlock">Part of team <strong>{{ session.user.team.name }}</strong>.</p>
-<ng-template #teamElseBlock>
-    <p>Currently not part of any team.</p>
-</ng-template>
+<h1>{{ team.name }}</h1>
+<h2>Members</h2>
+<ul>
+    <li *ngFor="let member of team.members">{{ member.username }}</li>
+</ul>
 
-<h2>Successful solve submissions</h2>
+<h2>Solves</h2>
 <p *ngIf="solves === null else solvesElseBlock">Loading...</p>
 <ng-template #solvesElseBlock>
-    <p *ngIf="solves.length === 0 else emptyElseBlock">You have not solved any challenges yet!</p>
+    <p *ngIf="solves.length === 0 else emptyElseBlock">This team has not solved any challenges yet!</p>
 </ng-template>
 <ng-template #emptyElseBlock>
+    <p>Total points accumulated: <strong>{{ points }}</strong></p>
     <div class="solves">
         <div class="solves-cell header">Challenge</div>
         <div class="solves-cell header">Score</div>

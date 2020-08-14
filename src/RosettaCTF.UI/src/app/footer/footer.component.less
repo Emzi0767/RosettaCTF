@@ -16,14 +16,23 @@
  * limitations under the License.
  */
 
- div {
-     padding: 2px 0;
+div {
+    position: relative;
+    padding: 2px 0;
 
-     &:first-child {
-         padding-top: 6px;
-     }
+    &:first-child {
+        padding-top: 6px;
+    }
 
-     &:last-child {
-         padding-bottom: 6px;
-     }
- }
+    &:last-child {
+        padding-bottom: 6px;
+    }
+}
+
+div.the-trick {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    color: #222;
+}

@@ -52,6 +52,8 @@ import { TeamManageComponent } from "./team/team-manage/team-manage.component";
 import { ScoreboardComponent } from "./scoreboard/scoreboard.component";
 import { ChallengesComponent } from "./challenges/challenges.component";
 import { SubmitFlagDialogComponent } from "./dialog/submit-flag-dialog/submit-flag-dialog.component";
+import { ChallengeDetailComponent } from "./challenges/challenge-detail/challenge-detail.component";
+import { TeamDetailComponent } from "./team/team-detail/team-detail.component";
 
 @NgModule({
     declarations: [
@@ -74,7 +76,9 @@ import { SubmitFlagDialogComponent } from "./dialog/submit-flag-dialog/submit-fl
         TeamManageComponent,
         ScoreboardComponent,
         ChallengesComponent,
-        SubmitFlagDialogComponent
+        SubmitFlagDialogComponent,
+        ChallengeDetailComponent,
+        TeamDetailComponent
     ],
     imports: [
         BrowserModule,

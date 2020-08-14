@@ -31,6 +31,7 @@ import { TeamComponent } from "./team/team.component";
 import { UserComponent } from "./user/user.component";
 import { ScoreboardComponent } from "./scoreboard/scoreboard.component";
 import { ChallengesComponent } from "./challenges/challenges.component";
+import { ChallengeDetailComponent } from "./challenges/challenge-detail/challenge-detail.component";
 
 const routes: Routes = [
     {
@@ -60,6 +61,11 @@ const routes: Routes = [
         canActivate: [ AuthenticationGuardService ]
     },
     {
+        path: "team/:id",
+        component: TeamComponent,
+        canActivate: [ AuthenticationGuardService ]
+    },
+    {
         path: "profile",
         component: UserComponent,
         canActivate: [ AuthenticationGuardService ]
@@ -71,6 +77,11 @@ const routes: Routes = [
     {
         path: "challenges",
         component: ChallengesComponent,
+        canActivate: [ AuthenticationGuardService ]
+    },
+    {
+        path: "challenges/:id",
+        component: ChallengeDetailComponent,
         canActivate: [ AuthenticationGuardService ]
     },
     {

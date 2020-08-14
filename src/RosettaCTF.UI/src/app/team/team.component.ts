@@ -15,6 +15,7 @@
 // limitations under the License.
 
 import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 
 import { RosettaApiService } from "../services/rosetta-api.service";
 import { ITeam } from "../data/session";
@@ -26,17 +27,22 @@ import { ITeam } from "../data/session";
 })
 export class TeamComponent implements OnInit {
 
+    isForeignTeam = false;
     hasTeam: boolean | null = null;
     team: ITeam | null = null;
 
-    constructor(private api: RosettaApiService) { }
+    constructor(private api: RosettaApiService,
+                private currentRoute: ActivatedRoute) { }
 
     ngOnInit(): void {
-        this.doInit();
+        const args = this.currentRoute.snapshot.paramMap;
+        const id = args.has("id") ? args.get("id") : null;
+        this.isForeignTeam = id !== null;
+        this.doInit(id);
     }
 
-    private async doInit(): Promise<void> {
-        const team = await this.api.getTeam();
+    private async doInit(id: string | null): Promise<void> {
+        const team = await this.api.getTeam(id);
         this.hasTeam = team.isSuccess && !!team.result;
         this.team = team.result;
     }

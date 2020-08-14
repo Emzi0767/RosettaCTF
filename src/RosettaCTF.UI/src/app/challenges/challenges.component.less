@@ -45,6 +45,16 @@ div.category {
 
                 position: relative;
 
+                & > a.challenge-link:link,
+                & > a.challenge-link:visited {
+                    color: #fff;
+                }
+
+                & > a.challenge-link:hover,
+                & > a.challenge-link:active {
+                    border-bottom-color: #fff;
+                }
+
                 &.solved {
                     background: #006cd1;
                 }
@@ -81,11 +91,28 @@ div.category {
                     padding-bottom: 0;
                 }
 
-                &.description {
+                &.description,
+                &.hint {
                     padding-top: 0;
 
                     ::ng-deep p {
                         margin: 6px 0;
+
+                        &:last-of-type {
+                            margin-bottom: 0;
+                        }
+                    }
+                }
+
+                &.hint {
+                    padding: 4px 12px 4px 24px;
+
+                    &::before {
+                        content: '-';
+
+                        display: inline-block;
+                        margin-left: -12px;
+                        width: 12px;
                     }
                 }
 

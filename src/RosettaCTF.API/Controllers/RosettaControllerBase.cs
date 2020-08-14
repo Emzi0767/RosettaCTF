@@ -35,6 +35,7 @@ namespace RosettaCTF.Controllers
         protected ICtfEvent EventConfiguration { get; }
         protected IUser RosettaUser { get; private set; }
         protected TimeSpan Elapsed { get; private set; }
+        protected DateTimeOffset StartTime { get; private set; }
 
         protected RosettaControllerBase(
             ILoggerFactory loggerFactory,
@@ -59,8 +60,10 @@ namespace RosettaCTF.Controllers
 
         [NonAction]
         public void SetElapsed(TimeSpan elapsed)
-        {
-            this.Elapsed = elapsed;
-        }
+            => this.Elapsed = elapsed;
+
+        [NonAction]
+        public void SetStartTime(DateTimeOffset startTime)
+            => this.StartTime = startTime;
     }
 }

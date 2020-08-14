@@ -189,13 +189,20 @@ namespace RosettaCTF
             => await this.Database.Solves
                 .Where(x => x.IsValid)
                 .Include(x => x.TeamInternal)
-                .Include(x => x.ChallengeInternal)
+                .Include(x => x.ChallengeInternal).ThenInclude(x => x.CategoryInternal)
                 .ToListAsync(cancellationToken);
 
         public async Task<IEnumerable<ICtfSolveSubmission>> GetSuccessfulSolvesAsync(long teamId, CancellationToken cancellationToken = default)
             => await this.Database.Solves
-                .Include(x => x.ChallengeInternal)
+                .Include(x => x.ChallengeInternal).ThenInclude(x => x.CategoryInternal)
+                .Include(x => x.UserInternal)
                 .Where(x => x.IsValid && x.TeamId == teamId)
+                .ToListAsync(cancellationToken);
+
+        public async Task<IEnumerable<ICtfSolveSubmission>> GetSuccessfulSolvesAsync(string challengeId, CancellationToken cancellationToken = default)
+            => await this.Database.Solves
+                .Include(x => x.ChallengeInternal).ThenInclude(x => x.CategoryInternal)
+                .Where(x => x.IsValid && x.ChallengeId == challengeId)
                 .ToListAsync(cancellationToken);
     }
 }

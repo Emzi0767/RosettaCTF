@@ -14,21 +14,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace RosettaCTF.Models
 {
     public sealed class ScoreboardEntryPreview
     {
+        public ChallengePreview Challenge { get; }
+
         public TeamPreview Team { get; }
+
+        public UserPreview User { get; }
 
         public int Score { get; }
 
         public int Ordinal { get; }
 
-        public ScoreboardEntryPreview(TeamPreview team, int score, int ordinal)
+        public string TimeTaken { get; }
+
+        public ScoreboardEntryPreview(TeamPreview team, int score, int ordinal, TimeSpan? elapsed)
         {
             this.Team = team;
             this.Score = score;
             this.Ordinal = ordinal;
+            this.TimeTaken = elapsed?.ToHumanString();
+        }
+
+        public ScoreboardEntryPreview(ChallengePreview challenge, UserPreview user, int score, int ordinal, TimeSpan? elapsed)
+        {
+            this.Challenge = challenge;
+            this.User = user;
+            this.Score = score;
+            this.Ordinal = ordinal;
+            this.TimeTaken = elapsed?.ToHumanString();
         }
     }
 }

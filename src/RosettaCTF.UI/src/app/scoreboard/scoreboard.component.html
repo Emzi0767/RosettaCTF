@@ -23,20 +23,16 @@
     <p *ngIf="scoreboard.length === 0 else emptyElseBlock">No scoreboard entries exist yet. A team will only appear in the scoreboard after submitting at least one valid solution.</p>
 </ng-template>
 <ng-template #emptyElseBlock>
-    <table class="scores">
-        <thead>
-            <tr>
-                <td>#</td>
-                <td>Team name</td>
-                <td>Score</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let entry of scoreboard">
-                <td>{{ entry.ordinal }}</td>
-                <td><a [routerLink]="['/team', entry.team.id]">{{ entry.team.name }}</a></td>
-                <td>{{ entry.score }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <h1>Current event scoreboard</h1>
+    <div class="scores">
+        <div class="scores-cell header">#</div>
+        <div class="scores-cell header">Team</div>
+        <div class="scores-cell header">Score</div>
+        
+        <ng-container *ngFor="let score of scoreboard">
+            <div class="scores-cell">{{ score.ordinal }}</div>
+            <div class="scores-cell"><a [routerLink]="['/team', score.team.id]">{{ score.team.name }}</a></div>
+            <div class="scores-cell">{{ score.score }}</div>
+        </ng-container>
+    </div>
 </ng-template>

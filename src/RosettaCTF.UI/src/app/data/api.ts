@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { IUser, ITeam } from './session';
+import { IUser, ITeam } from "./session";
 
 /**
  * Error codes that can be returned from the API.

@@ -22,6 +22,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Humanizer;
+using Humanizer.Localisation;
 
 namespace RosettaCTF
 {
@@ -93,6 +95,15 @@ namespace RosettaCTF
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string AsString(this ulong l)
             => l.ToString(CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Converts a timespan to a human-readable string.
+        /// </summary>
+        /// <param name="timeSpan">Timespan to humanize.</param>
+        /// <returns>Humanized string.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string ToHumanString(this TimeSpan timeSpan)
+            => timeSpan.Humanize(3, CultureInfo.InvariantCulture, maxUnit: TimeUnit.Hour, minUnit: TimeUnit.Second);
 
         private static void ForceLoadAssemblies()
         {
