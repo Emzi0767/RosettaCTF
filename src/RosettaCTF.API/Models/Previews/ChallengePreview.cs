@@ -72,11 +72,20 @@ namespace RosettaCTF.Models
         /// </summary>
         public int Score { get; }
 
+        /// <summary>
+        /// Gets whether the currently-logged in user's team solved the challenge already.
+        /// </summary>
+        public bool? IsSolved { get; }
+
         internal ChallengePreview(ICtfChallenge challenge, TimeSpan elapsed, EnumDisplayConverter enumCv)
             : this(challenge, elapsed, enumCv, null)
         { }
 
         internal ChallengePreview(ICtfChallenge challenge, TimeSpan elapsed, EnumDisplayConverter enumCv, int? score)
+            : this(challenge, elapsed, enumCv, score, null)
+        { }
+
+        internal ChallengePreview(ICtfChallenge challenge, TimeSpan elapsed, EnumDisplayConverter enumCv, int? score, bool? solved)
         {
             this.Id = challenge.Id;
             this.Title = challenge.Title;
@@ -98,6 +107,7 @@ namespace RosettaCTF.Models
                 this.Endpoint = EndpointToString(challenge.Endpoint);
 
             this.Score = score ?? challenge.BaseScore;
+            this.IsSolved = solved;
         }
 
         private static string EndpointToString(ICtfChallengeEndpoint endpoint)

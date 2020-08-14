@@ -49,7 +49,7 @@ namespace RosettaCTF.Models
 
         public PostgresChallengeEndpoint EndpointInternal { get; set; }
 
-        public ICtfChallengeEndpoint Endpoint { get; set; }
+        public ICtfChallengeEndpoint Endpoint => this.EndpointInternal;
 
         public bool IsHidden { get; set; }
 

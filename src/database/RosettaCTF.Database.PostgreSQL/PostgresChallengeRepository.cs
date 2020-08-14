@@ -41,6 +41,7 @@ namespace RosettaCTF
                 .Include(x => x.ChallengesInternal).ThenInclude(x => x.HintsInternal)
                 .Include(x => x.ChallengesInternal).ThenInclude(x => x.EndpointInternal)
                 .Include(x => x.ChallengesInternal).ThenInclude(x => x.CategoryInternal)
+                .OrderBy(x => x.Ordinality)
                 .ToListAsync(cancellationToken);
 
         public async Task<ICtfChallengeCategory> GetCategoryAsync(string id, CancellationToken cancellationToken = default)
@@ -83,7 +84,8 @@ namespace RosettaCTF
                 {
                     Id = category.Id,
                     Name = category.Name,
-                    IsHidden = category.IsHidden
+                    IsHidden = category.IsHidden,
+                    Ordinality = category.Ordinality
                 };
                 cats.Add(cat);
 
@@ -114,7 +116,7 @@ namespace RosettaCTF
                             ChallengeInternal = chl
                         };
                         enps.Add(cenp);
-                        chl.Endpoint = cenp;
+                        chl.EndpointInternal = cenp;
                     }
 
                     if (challenge.Hints != null && challenge.Hints.Any())
@@ -149,23 +151,6 @@ namespace RosettaCTF
                                 ChallengeInternal = chl
                             };
                             atcs.Add(atc);
-
-                            if (attachment.DecompressedAttachment != null)
-                            {
-                                var attachment_dec = attachment.DecompressedAttachment;
-                                var atc_dec = new PostgresChallengeAttachment
-                                {
-                                    Name = attachment_dec.Name,
-                                    Type = attachment_dec.Type,
-                                    Length = attachment_dec.Length,
-                                    Sha256 = attachment_dec.Sha256,
-                                    Sha1 = attachment_dec.Sha1,
-                                    DownloadUriInternal = attachment_dec.DownloadUri?.ToString(),
-                                    ChallengeInternal = chl
-                                };
-                                atcs.Add(atc_dec);
-                                atc.DecompressedAttachmentInternal = atc_dec;
-                            }
                         }
                         chl.AttachmentsInternal = catcs;
                     }
@@ -199,5 +184,17 @@ namespace RosettaCTF
 
             return solve;
         }
+
+        public async Task<IEnumerable<ICtfSolveSubmission>> GetSuccessfulSolvesAsync(CancellationToken cancellationToken = default)
+            => await this.Database.Solves
+                .Where(x => x.IsValid)
+                .Include(x => x.TeamInternal)
+                .ToListAsync(cancellationToken);
+
+        public async Task<IEnumerable<ICtfSolveSubmission>> GetSuccessfulSolvesAsync(long teamId, CancellationToken cancellationToken = default)
+            => await this.Database.Solves
+                .Include(x => x.ChallengeInternal)
+                .Where(x => x.TeamId == teamId)
+                .ToListAsync(cancellationToken);
     }
 }

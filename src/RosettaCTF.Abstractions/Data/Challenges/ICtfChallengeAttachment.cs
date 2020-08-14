@@ -52,10 +52,5 @@ namespace RosettaCTF.Data
         /// Gets the URI which allows the user to download the file.
         /// </summary>
         Uri DownloadUri { get; }
-
-        /// <summary>
-        /// Gets the information about the decompressed version of attached file.
-        /// </summary>
-        ICtfChallengeAttachment DecompressedAttachment { get; }
     }
 }

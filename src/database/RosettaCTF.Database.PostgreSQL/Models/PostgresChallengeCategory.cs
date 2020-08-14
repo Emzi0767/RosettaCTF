@@ -27,6 +27,8 @@ namespace RosettaCTF.Models
 
         public bool IsHidden { get; set; }
 
+        public int Ordinality { get; set; }
+
         public IEnumerable<PostgresChallenge> ChallengesInternal { get; set; }
 
         public IEnumerable<ICtfChallenge> Challenges => this.ChallengesInternal;

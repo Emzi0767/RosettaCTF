@@ -18,15 +18,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RosettaCTF.Data;
 
 namespace RosettaCTF.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    partial class PostgresDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200814042404_M02_CategoryOrdinality")]
+    partial class M02_CategoryOrdinality
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,8 +106,11 @@ namespace RosettaCTF.Migrations
                         .HasColumnName("challenge_id")
                         .HasColumnType("text");
 
+                    b.Property<long?>("DecompressedAttachmentId")
+                        .HasColumnName("decompressed_id")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("DownloadUriInternal")
-                        .IsRequired()
                         .HasColumnName("download_url")
                         .HasColumnType("text");
 
@@ -136,6 +141,9 @@ namespace RosettaCTF.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ChallengeId");
+
+                    b.HasIndex("DecompressedAttachmentId")
+                        .IsUnique();
 
                     b.HasIndex("Id")
                         .HasName("pkey_challenge_attachments_id");
@@ -422,6 +430,11 @@ namespace RosettaCTF.Migrations
                         .HasConstraintName("fkey_challenge_attachments_challenge")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("RosettaCTF.Models.PostgresChallengeAttachment", "DecompressedAttachmentInternal")
+                        .WithOne("CompressedAttachmentInternal")
+                        .HasForeignKey("RosettaCTF.Models.PostgresChallengeAttachment", "DecompressedAttachmentId")
+                        .HasConstraintName("fkey_challenge_attachments_decompressed");
                 });
 
             modelBuilder.Entity("RosettaCTF.Models.PostgresChallengeHint", b =>

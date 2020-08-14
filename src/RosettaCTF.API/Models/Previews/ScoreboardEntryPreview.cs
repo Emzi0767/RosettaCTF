@@ -14,30 +14,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using RosettaCTF.Data;
-using SharpYaml.Serialization;
-
-namespace RosettaCTF
+namespace RosettaCTF.Models
 {
-    internal sealed class YamlCtfChallengeAttachment : ICtfChallengeAttachment
+    public sealed class ScoreboardEntryPreview
     {
-        [YamlMember("filename")]
-        public string Name { get; set; }
+        public TeamPreview Team { get; }
 
-        [YamlMember("type")]
-        public string Type { get; set; }
+        public int Score { get; }
 
-        [YamlMember("length")]
-        public long Length { get; set; }
+        public int Ordinal { get; }
 
-        [YamlMember("sha256")]
-        public string Sha256 { get; set; }
-
-        [YamlMember("sha1")]
-        public string Sha1 { get; set; }
-
-        [YamlMember("url")]
-        public Uri DownloadUri { get; set; }
+        public ScoreboardEntryPreview(TeamPreview team, int score, int ordinal)
+        {
+            this.Team = team;
+            this.Score = score;
+            this.Ordinal = ordinal;
+        }
     }
 }

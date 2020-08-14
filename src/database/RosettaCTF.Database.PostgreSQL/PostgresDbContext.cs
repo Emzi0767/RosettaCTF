@@ -214,7 +214,6 @@ namespace RosettaCTF
             modelBuilder.Entity<PostgresChallengeAttachment>(e =>
             {
                 e.ToTable("challenge_attachments")
-                    .Ignore(m => m.DecompressedAttachment)
                     .Ignore(m => m.DownloadUri);
 
                 e.Property(m => m.Id)
@@ -243,11 +242,8 @@ namespace RosettaCTF
                     .HasColumnName("sha1");
 
                 e.Property(m => m.DownloadUriInternal)
+                    .IsRequired()
                     .HasColumnName("download_url");
-
-                e.Property(m => m.DecompressedAttachmentId)
-                    .HasColumnName("decompressed_id")
-                    .ValueGeneratedNever();
 
                 e.Property(m => m.ChallengeId)
                     .IsRequired()
@@ -255,12 +251,6 @@ namespace RosettaCTF
 
                 e.HasIndex(m => m.Id)
                     .HasName("pkey_challenge_attachments_id");
-
-                e.HasOne(m => m.DecompressedAttachmentInternal)
-                    .WithOne(m => m.CompressedAttachmentInternal)
-                    .HasForeignKey<PostgresChallengeAttachment>(m => m.DecompressedAttachmentId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fkey_challenge_attachments_decompressed");
 
                 e.HasOne(m => m.ChallengeInternal)
                     .WithMany(m => m.AttachmentsInternal)
@@ -374,6 +364,10 @@ namespace RosettaCTF
                 e.Property(m => m.IsHidden)
                     .IsRequired()
                     .HasColumnName("hidden");
+
+                e.Property(m => m.Ordinality)
+                    .IsRequired()
+                    .HasColumnName("order");
 
                 e.HasKey(m => m.Id)
                     .HasName("challenge_category_id");

@@ -49,6 +49,9 @@ import { TeamCreateComponent } from "./team/team-create/team-create.component";
 import { NotLoggedInComponent } from "./session/not-logged-in/not-logged-in.component";
 import { UserComponent } from "./user/user.component";
 import { TeamManageComponent } from "./team/team-manage/team-manage.component";
+import { ScoreboardComponent } from "./scoreboard/scoreboard.component";
+import { ChallengesComponent } from "./challenges/challenges.component";
+import { SubmitFlagDialogComponent } from "./dialog/submit-flag-dialog/submit-flag-dialog.component";
 
 @NgModule({
     declarations: [
@@ -68,7 +71,10 @@ import { TeamManageComponent } from "./team/team-manage/team-manage.component";
         TeamCreateComponent,
         NotLoggedInComponent,
         UserComponent,
-        TeamManageComponent
+        TeamManageComponent,
+        ScoreboardComponent,
+        ChallengesComponent,
+        SubmitFlagDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -93,7 +99,8 @@ import { TeamManageComponent } from "./team/team-manage/team-manage.component";
     ],
     bootstrap: [AppComponent],
     entryComponents: [
-        ErrorDialogComponent
+        ErrorDialogComponent,
+        SubmitFlagDialogComponent
     ]
 })
 export class AppModule { }

@@ -68,9 +68,12 @@ namespace RosettaCTF.Controllers
                 .Select(x => x.Id);
 
             var scores = await this.ChallengeCacheRepository.GetScoresAsync(challengeIds, cancellationToken);
+            var solves = await this.ChallengeRepository.GetSuccessfulSolvesAsync(this.RosettaUser.Team.Id, cancellationToken);
+            var solveIds = solves.Select(x => x.Challenge.Id)
+                .ToHashSet();
 
-            var rcategories = this.ChallengePreviewRepository.GetChallengeCategories(categories, this.Elapsed, this.RosettaUser.HasHiddenAccess, scores);
-            return this.Ok(rcategories);
+            var rcategories = this.ChallengePreviewRepository.GetChallengeCategories(categories, this.Elapsed, this.RosettaUser.HasHiddenAccess, scores, solveIds);
+            return this.Ok(ApiResult.FromResult(rcategories));
         }
 
         [HttpGet]
@@ -81,7 +84,7 @@ namespace RosettaCTF.Controllers
             var score = await this.ChallengeCacheRepository.GetScoreAsync(id, cancellationToken);
 
             var rchallenge = this.ChallengePreviewRepository.GetChallenge(challenge, this.Elapsed, score);
-            return this.Ok(rchallenge);
+            return this.Ok(ApiResult.FromResult(rchallenge));
         }
 
         [HttpPost]
@@ -100,6 +103,9 @@ namespace RosettaCTF.Controllers
                 var score = this.ScoringModel.ComputeScore(challenge.BaseScore, rate);
 
                 await this.ChallengeCacheRepository.UpdateScoreAsync(challenge.Id, score, cancellationToken);
+
+                if (challenge.BaseScore == 1)
+                    await this.ChallengeCacheRepository.IncrementBaselineSolveCountAsync(cancellationToken);
             }
 
             try

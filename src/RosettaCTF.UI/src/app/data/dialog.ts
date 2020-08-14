@@ -16,6 +16,8 @@
 
 import { Type, EventEmitter } from "@angular/core";
 
+import { IChallenge, IApiFlag } from "./api";
+
 export interface IDialogComponent {
     dialogDismiss: EventEmitter<null>;
     provideDefaults(defaults: any): void;
@@ -28,4 +30,9 @@ export interface IDialogData {
 
 export interface IErrorDialogDefaults {
     message: string;
+}
+
+export interface ISubmitFlagDialogDefaults {
+    challenge: IChallenge;
+    provideFlag: (flag: IApiFlag) => void;
 }

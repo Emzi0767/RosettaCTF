@@ -14,30 +14,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using RosettaCTF.Data;
-using SharpYaml.Serialization;
+using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace RosettaCTF
+namespace RosettaCTF.Migrations
 {
-    internal sealed class YamlCtfChallengeAttachment : ICtfChallengeAttachment
+    public partial class M02_CategoryOrdinality : Migration
     {
-        [YamlMember("filename")]
-        public string Name { get; set; }
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn<int>(
+                name: "order",
+                table: "challenge_categories",
+                nullable: false,
+                defaultValue: 0);
+        }
 
-        [YamlMember("type")]
-        public string Type { get; set; }
-
-        [YamlMember("length")]
-        public long Length { get; set; }
-
-        [YamlMember("sha256")]
-        public string Sha256 { get; set; }
-
-        [YamlMember("sha1")]
-        public string Sha1 { get; set; }
-
-        [YamlMember("url")]
-        public Uri DownloadUri { get; set; }
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: "order",
+                table: "challenge_categories");
+        }
     }
 }

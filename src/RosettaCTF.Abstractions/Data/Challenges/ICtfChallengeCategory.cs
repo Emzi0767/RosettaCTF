@@ -39,6 +39,11 @@ namespace RosettaCTF.Data
         bool IsHidden { get; }
 
         /// <summary>
+        /// Gets the ordinality of this category.
+        /// </summary>
+        int Ordinality { get; }
+
+        /// <summary>
         /// Gets the challenges contained within this category.
         /// </summary>
         IEnumerable<ICtfChallenge> Challenges { get; }

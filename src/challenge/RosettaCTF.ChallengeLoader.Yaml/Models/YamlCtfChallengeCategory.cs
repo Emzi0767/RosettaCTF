@@ -31,6 +31,9 @@ namespace RosettaCTF
         [YamlMember("hidden")]
         public bool IsHidden { get; set; }
 
+        [YamlMember("order")]
+        public int Ordinality { get; set; }
+
         [YamlMember("challenges")]
         public IEnumerable<ICtfChallenge> Challenges { get; set; }
     }

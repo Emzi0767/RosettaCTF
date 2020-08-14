@@ -53,11 +53,6 @@ namespace RosettaCTF.Models
         /// </summary>
         public string Uri { get; }
 
-        /// <summary>
-        /// Gets the data for decompressed version of this attachment.
-        /// </summary>
-        public ChallengeAttachmentPreview DecompressedAttachment { get; }
-
         internal ChallengeAttachmentPreview(ICtfChallengeAttachment attachment)
         {
             this.Name = attachment.Name;
@@ -66,9 +61,6 @@ namespace RosettaCTF.Models
             this.Sha256 = attachment.Sha256;
             this.Sha1 = attachment.Sha1;
             this.Uri = attachment.DownloadUri?.ToString();
-            this.DecompressedAttachment = attachment.DecompressedAttachment != null
-                ? new ChallengeAttachmentPreview(attachment.DecompressedAttachment)
-                : null;
         }
 
         // doubles alloc, and figuring out the number of commas would probably make this unnecessarily complicated
@@ -77,7 +69,7 @@ namespace RosettaCTF.Models
                 ? $"{FormatSize(length)} ({length:#,##0} bytes)"
                 : $"{length:#,##0} bytes";
 
-        private static string[] Prefixes { get; } = new[] { "k", "M", "G", "T" };
+        private static string[] Prefixes { get; } = new[] { "K", "M", "G", "T" };
 
         private static string FormatSize(long length)
         {

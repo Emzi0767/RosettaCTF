@@ -17,7 +17,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { IApiResult, IApiEventConfiguration, IApiFlag } from "../data/api";
+import { IApiResult, IApiEventConfiguration, IApiFlag, IScoreboardEntry, IChallengeCategory } from "../data/api";
 import { ISession, ITeam, ITeamInvite } from "../data/session";
 import { SessionProviderService } from "./session-provider.service";
 
@@ -183,6 +183,43 @@ export class RosettaApiService {
     async getInvites(): Promise<IApiResult<ITeamInvite[]>> {
         try {
             const response = await this.http.get<IApiResult<ITeamInvite[]>>("/api/team/invite", this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    // SCOREBOARD ----------------------------------------------------
+    async getScoreboard(): Promise<IApiResult<IScoreboardEntry[]>> {
+        try {
+            const response = await this.http.get<IApiResult<IScoreboardEntry[]>>("/api/scoreboard", this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    // CHALLENGES ----------------------------------------------------
+    async getCategories(): Promise<IApiResult<IChallengeCategory[]>> {
+        try {
+            // tslint:disable-next-line: max-line-length
+            const response = await this.http.get<IApiResult<IChallengeCategory[]>>("/api/challenge/categories", this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    async submitSolve(flag: IApiFlag): Promise<IApiResult<boolean>> {
+        try {
+            // tslint:disable-next-line: max-line-length
+            const response = await this.http.post<IApiResult<boolean>>(`/api/challenge/${flag.id}`, { flag: flag.flag }, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 

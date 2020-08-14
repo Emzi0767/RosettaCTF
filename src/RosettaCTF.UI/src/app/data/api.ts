@@ -150,6 +150,11 @@ export interface IApiError {
 export interface IApiFlag {
 
     /**
+     * Gets the ID of the challenge.
+     */
+    id: string;
+
+    /**
      * Flag text
      */
     flag: string;
@@ -322,6 +327,11 @@ export interface IChallenge {
      * Gets the point value of this challenge.
      */
     score: number;
+
+    /**
+     * Gets the solve status in current context, if applicable.
+     */
+    isSolved: boolean | null;
 }
 
 /**
@@ -358,11 +368,6 @@ export interface IChallengeAttachment {
      * Gets the download URI of the attached file.
      */
     uri?: string;
-
-    /**
-     * Gets the information about decompressed version of the attachment, if applicable.
-     */
-    decompressedAttachment?: IChallengeAttachment | null;
 }
 
 /**
@@ -404,4 +409,25 @@ export interface ISolve {
      * Gets the amount of time taken to solve.
      */
     timeTaken: number;
+}
+
+/**
+ * Represents an entry on the scoreboard.
+ */
+export interface IScoreboardEntry {
+
+    /**
+     * Gets the team for this entry.
+     */
+    team: ITeam;
+
+    /**
+     * Gets the score this team has accumulated.
+     */
+    score: number;
+
+    /**
+     * Gets the position of the team on the leaderboard.
+     */
+    ordinal: number;
 }

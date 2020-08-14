@@ -29,6 +29,8 @@ import { CallbackComponent } from "./session/callback/callback.component";
 import { NotLoggedInComponent } from "./session/not-logged-in/not-logged-in.component";
 import { TeamComponent } from "./team/team.component";
 import { UserComponent } from "./user/user.component";
+import { ScoreboardComponent } from "./scoreboard/scoreboard.component";
+import { ChallengesComponent } from "./challenges/challenges.component";
 
 const routes: Routes = [
     {
@@ -60,6 +62,15 @@ const routes: Routes = [
     {
         path: "profile",
         component: UserComponent,
+        canActivate: [ AuthenticationGuardService ]
+    },
+    {
+        path: "scoreboard",
+        component: ScoreboardComponent
+    },
+    {
+        path: "challenges",
+        component: ChallengesComponent,
         canActivate: [ AuthenticationGuardService ]
     },
     {

@@ -1,0 +1,42 @@
+<!-- 
+
+  This file is part of RosettaCTF project.
+  
+  Copyright 2020 Emzi0767
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ 
+-->
+
+<p *ngIf="scoreboard === null else loadingElseBlock">Loading...</p>
+<ng-template #loadingElseBlock>
+    <p *ngIf="scoreboard.length === 0 else emptyElseBlock">No scoreboard entries exist yet. A team will only appear in the scoreboard after submitting at least one valid solution.</p>
+</ng-template>
+<ng-template #emptyElseBlock>
+    <table class="scores">
+        <thead>
+            <tr>
+                <td>#</td>
+                <td>Team name</td>
+                <td>Score</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let entry of scoreboard">
+                <td>{{ entry.ordinal }}</td>
+                <td><a [routerLink]="['/team', entry.team.id]">{{ entry.team.name }}</a></td>
+                <td>{{ entry.score }}</td>
+            </tr>
+        </tbody>
+    </table>
+</ng-template>

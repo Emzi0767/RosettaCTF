@@ -41,14 +41,6 @@ namespace RosettaCTF.Models
             set => this.DownloadUriInternal = value?.ToString();
         }
 
-        public long? DecompressedAttachmentId { get; set; }
-
-        public PostgresChallengeAttachment DecompressedAttachmentInternal { get; set; }
-
-        public ICtfChallengeAttachment DecompressedAttachment => this.DecompressedAttachmentInternal;
-
-        public PostgresChallengeAttachment CompressedAttachmentInternal { get; set; }
-
         public string ChallengeId { get; set; }
 
         public PostgresChallenge ChallengeInternal { get; set; }
