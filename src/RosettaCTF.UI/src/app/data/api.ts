@@ -250,6 +250,11 @@ export interface IApiEventConfiguration {
      * Gets the scoring mode for this event.
      */
     scoring: ApiEventScoringMode;
+
+    /**
+     * Gets additional settings for this event.
+     */
+    flags: number;
 }
 
 /**

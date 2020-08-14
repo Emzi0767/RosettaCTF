@@ -18,6 +18,7 @@ import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 
 import { AuthenticationGuardService } from "./services/authentication-guard.service";
+import { KonamiGuardService } from "./services/konami-guard.service";
 
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { LandingComponent } from "./landing/landing.component";
@@ -33,7 +34,7 @@ const routes: Routes = [
     {
         path: "konami",
         component: KonamiComponent,
-        canActivate: [ AuthenticationGuardService ]
+        canActivate: [ AuthenticationGuardService, KonamiGuardService ]
     },
     {
         path: "session/login",

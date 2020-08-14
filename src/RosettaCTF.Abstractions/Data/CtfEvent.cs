@@ -39,6 +39,9 @@ namespace RosettaCTF.Data
         /// <inheritdoc />
         public CtfScoringMode Scoring { get; }
 
+        /// <inheritdoc />
+        public int Flags { get; }
+
         /// <summary>
         /// Creates a new instance with specified settings.
         /// </summary>
@@ -47,13 +50,15 @@ namespace RosettaCTF.Data
         /// <param name="start">Time at which the event starts.</param>
         /// <param name="end">Time at which the event ends.</param>
         /// <param name="scoring">Scoring mode for this event.</param>
-        public CtfEvent(string name, IEnumerable<string> organizers, DateTimeOffset start, DateTimeOffset end, CtfScoringMode scoring)
+        /// <param name="flags">Event flags.</param>
+        public CtfEvent(string name, IEnumerable<string> organizers, DateTimeOffset start, DateTimeOffset end, CtfScoringMode scoring, int flags)
         {
             this.Name = name;
             this.Organizers = organizers;
             this.StartTime = start;
             this.EndTime = end;
             this.Scoring = scoring;
+            this.Flags = flags;
         }
 
         /// <summary>
@@ -64,8 +69,8 @@ namespace RosettaCTF.Data
         /// <param name="start">Time at which the event starts.</param>
         /// <param name="duration">Duration of this event.</param>
         /// <param name="scoring">Scoring mode for this event.</param>
-        public CtfEvent(string name, IEnumerable<string> organizers, DateTimeOffset start, TimeSpan duration, CtfScoringMode scoring)
-            : this(name, organizers, start, start + duration, scoring)
+        public CtfEvent(string name, IEnumerable<string> organizers, DateTimeOffset start, TimeSpan duration, CtfScoringMode scoring, int flags)
+            : this(name, organizers, start, start + duration, scoring, flags)
         { }
     }
 }

@@ -24,9 +24,29 @@ import { IApiEventConfiguration } from "../data/api";
 })
 export class ConfigurationProviderService implements OnDestroy {
     configurationChange: ReplaySubject<IApiEventConfiguration> = new ReplaySubject<IApiEventConfiguration>(1);
+    private currentConfiguration: IApiEventConfiguration;
+
+    private init$: Promise<void>;
+    private initResolve;
+
+    constructor() {
+        this.init$ = new Promise<void>((resolve, reject) => { this.initResolve = resolve; });
+    }
+
+    async hasAdditionalFeatures(): Promise<boolean> {
+        await this.init$;
+        // tslint:disable-next-line: no-bitwise
+        return (this.currentConfiguration.flags & 1) === 1;
+    }
 
     updateConfiguration(data: IApiEventConfiguration): void {
+        this.currentConfiguration = data;
         this.configurationChange.next(data);
+
+        if (!!this.initResolve) {
+            this.initResolve();
+            this.initResolve = null;
+        }
     }
 
     ngOnDestroy(): void {

@@ -48,5 +48,10 @@ namespace RosettaCTF.Data
         /// Gets the scoring mode of the event.
         /// </summary>
         public CtfScoringMode Scoring { get; }
+
+        /// <summary>
+        /// Gets the additional flags for the event.
+        /// </summary>
+        public int Flags { get; }
     }
 }

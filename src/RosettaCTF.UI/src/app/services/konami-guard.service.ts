@@ -15,21 +15,21 @@
 // limitations under the License.
 
 import { Injectable } from "@angular/core";
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from "@angular/router";
+import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 
-import { SessionProviderService } from "../services/session-provider.service";
+import { ConfigurationProviderService } from "./configuration-provider.service";
 
 @Injectable({
     providedIn: "root"
 })
-export class AuthenticationGuardService implements CanActivate {
-    constructor(private sessionProvider: SessionProviderService,
+export class KonamiGuardService {
+    constructor(private configurationProvider: ConfigurationProviderService,
                 private router: Router) { }
 
     async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
-        const result = await this.sessionProvider.isAuthenticated();
+        const result = await this.configurationProvider.hasAdditionalFeatures();
         if (!result) {
-            this.router.navigate(["/session/unauthorized"]);
+            console.log("Event flags specified no special features; aborting...");
         }
 
         return result;

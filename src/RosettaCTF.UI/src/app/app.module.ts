@@ -31,6 +31,7 @@ import { SessionProviderService } from "./services/session-provider.service";
 import { RosettaHttpInterceptor } from "./services/rosetta-http-interceptor.service";
 import { SessionRefreshManagerService } from "./services/session-refresh-manager.service";
 import { AuthenticationGuardService } from "./services/authentication-guard.service";
+import { KonamiGuardService } from "./services/konami-guard.service";
 
 import { NavbarComponent } from "./navbar/navbar.component";
 import { FooterComponent } from "./footer/footer.component";
@@ -47,7 +48,7 @@ import { TeamComponent } from "./team/team.component";
 import { TeamCreateComponent } from "./team/team-create/team-create.component";
 import { NotLoggedInComponent } from "./session/not-logged-in/not-logged-in.component";
 import { UserComponent } from "./user/user.component";
-import { TeamManageComponent } from './team/team-manage/team-manage.component';
+import { TeamManageComponent } from "./team/team-manage/team-manage.component";
 
 @NgModule({
     declarations: [
@@ -87,7 +88,8 @@ import { TeamManageComponent } from './team/team-manage/team-manage.component';
         SessionProviderService,
         SessionRefreshManagerService,
         { provide: HTTP_INTERCEPTORS, useClass: RosettaHttpInterceptor, multi: true },
-        AuthenticationGuardService
+        AuthenticationGuardService,
+        KonamiGuardService
     ],
     bootstrap: [AppComponent],
     entryComponents: [
