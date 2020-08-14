@@ -127,6 +127,7 @@ namespace RosettaCTF.Controllers
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(EventNotOverFilter))]
         [Route("{id}")]
         public async Task<ActionResult<ApiResult<bool>>> SubmitFlag([FromRoute] string id, [FromBody] ChallengeFlagModel challengeFlag, CancellationToken cancellationToken = default)
         {
