@@ -70,6 +70,40 @@ export class ChallengesComponent implements OnInit {
     }
 
     private async submitFlag(flag: IApiFlag): Promise<void> {
+        this.disableButtons = true;
+        const response = await this.api.submitSolve(flag);
+        if (!response.isSuccess || !response.result) {
+            this.eventDispatcher.emit("dialog",
+                {
+                    componentType: ErrorDialogComponent,
+                    defaults:
+                    {
+                        message: !response.isSuccess && !!response.error?.message
+                            ? `Submitting flag failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${response.error.message}`
+                            : (!response.isSuccess
+                                ? "Submitting flag failed.\n\nIf the problem persists, contact the organizers."
+                                : "Your response was incorrect.")
+                    }
+                });
+        }
 
+        const categories = await this.api.getCategories();
+        if (!categories.isSuccess) {
+            this.eventDispatcher.emit("dialog",
+                {
+                    componentType: ErrorDialogComponent,
+                    defaults:
+                    {
+                        message: !!categories.error?.message
+                            ? `Fetching challenges failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${categories.error.message}`
+                            : "Fetching challenges failed.\n\nIf the problem persists, contact the organizers."
+                    }
+                });
+            this.router.navigate(["/"]);
+            return;
+        }
+
+        this.categories = categories.result;
+        this.disableButtons = false;
     }
 }

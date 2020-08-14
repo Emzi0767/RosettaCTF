@@ -18,4 +18,21 @@
  
 -->
 
-<p>submit-flag-dialog works!</p>
+<h5 class="title">Submit your flag</h5>
+
+<p class="content">Enter the flag for <strong>{{ challenge.title }}</strong>:</p>
+
+<form (ngSubmit)="doNothing()" #flagForm="ngForm">
+    <input type="text" 
+        minlength="1" maxlength="256" 
+        placeholder="Flag"
+        [(ngModel)]="model.flag" name="flag" #flag="ngModel" />
+    <div class="validation-error" [hidden]="flag.valid || flag.pristine">
+        Invalid flag. A flag must consist of no less than 1 character and no more than 256 characters.
+    </div>
+</form>
+
+<div class="buttons">
+    <button (click)="cancel()">Cancel</button>
+    <button (click)="submit()" [disabled]="!flagForm.valid || flagForm.pristine">Submit</button>
+</div>

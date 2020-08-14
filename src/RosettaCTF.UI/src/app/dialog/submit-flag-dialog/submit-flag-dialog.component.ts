@@ -41,7 +41,13 @@ export class SubmitFlagDialogComponent implements IDialogComponent {
     }
 
     submit(): void {
-        this.dialogDismiss.emit(null);
+        this.cancel();
         this.provideFlag(this.model);
     }
+
+    cancel(): void {
+        this.dialogDismiss.emit(null);
+    }
+
+    doNothing(): void { }
 }
