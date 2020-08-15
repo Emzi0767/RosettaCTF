@@ -14,30 +14,56 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
+import { Observable, Subject, merge } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+import { parseZone, utc, Moment, duration } from "moment";
 
 import { RosettaApiService } from "../services/rosetta-api.service";
 import { EventDispatcherService } from "../services/event-dispatcher.service";
-import { IChallengeCategory, IChallenge, IApiFlag } from "../data/api";
+import { IChallengeCategory, IChallenge, IApiFlag, IApiEventConfiguration } from "../data/api";
 import { ErrorDialogComponent } from "../dialog/error-dialog/error-dialog.component";
 import { SubmitFlagDialogComponent } from "../dialog/submit-flag-dialog/submit-flag-dialog.component";
+import { ConfigurationProviderService } from "../services/configuration-provider.service";
+import { TimerService } from "../services/timer.service";
 
 @Component({
     selector: "app-challenges",
     templateUrl: "./challenges.component.html",
     styleUrls: ["./challenges.component.less"]
 })
-export class ChallengesComponent implements OnInit {
+export class ChallengesComponent implements OnInit, OnDestroy {
 
+    private ngUnsubscribe = new Subject();
+    private timerStop = new Subject();
+
+    configuration$: Observable<IApiEventConfiguration>;
+    configuration: IApiEventConfiguration = null;
+    eventEnd: Moment = null;
+
+    endCountdown: string | boolean | null = null;
     categories: IChallengeCategory[] | null = null;
     disableButtons = false;
+    hideButtons = false;
 
     constructor(private api: RosettaApiService,
                 private eventDispatcher: EventDispatcherService,
-                private router: Router) { }
+                private router: Router,
+                private configurationProvider: ConfigurationProviderService,
+                private timer: TimerService) {
+        this.configuration$ = this.configurationProvider.configurationChange;
+    }
 
     ngOnInit(): void {
+        this.configuration$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(x => { this.configuration = x; this.eventEnd = parseZone(x.endTime); this.recomputeButtonVisibility(); });
+
+        this.timer.timer$
+            .pipe(takeUntil(merge(this.ngUnsubscribe, this.timerStop)))
+            .subscribe(x => this.processCountdown(x));
+
         this.api.getCategories().then(x => {
             if (!x.isSuccess) {
                 this.eventDispatcher.emit("dialog",
@@ -56,6 +82,15 @@ export class ChallengesComponent implements OnInit {
 
             this.categories = x.result;
         });
+    }
+
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+
+        if (!!this.timerStop) {
+            this.stopTimer();
+        }
     }
 
     openSolveDialog(challenge: IChallenge): void {
@@ -105,5 +140,31 @@ export class ChallengesComponent implements OnInit {
 
         this.categories = categories.result;
         this.disableButtons = false;
+    }
+
+    private recomputeButtonVisibility(): void {
+        const start = parseZone(this.configuration.endTime);
+        const now = utc();
+
+        this.hideButtons = now.isAfter(start);
+    }
+
+    private stopTimer(): void {
+        this.timerStop.next();
+        this.timerStop.complete();
+        this.timerStop = null;
+    }
+
+    private processCountdown(x: Moment): void {
+        if (this.eventEnd == null) {
+            return;
+        }
+
+        if (x.isAfter(this.eventEnd)) {
+            this.stopTimer();
+            this.endCountdown = true;
+        } else {
+            this.endCountdown = duration(this.eventEnd.diff(x)).humanize({ h: 48, m: 60, s: 60, ss: 0 });
+        }
     }
 }

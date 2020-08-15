@@ -121,7 +121,8 @@ namespace RosettaCTF.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant + "," + JwtAuthenticationOptions.RoleTeamMember)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleTeamMember)]
         [ServiceFilter(typeof(ValidRosettaUserFilter))]
         [Route("unhide")]
         public async Task<ActionResult<ApiResult<object>>> Unhide(CancellationToken cancellationToken = default)

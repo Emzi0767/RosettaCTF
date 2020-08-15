@@ -26,10 +26,10 @@ export class AuthenticationGuardService implements CanActivate {
     constructor(private sessionProvider: SessionProviderService,
                 private router: Router) { }
 
-    async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
+    async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean | UrlTree> {
         const result = await this.sessionProvider.isAuthenticated();
         if (!result) {
-            this.router.navigate(["/session/unauthorized"]);
+            return this.router.createUrlTree(["/session/unauthorized"]);
         }
 
         return result;

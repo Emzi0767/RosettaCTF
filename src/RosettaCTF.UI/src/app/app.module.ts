@@ -28,10 +28,13 @@ import { AppComponent } from "./app.component";
 
 import { ConfigurationProviderService } from "./services/configuration-provider.service";
 import { SessionProviderService } from "./services/session-provider.service";
+import { TimerService } from "./services/timer.service";
 import { RosettaHttpInterceptor } from "./services/rosetta-http-interceptor.service";
 import { SessionRefreshManagerService } from "./services/session-refresh-manager.service";
+import { CompositeRouteGuardService } from "./services/composite-route-guard.service";
 import { AuthenticationGuardService } from "./services/authentication-guard.service";
 import { KonamiGuardService } from "./services/konami-guard.service";
+import { EventStartGuardService } from "./services/event-start-guard.service";
 
 import { NavbarComponent } from "./navbar/navbar.component";
 import { FooterComponent } from "./footer/footer.component";
@@ -54,6 +57,7 @@ import { ChallengesComponent } from "./challenges/challenges.component";
 import { SubmitFlagDialogComponent } from "./dialog/submit-flag-dialog/submit-flag-dialog.component";
 import { ChallengeDetailComponent } from "./challenges/challenge-detail/challenge-detail.component";
 import { TeamDetailComponent } from "./team/team-detail/team-detail.component";
+import { NotYetComponent } from "./not-yet/not-yet.component";
 
 @NgModule({
     declarations: [
@@ -78,7 +82,8 @@ import { TeamDetailComponent } from "./team/team-detail/team-detail.component";
         ChallengesComponent,
         SubmitFlagDialogComponent,
         ChallengeDetailComponent,
-        TeamDetailComponent
+        TeamDetailComponent,
+        NotYetComponent
     ],
     imports: [
         BrowserModule,
@@ -96,10 +101,13 @@ import { TeamDetailComponent } from "./team/team-detail/team-detail.component";
     providers: [
         ConfigurationProviderService,
         SessionProviderService,
+        TimerService,
         SessionRefreshManagerService,
         { provide: HTTP_INTERCEPTORS, useClass: RosettaHttpInterceptor, multi: true },
+        CompositeRouteGuardService,
         AuthenticationGuardService,
-        KonamiGuardService
+        KonamiGuardService,
+        EventStartGuardService
     ],
     bootstrap: [AppComponent],
     entryComponents: [

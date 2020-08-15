@@ -14,23 +14,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
-
-import { ConfigurationProviderService } from "./configuration-provider.service";
+import { Injectable, OnDestroy } from "@angular/core";
+import { interval, Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+import { utc, Moment } from "moment";
 
 @Injectable({
     providedIn: "root"
 })
-export class KonamiGuardService {
-    constructor(private configurationProvider: ConfigurationProviderService) { }
+export class TimerService implements OnDestroy {
 
-    async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
-        const result = await this.configurationProvider.hasAdditionalFeatures();
-        if (!result) {
-            console.log("Event flags specified no special features; aborting...");
-        }
+    private ngUnsubscribe = new Subject();
 
-        return result;
+    timer$ = new Subject<Moment>();
+
+    constructor() {
+        interval(100)
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(x => this.timer$.next(utc()));
+    }
+
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+        this.timer$.complete();
     }
 }

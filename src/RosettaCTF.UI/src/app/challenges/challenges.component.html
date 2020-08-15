@@ -23,8 +23,10 @@
     <p *ngIf="categories.length === 0 else emptyElseBlock">It seems no challenges have been set up. Contact the organizers about it.</p>
 </ng-template>
 <ng-template #emptyElseBlock>
+    <h1>Available challenges</h1>
+    <p *ngIf="endCountdown === true || endCountdown === false else countdownElseBlock">Event is over. Submissions are locked.</p>
     <ng-container *ngFor="let category of categories">
-        <h1>{{ category.name }}</h1>
+        <h2>{{ category.name }}</h2>
         <div class="category">
             <div class="challenge" *ngFor="let challenge of category.challenges">
                 <div class="challenge-inner">
@@ -58,11 +60,14 @@
                         <div class="challenge-element hint" *ngFor="let hint of challenge.hints">{{ hint }}</div>
                     </ng-container>
 
-                    <div class="challenge-element solve-button" *ngIf="!challenge.isSolved">
+                    <div class="challenge-element solve-button" *ngIf="!challenge.isSolved && !hideButtons">
                         <button type="button" (click)="openSolveDialog(challenge)" [disabled]="disableButtons">Submit flag</button>
                     </div>
                 </div>
             </div>
         </div>
     </ng-container>
+</ng-template>
+<ng-template #countdownElseBlock>
+    <p *ngIf="endCountdown !== null">Event ends in {{ endCountdown }}.</p>
 </ng-template>

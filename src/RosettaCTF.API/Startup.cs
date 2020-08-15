@@ -247,7 +247,7 @@ namespace RosettaCTF.API
             }
             else
             {
-                error = new ApiError(ApiErrorCode.GenericError, $"HTTP Error {ctx.Response.StatusCode}");
+                error = new ApiError(ApiErrorCode.GenericError, $"HTTP Error {ctx.Response.StatusCode}.");
             }
 
             await JsonSerializer.SerializeAsync(ctx.Response.Body, ApiResult.FromError<object>(error), DefaultJsonOptions);

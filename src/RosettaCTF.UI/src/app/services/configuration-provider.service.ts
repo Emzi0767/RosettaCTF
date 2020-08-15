@@ -39,6 +39,11 @@ export class ConfigurationProviderService implements OnDestroy {
         return (this.currentConfiguration.flags & 1) === 1;
     }
 
+    async getCurrent(): Promise<IApiEventConfiguration> {
+        await this.init$;
+        return this.currentConfiguration;
+    }
+
     updateConfiguration(data: IApiEventConfiguration): void {
         this.currentConfiguration = data;
         this.configurationChange.next(data);

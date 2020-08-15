@@ -17,8 +17,10 @@
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 
+import { CompositeRouteGuardService } from "./services/composite-route-guard.service";
 import { AuthenticationGuardService } from "./services/authentication-guard.service";
 import { KonamiGuardService } from "./services/konami-guard.service";
+import { EventStartGuardService } from "./services/event-start-guard.service";
 
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { LandingComponent } from "./landing/landing.component";
@@ -32,12 +34,18 @@ import { UserComponent } from "./user/user.component";
 import { ScoreboardComponent } from "./scoreboard/scoreboard.component";
 import { ChallengesComponent } from "./challenges/challenges.component";
 import { ChallengeDetailComponent } from "./challenges/challenge-detail/challenge-detail.component";
+import { NotYetComponent } from "./not-yet/not-yet.component";
 
 const routes: Routes = [
     {
+        path: "notyet",
+        component: NotYetComponent
+    },
+    {
         path: "konami",
         component: KonamiComponent,
-        canActivate: [ AuthenticationGuardService, KonamiGuardService ]
+        data: { routeGuards: [ KonamiGuardService, AuthenticationGuardService ] },
+        canActivate: [ CompositeRouteGuardService ]
     },
     {
         path: "session/login",
@@ -63,7 +71,8 @@ const routes: Routes = [
     {
         path: "team/:id",
         component: TeamComponent,
-        canActivate: [ AuthenticationGuardService ]
+        data: { routeGuards: [ AuthenticationGuardService, EventStartGuardService ] },
+        canActivate: [ CompositeRouteGuardService ]
     },
     {
         path: "profile",
@@ -72,17 +81,21 @@ const routes: Routes = [
     },
     {
         path: "scoreboard",
-        component: ScoreboardComponent
+        component: ScoreboardComponent,
+        data: { routeGuards: [ AuthenticationGuardService, EventStartGuardService ] },
+        canActivate: [ CompositeRouteGuardService ]
     },
     {
         path: "challenges",
         component: ChallengesComponent,
-        canActivate: [ AuthenticationGuardService ]
+        data: { routeGuards: [ AuthenticationGuardService, EventStartGuardService ] },
+        canActivate: [ CompositeRouteGuardService ]
     },
     {
         path: "challenges/:id",
         component: ChallengeDetailComponent,
-        canActivate: [ AuthenticationGuardService ]
+        data: { routeGuards: [ AuthenticationGuardService, EventStartGuardService ] },
+        canActivate: [ CompositeRouteGuardService ]
     },
     {
         path: "",

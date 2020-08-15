@@ -42,7 +42,8 @@ namespace RosettaCTF.Controllers
         { }
 
         [HttpGet]
-        [Authorize(Roles = JwtAuthenticationOptions.RoleTeamMember + "," + JwtAuthenticationOptions.RoleParticipant)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleTeamMember)]
         [Route("{id?}")]
         public async Task<ActionResult<ApiResult<TeamPreview>>> Get(long? id = null, CancellationToken cancellationToken = default)
         {
@@ -60,7 +61,8 @@ namespace RosettaCTF.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = JwtAuthenticationOptions.RoleUnteamed + "," + JwtAuthenticationOptions.RoleParticipant)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleUnteamed)]
         [ServiceFilter(typeof(EventNotStartedFilter))]
         public async Task<ActionResult<ApiResult<TeamPreview>>> Create([FromBody] TeamCreateModel teamCreate, CancellationToken cancellationToken = default)
         {
@@ -82,7 +84,8 @@ namespace RosettaCTF.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = JwtAuthenticationOptions.RoleTeamMember + "," + JwtAuthenticationOptions.RoleParticipant)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleTeamMember)]
         [ServiceFilter(typeof(EventNotStartedFilter))]
         [Route("members/{userId}")]
         public async Task<ActionResult<ApiResult<TeamPreview>>> Kick(long userId, CancellationToken cancellationToken = default)
@@ -105,7 +108,8 @@ namespace RosettaCTF.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = JwtAuthenticationOptions.RoleTeamMember + "," + JwtAuthenticationOptions.RoleParticipant)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleTeamMember)]
         [ServiceFilter(typeof(EventNotStartedFilter))]
         [Route("invite/{userId}")]
         public async Task<ActionResult<ApiResult<TeamPreview>>> Invite(long userId, CancellationToken cancellationToken = default)
@@ -130,7 +134,8 @@ namespace RosettaCTF.Controllers
         }
 
         [HttpPatch]
-        [Authorize(Roles = JwtAuthenticationOptions.RoleUnteamed + "," + JwtAuthenticationOptions.RoleParticipant)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleUnteamed)]
         [ServiceFilter(typeof(EventNotStartedFilter))]
         [Route("invite/{teamId}")]
         public async Task<ActionResult<ApiResult<TeamPreview>>> AcceptInvite(long teamId, CancellationToken cancellationToken = default)
@@ -151,7 +156,8 @@ namespace RosettaCTF.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = JwtAuthenticationOptions.RoleUnteamed + "," + JwtAuthenticationOptions.RoleParticipant)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
+        [Authorize(Roles = JwtAuthenticationOptions.RoleUnteamed)]
         [ServiceFilter(typeof(EventNotStartedFilter))]
         [Route("invite")]
         public async Task<ActionResult<ApiResult<IEnumerable<TeamInvitePreview>>>> GetInvites(CancellationToken cancellationToken = default)

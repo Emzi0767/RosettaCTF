@@ -63,8 +63,7 @@ namespace RosettaCTF.Controllers
 
             var rteams = solves.Select(x => x.Team)
                 .Distinct()
-                .Select(x => new { id = x.Id, team = this.UserPreviewRepository.GetTeam(x) })
-                .ToDictionary(x => x.id, x => x.team);
+                .ToDictionary(x => x.Id, x => this.UserPreviewRepository.GetTeam(x));
 
             var scoreboard = this.ChallengePreviewRepository.GetScoreboard(solves, points, rteams);
             return this.Ok(ApiResult.FromResult(scoreboard));

@@ -15,22 +15,26 @@
 // limitations under the License.
 
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from "@angular/router";
+import { parseZone, utc } from "moment";
 
 import { ConfigurationProviderService } from "./configuration-provider.service";
 
 @Injectable({
     providedIn: "root"
 })
-export class KonamiGuardService {
-    constructor(private configurationProvider: ConfigurationProviderService) { }
+export class EventStartGuardService implements CanActivate {
 
-    async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
-        const result = await this.configurationProvider.hasAdditionalFeatures();
-        if (!result) {
-            console.log("Event flags specified no special features; aborting...");
+    constructor(private configurationProvider: ConfigurationProviderService,
+                private router: Router) { }
+
+    async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean | UrlTree> {
+        const config = await this.configurationProvider.getCurrent();
+        const result = parseZone(config.startTime);
+        if (utc().isBefore(result)) {
+            return this.router.createUrlTree(["/notyet"]);
         }
 
-        return result;
+        return true;
     }
 }

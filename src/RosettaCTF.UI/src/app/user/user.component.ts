@@ -15,7 +15,7 @@
 // limitations under the License.
 
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { Subject, Observable, forkJoin } from "rxjs";
+import { Subject, Observable, zip } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { parseZone, utc } from "moment";
 
@@ -60,9 +60,9 @@ export class UserComponent implements OnInit, OnDestroy {
 
         const c$ = this.configuration$
             .pipe(takeUntil(this.ngUnsubscribe));
-        c$.subscribe(x => { this.configuration = x; });
+        c$.subscribe(x => { this.configuration = x; this.recomputeSolveVisibility(); });
 
-        forkJoin([s$, c$]).subscribe(_ => { this.loadSolves(); });
+        zip([s$, c$]).subscribe(_ => { this.loadSolves(); });
     }
 
     ngOnDestroy(): void {
@@ -98,6 +98,6 @@ export class UserComponent implements OnInit, OnDestroy {
         const start = parseZone(this.configuration.startTime);
         const now = utc();
 
-        this.showSolves = now.isAfter(start);
+        this.showSolves = now.isAfter(start) && this.session.user.team !== null;
     }
 }

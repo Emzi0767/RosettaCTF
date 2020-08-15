@@ -29,7 +29,8 @@ using RosettaCTF.Services;
 namespace RosettaCTF.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant + "," + JwtAuthenticationOptions.RoleTeamMember)]
+    [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
+    [Authorize(Roles = JwtAuthenticationOptions.RoleTeamMember)]
     [ServiceFilter(typeof(ValidRosettaUserFilter))]
     [ServiceFilter(typeof(EventStartedFilter))]
     [ElapsedPopulatorFilter]
@@ -94,8 +95,7 @@ namespace RosettaCTF.Controllers
 
             var rteams = solves.Select(x => x.Team)
                 .Distinct()
-                .Select(x => new { id = x.Id, team = this.UserPreviewRepository.GetTeam(x) })
-                .ToDictionary(x => x.id, x => x.team);
+                .ToDictionary(x => x.Id, x => this.UserPreviewRepository.GetTeam(x));
 
             var scoreboard = this.ChallengePreviewRepository.GetScoreboard(solves, null, rteams, this.StartTime);
             return this.Ok(ApiResult.FromResult(scoreboard));

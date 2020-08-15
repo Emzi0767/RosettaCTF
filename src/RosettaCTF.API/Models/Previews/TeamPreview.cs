@@ -51,7 +51,7 @@ namespace RosettaCTF.Models
             this.Id = team.Id.AsString();
             this.Name = team.Name;
             this.AvatarUrl = team.AvatarUrl;
-            this.Members = team.Members.Select(x => new UserPreview(x, null /* this - object cycle */))
+            this.Members = team.Members?.Select(x => new UserPreview(x, null /* this - object cycle */))
                 .ToList();
         }
     }
