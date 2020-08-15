@@ -41,6 +41,11 @@ namespace RosettaCTF.API
 {
     public class Startup
     {
+        internal static JsonSerializerOptions DefaultJsonOptions { get; } = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
         public IConfiguration Configuration { get; }
 #if DEBUG
         private SpaConfigurationAttribute SpaConfiguration { get; }
@@ -177,6 +182,9 @@ namespace RosettaCTF.API
 
 #if !DEBUG
             services.AddControllers();
+
+            foreach (var xsrfType in AbstractionUtilities.FindAntiforgeryFilters())
+                services.AddSingleton(xsrfType);
 #else
             services.AddControllersWithViews();
             services.AddSpaStaticFiles(cfg => cfg.RootPath = $"{this.SpaConfiguration.Root}/dist");
@@ -200,8 +208,9 @@ namespace RosettaCTF.API
                     .UseHsts();
             }
 
-            app.UseHttpsRedirection()
-                .UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor })
+            // Typically, this will not run on HTTPS, HTTP will be used in staging for debugging
+            //app.UseHttpsRedirection()
+            app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.All })
 #if DEBUG
                 .UseStaticFiles()
 #endif
@@ -226,7 +235,7 @@ namespace RosettaCTF.API
         private void HandlePipelineException(IApplicationBuilder app)
             => app.Run(this.RunHandlerAsync);
 
-        private Task RunHandlerAsync(HttpContext ctx)
+        private async Task RunHandlerAsync(HttpContext ctx)
         {
             ctx.Response.ContentType = "application/json";
 
@@ -236,17 +245,14 @@ namespace RosettaCTF.API
             {
                 ctx.Response.StatusCode = 500;
 
-                error = new ApiError(ApiErrorCode.GenericError, "Internal server error occured while processing the request");
+                error = new ApiError(ApiErrorCode.GenericError, "Internal server error occured while processing the request.");
             }
             else
             {
                 error = new ApiError(ApiErrorCode.GenericError, $"HTTP Error {ctx.Response.StatusCode}");
             }
 
-            using (var utf8json = new Utf8JsonWriter(ctx.Response.Body))
-                JsonSerializer.Serialize(ApiResult.FromError<object>(error));
-
-            return Task.CompletedTask;
+            await JsonSerializer.SerializeAsync(ctx.Response.Body, ApiResult.FromError<object>(error), DefaultJsonOptions);
         }
     }
 }

@@ -71,6 +71,7 @@
   <PropertyGroup>
     <SpaRoot>../RosettaCTF.UI</SpaRoot>
     <MinimumNodeVersion>10.0.0</MinimumNodeVersion>
+    <UserSecretsId>9a475dc9-e1f0-4af5-a274-fcab10ac1ed0</UserSecretsId>
   </PropertyGroup>
 
   <!-- SPA build targets -->

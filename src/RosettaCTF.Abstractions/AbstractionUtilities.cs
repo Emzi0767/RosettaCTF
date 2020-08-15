@@ -32,6 +32,8 @@ namespace RosettaCTF
     /// </summary>
     public static class AbstractionUtilities
     {
+        private static HashSet<string> AntiforgeryTypeNames { get; }
+
         /// <summary>
         /// Gets the common, properly-configured instance of the UTF-8 encoder.
         /// </summary>
@@ -58,6 +60,12 @@ namespace RosettaCTF
             AssemblyCache = AppDomain.CurrentDomain.GetAssemblies();
             CurrentDirectory = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             LoadableAssemblies = CurrentDirectory.GetFiles("*.dll", SearchOption.TopDirectoryOnly);
+
+            AntiforgeryTypeNames = new HashSet<string>(2)
+            {
+                "ValidateAntiforgeryTokenAuthorizationFilter",
+                "AutoValidateAntiforgeryTokenAuthorizationFilter"
+            };
         }
 
         /// <summary>
@@ -105,6 +113,14 @@ namespace RosettaCTF
         public static string ToHumanString(this TimeSpan timeSpan)
             => timeSpan.Humanize(3, CultureInfo.InvariantCulture, maxUnit: TimeUnit.Hour, minUnit: TimeUnit.Second);
 
+        /// <summary>
+        /// Finds the types of ASP.NET Core CRSF Antiforgery filters and returns them.
+        /// </summary>
+        /// <returns>Found types.</returns>
+        public static IEnumerable<Type> FindAntiforgeryFilters()
+            => AssemblyCache.SelectMany(x => x.DefinedTypes)
+                .Where(x => AntiforgeryTypeNames.Contains(x.Name));
+
         private static void ForceLoadAssemblies()
         {
             var asns = new HashSet<string>(AppDomain.CurrentDomain
@@ -114,7 +130,10 @@ namespace RosettaCTF
             var a = Assembly.GetEntryAssembly();
             var loc = Path.GetFullPath(a.Location);
             var dir = Path.GetDirectoryName(loc.AsSpan());
-            var assemblies = Directory.GetFiles(new string(dir), "RosettaCTF.**.dll");
+            var assemblies = Directory.GetFiles(new string(dir), "RosettaCTF.*.dll");
+
+            foreach (var assembly in a.GetReferencedAssemblies())
+                Assembly.Load(assembly);
 
             foreach (var assembly in assemblies)
             {

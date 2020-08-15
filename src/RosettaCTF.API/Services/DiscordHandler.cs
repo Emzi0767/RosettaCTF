@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
+using RosettaCTF.API;
 using RosettaCTF.Data;
 using RosettaCTF.Filters;
 using RosettaCTF.Models;
@@ -47,10 +48,7 @@ namespace RosettaCTF.Services
         private const string GrantTypeToken = "authorization_code";
         private const string GrantTypeRefresh = "refresh_token";
 
-        private static JsonSerializerOptions JsonOptionsCamelCase { get; } = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
+        private static JsonSerializerOptions JsonOptionsCamelCase { get; } = Startup.DefaultJsonOptions;
 
         private static JsonSerializerOptions JsonOptionsSnakeCase { get; } = new JsonSerializerOptions
         {
