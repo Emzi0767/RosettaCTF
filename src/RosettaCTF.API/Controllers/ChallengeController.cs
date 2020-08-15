@@ -22,7 +22,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RosettaCTF.Data;
-using RosettaCTF.Data.Scoring;
 using RosettaCTF.Filters;
 using RosettaCTF.Models;
 using RosettaCTF.Services;

@@ -16,7 +16,7 @@
 
 using System;
 
-namespace RosettaCTF.Data.Scoring
+namespace RosettaCTF.Data
 {
     /// <summary>
     /// Challenge scores decay in a manner similar to a sigmoid function (a logistic curve). This variant decays slowly in the beginning, then speeds up.
@@ -27,6 +27,6 @@ namespace RosettaCTF.Data.Scoring
         int IScoringModel.ComputeScore(int baseScore, double solveRate)
             => (int)Math.Min(baseScore,
                 Math.Max(Math.Ceiling(baseScore * 0.1),
-                    baseScore * (1771 / (1964 + Math.Exp(25.28 * solveRate)) + 0.09977)));
+                    baseScore * (1771 / (1964 + Math.Exp(25.28 * solveRate.Clamp(0, 1))) + 0.09977)));
     }
 }

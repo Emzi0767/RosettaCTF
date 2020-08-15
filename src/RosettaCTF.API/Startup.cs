@@ -16,7 +16,6 @@
 
 using System;
 using System.Net.Http;
-using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery;
@@ -34,7 +33,6 @@ using RosettaCTF.Data;
 using RosettaCTF.Services;
 using RosettaCTF.Filters;
 using RosettaCTF.Models;
-using RosettaCTF.Data.Scoring;
 using Microsoft.AspNetCore.HttpOverrides;
 
 namespace RosettaCTF.API

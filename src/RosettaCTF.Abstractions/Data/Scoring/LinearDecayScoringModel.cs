@@ -16,7 +16,7 @@
 
 using System;
 
-namespace RosettaCTF.Data.Scoring
+namespace RosettaCTF.Data
 {
     /// <summary>
     /// Challenge scores decay in a linear fashion.
@@ -24,6 +24,6 @@ namespace RosettaCTF.Data.Scoring
     public sealed class LinearDecayScoringModel : IScoringModel
     {
         int IScoringModel.ComputeScore(int baseScore, double solveRate)
-            => (int)Math.Round(Math.Max(Math.Ceiling(baseScore * 0.1), (solveRate * -1.8 + 1.0) * baseScore), MidpointRounding.AwayFromZero);
+            => (int)Math.Round(Math.Max(Math.Ceiling(baseScore * 0.1), (solveRate.Clamp(0, 1) * -1.8 + 1.0) * baseScore), MidpointRounding.AwayFromZero);
     }
 }

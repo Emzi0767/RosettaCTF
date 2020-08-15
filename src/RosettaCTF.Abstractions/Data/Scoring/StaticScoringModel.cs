@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace RosettaCTF.Data.Scoring
+namespace RosettaCTF.Data
 {
     /// <summary>
     /// Static scoring mode. Challenge scoring does not decay.

@@ -121,6 +121,19 @@ namespace RosettaCTF
             => AssemblyCache.SelectMany(x => x.DefinedTypes)
                 .Where(x => AntiforgeryTypeNames.Contains(x.Name));
 
+        /// <summary>
+        /// Clamps a value to a specific range.
+        /// </summary>
+        /// <param name="d">Value to clamp.</param>
+        /// <param name="max">Maximum value.</param>
+        /// <param name="min">Minimum value.</param>
+        /// <returns>Clamped value.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Clamp(this double d, double max, double min)
+            => double.IsNaN(d)
+                ? Math.Max(0, min)
+                : Math.Max(Math.Min(d, max), min);
+
         private static void ForceLoadAssemblies()
         {
             var asns = new HashSet<string>(AppDomain.CurrentDomain

@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace RosettaCTF.Data.Scoring
+namespace RosettaCTF.Data
 {
     /// <summary>
     /// Defines a basic interface for computing the score of a challenge.
