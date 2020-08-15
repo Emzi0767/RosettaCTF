@@ -131,6 +131,9 @@ namespace RosettaCTF.Controllers
         public async Task<ActionResult<ApiResult<bool>>> SubmitFlag([FromRoute] string id, [FromBody] ChallengeFlagModel challengeFlag, CancellationToken cancellationToken = default)
         {
             var challenge = await this.ChallengeRepository.GetChallengeAsync(id, cancellationToken);
+            if (challenge.IsHidden && !this.RosettaUser.HasHiddenAccess)
+                return this.StatusCode(403, ApiResult.FromError<bool>(new ApiError(ApiErrorCode.ChallengeUnavailable, "This user is not authorized to access this challenge.")));
+
             var flag = challengeFlag.Flag;
             var valid = flag == challenge.Flag;
 

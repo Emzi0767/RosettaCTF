@@ -1,0 +1,44 @@
+{
+  "eventConfiguration": "event.yml",
+  "database": {
+    "type": "postgresql",
+    "hostname": "localhost",
+    "port": 5432,
+    "database": "rosettactf",
+    "username": "rosettactf",
+    "password": "hunter2",
+    "useSsl": true,
+    "forceTrust": true
+  },
+  "cache": {
+    "type": "redis",
+    "hostname": "localhost",
+    "port": 6379,
+    "index": 0,
+    "password": "hunter2",
+    "useSsl": true
+  },
+  "http": {
+    "listen": [
+      {
+        "address": "127.0.0.1",
+        "port": 5000,
+        "useSsl": true,
+        "certificateFile": "/var/rosettactf/rosettactf.pfx",
+        "certificatePasswordFile": "/var/rosettactf/rosettactf.pfx.pwd"
+      }
+    ]
+  },
+  "discord": {
+    "clientId": 123456789123456789,
+    "secret": "Client secret from Discord Developers page",
+    "hostname": "myrosettactfinstance.xyz",
+    "port": -1,
+    "tokenKey": "hunter2",
+    "guildId": "ID of the server to serve as authorization server. Only members from this server will be allowed to take part."
+  },
+  "tokens": {
+    "key": "hunter2",
+    "issuer": "https://myrosettactfinstance.xyz/"
+  }
+}

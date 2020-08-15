@@ -1,0 +1,107 @@
+---
+name: My CTF
+organizers:
+- Me
+- You
+- Your Grandparents
+startTime: 2020-08-20T00:00:00+00:00
+endTime: 2020-08-22T00:00:00+00:00
+scoring: jeopardy
+flags: 1
+---
+- id: start
+  name: Starter
+  order: 0
+  challenges:
+  - id: baseline
+    title: Baseline Challenge
+    flag: 'myctf{I_can_copypaste}'
+    difficulty: 0
+    description: |-
+      This is a baseline challenge. Only one challenge of this kind should exist. System will consider any challenge 
+      with base score of 1 to be baseline.
+
+      This challenge exists for the purpose of score scaling. The number of solves on this challenge is used as 
+      divisor on solve counts for every other challenge when recomputing scores.
+
+      The flag should usually be listed in the description, like so: `myctf{I_can_copypaste}`.
+
+      Difficulty should be a value of 0-6, where 0 is None, 1 is Very Easy, 5 is Very Hard, and 6 is Ultra Nightmare.
+
+      Descriptions use Markdown to style the contents.
+
+      For challenge settings, flags: 1 enables client-side facilities to access hidden challenges. Scoring can have 
+      one of the following values: static (no score decay), jeopardy (score decay), firstcomefirstserve (score decay 
+      with solve freeze). Currently only jeopardy is implemented.
+
+    hints:
+    - contents: You can specify any hints to be progressively released for the challenge in here. They are not styled. releaseAfter is a number of seconds since event start.
+      releaseAfter: 3600
+    baseScore: 1
+- id: forensics
+  name: Forensics
+  order: 1
+  challenges:
+  - id: attached_files_are_dangerous
+    title: Dangerous file
+    flag: 'myctf{files_are_fun}'
+    difficulty: 5
+    description: >-
+      You can also attach files to your challenges, like so.
+
+    attachments:
+    - filename: file.zip
+      type: ZIP Archive
+      length: 42838
+      sha256: BBD05DE19AA2AF1455C0494639215898A15286D9B05073B6C4817FE24B2C36FA
+      sha1: 6C42C62696616B72BBFC88A4BE4EAD57AA7BC503
+      url: https://myrosettactfinstance.xyz/files/file.zip
+    baseScore: 500
+- id: crypto
+  name: Cryptography
+  order: 2
+  challenges:
+  - id: netcat_crypto_challenge
+    title: Solve the riddle and win!
+    flag: 'myctf{I_am_crypto_master}'
+    difficulty: 3
+    description: |-
+        Challenges can also specify connectable endpoints. Endpoint type can have one the following values:
+
+        - 0: unknown type, formatted as `host:port`
+        - 1: netcat, formatted as `nc host port`
+        - 2: http, formatted as `http://host:port/` unless port is 80, then `http://host/`
+        - 3: ssh, formatted as `ssh host -p port` unless port is 22, then `ssh host`; note that value of `host` is not 
+          validated, so it's possible to specify user@host as value
+        - 4: ssl, formatted as `openssl s_client -connect host:port` unless port is 443, then 
+          `openssl s_client -connect host`
+        - 5: https, formatted as `https://host:port/` unless port is 443, then `https://host/`
+
+    endpoint:
+      type: 1
+      host: tcp.myrosettactfinstance.xyz
+      port: 42000
+    baseScore: 500
+- id: hidden
+  name: Hidden
+  hidden: true
+  order: 3
+  challenges:
+  - id: supersecret
+    title: Super Secret Challenge
+    flag: 'myctf{I_can_see_everything}'
+    difficulty: 6
+    description: |-
+      It is possible to set a challenge as hidden, which will require the users to activate them (currently via 
+      inputting the [Konami Code](https://en.wikipedia.org/wiki/Konami_Code) anywhere on the site). Hidden challenges 
+      are not visible unless explicitly activated.
+
+      Enabling of these events occurs by hitting the `/api/session/unhide` endpoint, with the user's authentication 
+      token, therefore anything that performs this action will enable them (including users hitting the endpoint 
+      manually, however it should be noted that the endpoint requires and validates anti-XSRF data).
+
+      The SPA can be customized to change the trigger.
+
+    baseScore: 500
+    hidden: true
+    

@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "meta", "meta", "{F014F57A-6
 		LICENSE.TXT = LICENSE.TXT
 		NOTICE.TXT = NOTICE.TXT
 		README.MD = README.MD
+		SETUP-IIS.MD = SETUP-IIS.MD
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RosettaCTF.Abstractions", "src\RosettaCTF.Abstractions\RosettaCTF.Abstractions.csproj", "{5E4779E7-3A7A-4C95-83EA-D7B90CE5D085}"
@@ -29,9 +30,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "database", "database", "{70
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cache", "cache", "{5A0B4659-991C-43D5-BD45-92283FA84D39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RosettaCTF.Database.PostgreSQL", "src\database\RosettaCTF.Database.PostgreSQL\RosettaCTF.Database.PostgreSQL.csproj", "{885E0936-19DE-47CD-AF96-A34015F310C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RosettaCTF.Database.PostgreSQL", "src\database\RosettaCTF.Database.PostgreSQL\RosettaCTF.Database.PostgreSQL.csproj", "{885E0936-19DE-47CD-AF96-A34015F310C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RosettaCTF.Cache.Redis", "src\cache\RosettaCTF.Cache.Redis\RosettaCTF.Cache.Redis.csproj", "{E5B063B6-BE3E-4B83-8168-CE062598DC5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RosettaCTF.Cache.Redis", "src\cache\RosettaCTF.Cache.Redis\RosettaCTF.Cache.Redis.csproj", "{E5B063B6-BE3E-4B83-8168-CE062598DC5A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "example-configs", "example-configs", "{E958165C-F77D-495D-9CC6-5F1F165CE94C}"
+	ProjectSection(SolutionItems) = preProject
+		config.json.example = config.json.example
+		event.yml.example = event.yml.example
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{4C03E8D8-3BE3-4B5D-8927-0FF103765F32}"
+	ProjectSection(SolutionItems) = preProject
+		.github\FUNDING.yml = .github\FUNDING.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +85,8 @@ Global
 		{5A0B4659-991C-43D5-BD45-92283FA84D39} = {5196EBA1-008A-445A-B0DC-302827C2E7AB}
 		{885E0936-19DE-47CD-AF96-A34015F310C1} = {70E066FF-FFE5-4B98-859B-7B39C9AB7BCD}
 		{E5B063B6-BE3E-4B83-8168-CE062598DC5A} = {5A0B4659-991C-43D5-BD45-92283FA84D39}
+		{E958165C-F77D-495D-9CC6-5F1F165CE94C} = {F014F57A-68AE-4F86-BF34-0FC23B45429C}
+		{4C03E8D8-3BE3-4B5D-8927-0FF103765F32} = {F014F57A-68AE-4F86-BF34-0FC23B45429C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CB1F14CB-3FFE-4D9E-B9C4-D24C26CE6A52}
