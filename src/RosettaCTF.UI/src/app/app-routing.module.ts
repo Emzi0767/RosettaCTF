@@ -82,8 +82,7 @@ const routes: Routes = [
     {
         path: "scoreboard",
         component: ScoreboardComponent,
-        data: { routeGuards: [ AuthenticationGuardService, EventStartGuardService ] },
-        canActivate: [ CompositeRouteGuardService ]
+        canActivate: [ EventStartGuardService ]
     },
     {
         path: "challenges",
