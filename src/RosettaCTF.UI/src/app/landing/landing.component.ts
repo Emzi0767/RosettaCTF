@@ -47,6 +47,6 @@ export class LandingComponent {
         const start = parseZone(cfg.startTime);
 
         const dur = duration(end.diff(start));
-        return dur.humanize();
+        return dur.humanize({ s: 60, m: 60, h: 48 });
     }
 }

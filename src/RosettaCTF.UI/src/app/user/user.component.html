@@ -24,21 +24,23 @@
     <p>Currently not part of any team.</p>
 </ng-template>
 
-<h2>Successful solve submissions</h2>
-<p *ngIf="solves === null else solvesElseBlock">Loading...</p>
-<ng-template #solvesElseBlock>
-    <p *ngIf="solves.length === 0 else emptyElseBlock">You have not solved any challenges yet!</p>
-</ng-template>
-<ng-template #emptyElseBlock>
-    <div class="solves">
-        <div class="solves-cell header">Challenge</div>
-        <div class="solves-cell header">Score</div>
-        <div class="solves-cell header">Time taken</div>
-        
-        <ng-container *ngFor="let solve of solves">
-            <div class="solves-cell"><a [routerLink]="['/challenges', solve.challenge.id]">{{ solve.challenge.title }}</a></div>
-            <div class="solves-cell">{{ solve.score }}</div>
-            <div class="solves-cell">{{ solve.timeTaken }}</div>
-        </ng-container>
-    </div>
-</ng-template>
+<ng-container *ngIf="showSolves">
+    <h2>Successful solve submissions</h2>
+    <p *ngIf="solves === null else solvesElseBlock">Loading...</p>
+    <ng-template #solvesElseBlock>
+        <p *ngIf="solves.length === 0 else emptyElseBlock">You have not solved any challenges yet!</p>
+    </ng-template>
+    <ng-template #emptyElseBlock>
+        <div class="solves">
+            <div class="solves-cell header">Challenge</div>
+            <div class="solves-cell header">Score</div>
+            <div class="solves-cell header">Time taken</div>
+            
+            <ng-container *ngFor="let solve of solves">
+                <div class="solves-cell"><a [routerLink]="['/challenges', solve.challenge.id]">{{ solve.challenge.title }}</a></div>
+                <div class="solves-cell">{{ solve.score }}</div>
+                <div class="solves-cell">{{ solve.timeTaken }}</div>
+            </ng-container>
+        </div>
+    </ng-template>
+</ng-container>

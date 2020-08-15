@@ -15,15 +15,17 @@
 // limitations under the License.
 
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { Subject, Observable } from "rxjs";
+import { Subject, Observable, forkJoin } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { parseZone, utc } from "moment";
 
 import { SessionProviderService } from "../services/session-provider.service";
 import { ISession } from "../data/session";
-import { ISolve } from "../data/api";
+import { ISolve, IApiEventConfiguration } from "../data/api";
 import { RosettaApiService } from "../services/rosetta-api.service";
 import { EventDispatcherService } from "../services/event-dispatcher.service";
 import { ErrorDialogComponent } from "../dialog/error-dialog/error-dialog.component";
+import { ConfigurationProviderService } from "../services/configuration-provider.service";
 
 @Component({
     selector: "app-user",
@@ -37,18 +39,30 @@ export class UserComponent implements OnInit, OnDestroy {
     session$: Observable<ISession>;
     session: ISession;
 
+    configuration$: Observable<IApiEventConfiguration>;
+    configuration: IApiEventConfiguration;
+
     solves: ISolve[] | null = null;
+    showSolves = false;
 
     constructor(private sessionProvider: SessionProviderService,
                 private api: RosettaApiService,
-                private eventDispatcher: EventDispatcherService) {
+                private eventDispatcher: EventDispatcherService,
+                private configurationProvider: ConfigurationProviderService) {
         this.session$ = this.sessionProvider.sessionChange;
+        this.configuration$ = this.configurationProvider.configurationChange;
     }
 
     ngOnInit(): void {
-        this.session$
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(x => { this.session = x; this.loadSolves(); });
+        const s$ = this.session$
+            .pipe(takeUntil(this.ngUnsubscribe));
+        s$.subscribe(x => { this.session = x; });
+
+        const c$ = this.configuration$
+            .pipe(takeUntil(this.ngUnsubscribe));
+        c$.subscribe(x => { this.configuration = x; });
+
+        forkJoin([s$, c$]).subscribe(_ => { this.loadSolves(); });
     }
 
     ngOnDestroy(): void {
@@ -57,6 +71,10 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     private async loadSolves(): Promise<void> {
+        if (!this.showSolves) {
+            return;
+        }
+
         const solves = await this.api.getTeamSolves(this.session.user.team.id);
         if (!solves.isSuccess) {
             this.eventDispatcher.emit("dialog",
@@ -74,5 +92,12 @@ export class UserComponent implements OnInit, OnDestroy {
         }
 
         this.solves = solves.result.filter(x => x.user.id === this.session.user.id);
+    }
+
+    private recomputeSolveVisibility(): void {
+        const start = parseZone(this.configuration.startTime);
+        const now = utc();
+
+        this.showSolves = now.isAfter(start);
     }
 }

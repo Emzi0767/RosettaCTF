@@ -14,23 +14,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, OnDestroy } from "@angular/core";
+import { Observable, Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+import { parseZone, utc } from "moment";
 
 import { ITeam } from "src/app/data/session";
-import { ICreateTeamInvite, ISolve } from "src/app/data/api";
+import { ICreateTeamInvite, ISolve, IApiEventConfiguration } from "src/app/data/api";
 import { RosettaApiService } from "src/app/services/rosetta-api.service";
 import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
 import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
+import { ConfigurationProviderService } from "src/app/services/configuration-provider.service";
 
 @Component({
     selector: "app-team-manage",
     templateUrl: "./team-manage.component.html",
     styleUrls: ["./team-manage.component.less"]
 })
-export class TeamManageComponent implements OnInit {
+export class TeamManageComponent implements OnInit, OnDestroy {
+
+    private ngUnsubscribe = new Subject();
 
     @Input()
     team: ITeam;
+
+    configuration$: Observable<IApiEventConfiguration>;
+    configuration: IApiEventConfiguration;
 
     solves: ISolve[] | null = null;
     points: number | null = null;
@@ -39,12 +48,23 @@ export class TeamManageComponent implements OnInit {
     hideForm = false;
 
     kickingMember = false;
+    showSolves = false;
 
     constructor(private api: RosettaApiService,
-                private eventDispatcher: EventDispatcherService) { }
+                private eventDispatcher: EventDispatcherService,
+                private configurationProvider: ConfigurationProviderService) {
+        this.configuration$ = this.configurationProvider.configurationChange;
+    }
 
     ngOnInit(): void {
-        this.loadSolves();
+        this.configuration$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(x => { this.configuration = x; this.recomputeSolveVisibility(); this.loadSolves(); });
+    }
+
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     async createSubmit(): Promise<void> {
@@ -100,6 +120,10 @@ export class TeamManageComponent implements OnInit {
     }
 
     private async loadSolves(): Promise<void> {
+        if (!this.showSolves) {
+            return;
+        }
+
         const solves = await this.api.getTeamSolves(this.team.id);
         if (!solves.isSuccess) {
             this.eventDispatcher.emit("dialog",
@@ -120,5 +144,12 @@ export class TeamManageComponent implements OnInit {
             .reduce((acc: number, current: number) => acc + current);
 
         this.solves = solves.result;
+    }
+
+    private recomputeSolveVisibility(): void {
+        const start = parseZone(this.configuration.startTime);
+        const now = utc();
+
+        this.showSolves = now.isAfter(start);
     }
 }
