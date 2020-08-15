@@ -51,7 +51,7 @@ In here, you want to set the options as follows:
 - **Conditions**
    - Remove all
 - **Server variables**
-   - `HTTP_X_FORWARDED_HOST` with value of `{HTTP_HOST} {HTTP_X_FORWARDED_HOST}`, and "Replace existing value" checked.
+   - `HTTP_X_FORWARDED_HOST` with value of `{HTTP_HOST}`, and "Replace existing value" checked.
    - `HTTP_X_FORWARDED_PROTO` with value of `https` or `http`, depending on whether you serve requests using TLS or not.
 - **Action**
    - **Action type:** Rewrite
