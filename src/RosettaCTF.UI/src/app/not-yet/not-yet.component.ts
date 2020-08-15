@@ -41,7 +41,7 @@ export class NotYetComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.configurationProvider.configurationChange
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(x => { this.eventStart = parseZone(x.endTime); });
+            .subscribe(x => { this.eventStart = parseZone(x.startTime); });
 
         this.timer.timer$
             .pipe(takeUntil(merge(this.ngUnsubscribe, this.timerStop)))
