@@ -16,7 +16,7 @@
 
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Subject, Observable, zip } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { takeUntil, take } from "rxjs/operators";
 import { parseZone, utc } from "moment";
 
 import { SessionProviderService } from "../services/session-provider.service";
@@ -54,15 +54,20 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        const s$ = this.session$
-            .pipe(takeUntil(this.ngUnsubscribe));
-        s$.subscribe(x => { this.session = x; });
+        this.session$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(x => { this.session = x; });
 
-        const c$ = this.configuration$
-            .pipe(takeUntil(this.ngUnsubscribe));
-        c$.subscribe(x => { this.configuration = x; this.recomputeSolveVisibility(); });
+        this.configuration$
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(x => { this.configuration = x; });
 
-        zip([s$, c$]).subscribe(_ => { this.loadSolves(); });
+        zip(
+            this.session$.pipe(take(1)),
+            this.configuration$.pipe(take(1))
+        )
+            .pipe(take(1))
+            .subscribe(() => { this.recomputeSolveVisibility(); this.loadSolves(); });
     }
 
     ngOnDestroy(): void {
