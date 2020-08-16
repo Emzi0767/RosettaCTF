@@ -16,6 +16,9 @@
 
 using System;
 using System.Net.Http;
+#if DEBUG
+using System.Reflection;
+#endif
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery;
@@ -83,10 +86,13 @@ namespace RosettaCTF.API
             // 5. Environment variables
             // 6. Command line
 
+            // For explanation on L94 and L95, see
+            https://github.com/dotnet/runtime/issues/40911
             // Load envvars and cmdline switches
             var cfg = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
-                .AddEnvironmentVariables("ROSETTACTF__")
+                //.AddEnvironmentVariables("ROSETTACTF__")
+                .AddEnvironmentVariables("ROSETTACTF:")
                 .AddCommandLine(Environment.GetCommandLineArgs())
                 .Build();
 
