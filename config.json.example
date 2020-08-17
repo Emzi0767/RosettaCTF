@@ -19,6 +19,11 @@
     "useSsl": true
   },
   "http": {
+    "forwardHeaders": {
+      "enable": true,
+      "limit": 1,
+      "networks": [ "10.0.0.0/8" ]
+    },
     "listen": [
       {
         "address": "127.0.0.1",
