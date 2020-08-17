@@ -21,6 +21,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   
   <Import Project="../RosettaCTF.Common.targets" />
+
+  <PropertyGroup>
+    <UserSecretsId>9a475dc9-e1f0-4af5-a274-fcab10ac1ed0</UserSecretsId>
+  </PropertyGroup>
   
   <!-- References -->
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
@@ -71,13 +75,13 @@
   <PropertyGroup>
     <SpaRoot>../RosettaCTF.UI</SpaRoot>
     <MinimumNodeVersion>10.0.0</MinimumNodeVersion>
-    <UserSecretsId>9a475dc9-e1f0-4af5-a274-fcab10ac1ed0</UserSecretsId>
+    <BuildSpa>True</BuildSpa>
   </PropertyGroup>
 
   <!-- SPA build targets -->
   
   <!-- Emit all configuration in debug -->
-  <Target Name="EmitSpaConfiguration" BeforeTargets="BeforeCompile" Condition="'$(Configuration)' == 'Debug'">
+  <Target Name="EmitSpaConfiguration" BeforeTargets="BeforeCompile" Condition="'$(Configuration)' == 'Debug' And '$(BuildSpa)' == 'True'">
     <ItemGroup>
       <AssemblyAttributes Include="RosettaCTF.SpaConfigurationAttribute">
         <_Parameter1>$(SpaRoot)</_Parameter1>
@@ -90,7 +94,7 @@
   </Target>
   
   <!-- Ensure node.js is installed and usable -->
-  <Target Name="EnsureNode" BeforeTargets="Build">
+  <Target Name="EnsureNode" BeforeTargets="Build" Condition="'$(BuildSpa)' == 'True'">
     <Exec Command="node --version" ContinueOnError="true" ConsoleToMsBuild="True" StandardOutputImportance="Low">
       <Output TaskParameter="ExitCode" PropertyName="NodeErrorCode" />
       <Output TaskParameter="ConsoleOutput" PropertyName="NodeVersion" />
@@ -101,13 +105,13 @@
   </Target>
   
   <!-- Restore node packages -->
-  <Target Name="RestoreNodePackages" AfterTargets="EnsureNode" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)/node_modules')">
+  <Target Name="RestoreNodePackages" AfterTargets="EnsureNode" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)/node_modules') And '$(BuildSpa)' == 'True'">
     <Message Importance="High" Text="Restoring npm packages for SPA build. This will take a while..." />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" ConsoleToMsBuild="True" StandardOutputImportance="Low" StandardErrorImportance="Normal" />
   </Target>
 
   <!-- Build SPA in production mode when building in Release -->
-  <Target Name="BuildWebPack" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+  <Target Name="BuildWebPack" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' And '$(BuildSpa)' == 'True'">
     <Message Importance="High" Text="Removing SPA build artifacts" Condition="Exists('$(SpaRoot)/dist')" />
     <RemoveDir Directories="$(SpaRoot)/dist" Condition="Exists('$(SpaRoot)/dist')" />
 

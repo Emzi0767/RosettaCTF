@@ -105,6 +105,15 @@ namespace RosettaCTF
             => l.ToString(CultureInfo.InvariantCulture);
 
         /// <summary>
+        /// Parses a numeric string as int.
+        /// </summary>
+        /// <param name="str">String to parse.</param>
+        /// <returns>Parsed string.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int ParseAsInt(this ReadOnlySpan<char> str)
+            => int.Parse(str, NumberStyles.Integer, CultureInfo.InvariantCulture);
+
+        /// <summary>
         /// Converts a timespan to a human-readable string.
         /// </summary>
         /// <param name="timeSpan">Timespan to humanize.</param>

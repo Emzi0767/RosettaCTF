@@ -37,6 +37,8 @@ using RosettaCTF.Services;
 using RosettaCTF.Filters;
 using RosettaCTF.Models;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Options;
+using System.Net;
 
 namespace RosettaCTF.API
 {
@@ -54,40 +56,40 @@ namespace RosettaCTF.API
 
         public Startup(IConfiguration configuration)
         {
-            // Configuration loading
-            // Given an object structure like
-            // CONFIG:
-            // prop: bool
-            // listen: endpoint[]
-            // 
-            // ENDPOINT:
-            // address: string
-            // port: int
-            //
-            // Array indexes are treated as keys
-            // To set /prop via:
-            // - envvars: ROSETTACTF__PROP=true (note double underscore)
-            // - cmdline: --prop=false
-            //
-            // To set /listen/0/* via:
-            // - envvars (note double underscores):
-            //   ROSETTACTF__LISTEN__0__ADDRESS=0.0.0.0
-            //   ROSETTACTF__LISTEN__0__PORT=5000
-            // - cmdline:
-            //   --listen:0:address=127.0.0.1
-            //   --listen:0:port=4200
-            //
-            // Supported configuration sources, in order of precedence (first is lowest priority - meaning higher 
-            // priority will override its values):
-            // 1. appsettings.json
-            // 2. appsettings.*.json (* is env, i.e. development, production, or staging)
-            // 3. *.json (specified via ROSETTACTF__JSONCONFIGURATION; defaults to config.json)
-            // 4. *.yml (specified via ROSETTACTF__YAMLCONFIGURATION; defaults to config.yml)
-            // 5. Environment variables
-            // 6. Command line
+        // Configuration loading
+        // Given an object structure like
+        // CONFIG:
+        // prop: bool
+        // listen: endpoint[]
+        // 
+        // ENDPOINT:
+        // address: string
+        // port: int
+        //
+        // Array indexes are treated as keys
+        // To set /prop via:
+        // - envvars: ROSETTACTF__PROP=true (note double underscore)
+        // - cmdline: --prop=false
+        //
+        // To set /listen/0/* via:
+        // - envvars (note double underscores):
+        //   ROSETTACTF__LISTEN__0__ADDRESS=0.0.0.0
+        //   ROSETTACTF__LISTEN__0__PORT=5000
+        // - cmdline:
+        //   --listen:0:address=127.0.0.1
+        //   --listen:0:port=4200
+        //
+        // Supported configuration sources, in order of precedence (first is lowest priority - meaning higher 
+        // priority will override its values):
+        // 1. appsettings.json
+        // 2. appsettings.*.json (* is env, i.e. development, production, or staging)
+        // 3. *.json (specified via ROSETTACTF__JSONCONFIGURATION; defaults to config.json)
+        // 4. *.yml (specified via ROSETTACTF__YAMLCONFIGURATION; defaults to config.yml)
+        // 5. Environment variables
+        // 6. Command line
 
-            // For explanation on L94 and L95, see
-            https://github.com/dotnet/runtime/issues/40911
+        // For explanation on L94 and L95, see
+        https://github.com/dotnet/runtime/issues/40911
             // Load envvars and cmdline switches
             var cfg = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
@@ -146,6 +148,10 @@ namespace RosettaCTF.API
                 .Bind(this.Configuration.GetSection("Http"))
                 .ValidateDataAnnotations();
 
+            services.AddOptions<RosettaConfigurationHttpProxy>()
+                .Bind(this.Configuration.GetSection("Http:ForwardHeaders"))
+                .ValidateDataAnnotations();
+
             services.AddOptions<RosettaConfigurationDiscord>()
                 .Bind(this.Configuration.GetSection("Discord"))
                 .ValidateDataAnnotations();
@@ -197,9 +203,10 @@ namespace RosettaCTF.API
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
-            IApplicationBuilder app, 
-            IWebHostEnvironment env, 
-            IAntiforgery xsrf)
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            IAntiforgery xsrf,
+            IOptions<RosettaConfigurationHttpProxy> proxyOpts)
         {
             if (env.IsDevelopment())
             {
@@ -212,9 +219,25 @@ namespace RosettaCTF.API
                     .UseHsts();
             }
 
+            var forwardConfig = new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = proxyOpts.Value.Enable ? ForwardedHeaders.All : ForwardedHeaders.None,
+                ForwardLimit = proxyOpts.Value.Limit
+            };
+            if (proxyOpts.Value.Enable)
+                foreach (var scidr in proxyOpts.Value.Networks)
+                {
+                    var cidr = scidr.AsSpan();
+                    var ix = cidr.IndexOf('/');
+                    var ip = IPAddress.Parse(cidr.Slice(0, ix));
+                    var sz = cidr.Slice(ix + 1).ParseAsInt();
+
+                    forwardConfig.KnownNetworks.Add(new IPNetwork(ip, sz));
+                }
+
             // Typically, this will not run on HTTPS, HTTP will be used in staging for debugging
             //app.UseHttpsRedirection()
-            app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.All })
+            app.UseForwardedHeaders(forwardConfig)
 #if DEBUG
                 .UseStaticFiles()
 #endif

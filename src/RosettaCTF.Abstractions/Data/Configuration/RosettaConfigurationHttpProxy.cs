@@ -1,5 +1,5 @@
 ﻿// This file is part of RosettaCTF project.
-//
+// 
 // Copyright 2020 Emzi0767
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,21 +18,23 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RosettaCTF.Data
 {
-    /// <summary>
-    /// Represents HTTP configuration options for the application.
-    /// </summary>
-    public sealed class RosettaConfigurationHttp
+    public sealed class RosettaConfigurationHttpProxy
     {
         /// <summary>
-        /// Gets the endpoints to bind to.
+        /// Gets or sets whether forward header reading is enabled;
         /// </summary>
         [Required]
-        public RosettaConfigurationEndpoint[] Listen { get; set; }
+        public bool Enable { get; set; }
 
         /// <summary>
-        /// Gets the forward header configuration.
+        /// Gets or sets the forward limit for the headers.
         /// </summary>
         [Required]
-        public RosettaConfigurationHttpProxy ForwardHeaders { get; set; }
+        public int? Limit { get; set; }
+
+        /// <summary>
+        /// Gets or sets the networks the headers are trusted from.
+        /// </summary>
+        public string[] Networks { get; set; }
     }
 }
