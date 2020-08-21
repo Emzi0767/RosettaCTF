@@ -19,20 +19,26 @@ using System.ComponentModel.DataAnnotations;
 namespace RosettaCTF.Data
 {
     /// <summary>
-    /// Represents configuration for application tokens.
+    /// Represents configuration for the key deriver.
     /// </summary>
-    public sealed class RosettaConfigurationTokens
+    public sealed class RosettaConfigurationSecurity
     {
         /// <summary>
-        /// Gets or sets the signing key.
+        /// Gets or sets the degree of parallelism when computing the hash.
         /// </summary>
         [Required]
-        public string Key { get; set; }
+        public int Parallelism { get; set; }
 
         /// <summary>
-        /// Gets or sets the token issuer to validate against.
+        /// Gets or sets how much memory should be used when computing the hash.
         /// </summary>
         [Required]
-        public string Issuer { get; set; }
+        public int Memory { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of iterations to use when computing the hash.
+        /// </summary>
+        [Required]
+        public int Iterations { get; set; }
     }
 }

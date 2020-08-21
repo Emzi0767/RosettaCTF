@@ -19,43 +19,24 @@ using System.ComponentModel.DataAnnotations;
 namespace RosettaCTF.Data
 {
     /// <summary>
-    /// Represents Discord OAuth2 configuration for authentication purposes.
+    /// Represents OAuth2 configuration.
     /// </summary>
-    public sealed class RosettaConfigurationDiscord
+    public sealed class RosettaConfigurationOAuth
     {
         /// <summary>
-        /// Gets the Client ID used for Discord redirect and token exchange.
+        /// Gets or sets whether OAuth authentication is enabled.
         /// </summary>
         [Required]
-        public ulong ClientId { get; set; }
+        public bool Enable { get; set; }
 
         /// <summary>
-        /// Gets the Client Secret used to exchange code for a token.
+        /// Gets or sets the key used to encrypt OAuth tokens at rest. This key is not used directly; rather, a hash is derived from it.
         /// </summary>
-        [Required]
-        public string Secret { get; set; }
-
-        /// <summary>
-        /// Gets the hostname for the redirect URL.
-        /// </summary>
-        [Required]
-        public string Hostname { get; set; }
-
-        /// <summary>
-        /// Gets the port for the redirect URL.
-        /// </summary>
-        public int Port { get; set; }
-
-        /// <summary>
-        /// Gets the token used to store keys.
-        /// </summary>
-        [Required]
         public string TokenKey { get; set; }
 
         /// <summary>
-        /// Gets the guild ID used to determine whether users are authorized.
+        /// Gets or sets the collection of configured OAuth providers.
         /// </summary>
-        [Required]
-        public string GuildId { get; set; }
+        public RosettaConfigurationOAuthProvider[] Providers { get; set; }
     }
 }

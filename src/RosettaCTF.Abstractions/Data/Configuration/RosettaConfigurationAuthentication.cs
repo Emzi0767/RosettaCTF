@@ -19,38 +19,32 @@ using System.ComponentModel.DataAnnotations;
 namespace RosettaCTF.Data
 {
     /// <summary>
-    /// Represents the root of RosettaCTF basic configuration.
+    /// Represents configuration for application tokens.
     /// </summary>
-    public sealed class RosettaConfigurationRoot
+    public sealed class RosettaConfigurationAuthentication
     {
         /// <summary>
-        /// Gets the path to event configuration file.
-        /// </summary>
-        [ValidFilePath]
-        public string EventConfiguration { get; set; }
-
-        /// <summary>
-        /// Gets or sets the persistent datastore configuration.
+        /// Gets or sets the signing key.
         /// </summary>
         [Required]
-        public RosettaConfigurationDatastore Database { get; set; }
+        public string TokenKey { get; set; }
 
         /// <summary>
-        /// Gets or sets the cache datastore configuration.
+        /// Gets or sets the token issuer to validate against.
         /// </summary>
         [Required]
-        public RosettaConfigurationCache Cache { get; set; }
+        public string TokenIssuer { get; set; }
 
         /// <summary>
-        /// Gets or sets the HTTP configuration.
+        /// Gets or sets whether local login is enabled.
         /// </summary>
         [Required]
-        public RosettaConfigurationHttp Http { get; set; }
+        public bool LocalLogin { get; set; }
 
         /// <summary>
-        /// Gets or sets the application token configuration.
+        /// Gets or sets OAuth2 configuration.
         /// </summary>
         [Required]
-        public RosettaConfigurationAuthentication Tokens { get; set; }
+        public RosettaConfigurationOAuth OAuth { get; set; }
     }
 }

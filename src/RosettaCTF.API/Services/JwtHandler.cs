@@ -31,7 +31,7 @@ namespace RosettaCTF.Services
     /// </summary>
     public sealed class JwtHandler
     {
-        private RosettaConfigurationTokens Configuration { get; }
+        private RosettaConfigurationAuthentication Configuration { get; }
 
         private TokenValidationParameters JwtValidationParameters { get; }
         private SymmetricSecurityKey Key { get; }
@@ -42,7 +42,7 @@ namespace RosettaCTF.Services
         /// </summary>
         /// <param name="cfg">Configuration to use.</param>
         public JwtHandler(
-            IOptions<RosettaConfigurationTokens> cfg,
+            IOptions<RosettaConfigurationAuthentication> cfg,
             Argon2idKeyDeriver keyDeriver)
         {
             this.Configuration = cfg.Value;
@@ -51,7 +51,7 @@ namespace RosettaCTF.Services
             this.Key = new SymmetricSecurityKey(
                 async.Execute(
                     keyDeriver.DeriveKeyAsync(
-                        value: AbstractionUtilities.UTF8.GetBytes(this.Configuration.Key), 
+                        value: AbstractionUtilities.UTF8.GetBytes(this.Configuration.TokenKey), 
                         salt: null, 
                         byteCount: 512 / 8)));
 
@@ -62,8 +62,8 @@ namespace RosettaCTF.Services
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = this.Configuration.Issuer,
-                ValidAudience = this.Configuration.Issuer,
+                ValidIssuer = this.Configuration.TokenIssuer,
+                ValidAudience = this.Configuration.TokenIssuer,
                 IssuerSigningKey = this.Key,
                 ClockSkew = TimeSpan.FromSeconds(1)
             };
@@ -84,8 +84,8 @@ namespace RosettaCTF.Services
 
             var expires = DateTime.UtcNow.AddHours(2);
             var token = new JwtSecurityToken(
-                this.Configuration.Issuer,
-                this.Configuration.Issuer,
+                this.Configuration.TokenIssuer,
+                this.Configuration.TokenIssuer,
                 claims,
                 expires: expires,
                 signingCredentials: this.Credentials);

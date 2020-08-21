@@ -152,12 +152,16 @@ namespace RosettaCTF.API
                 .Bind(this.Configuration.GetSection("Http:ForwardHeaders"))
                 .ValidateDataAnnotations();
 
-            services.AddOptions<RosettaConfigurationDiscord>()
-                .Bind(this.Configuration.GetSection("Discord"))
+            services.AddOptions<RosettaConfigurationAuthentication>()
+                .Bind(this.Configuration.GetSection("Auth"))
                 .ValidateDataAnnotations();
 
-            services.AddOptions<RosettaConfigurationTokens>()
-                .Bind(this.Configuration.GetSection("Tokens"))
+            services.AddOptions<RosettaConfigurationOAuth>()
+                .Bind(this.Configuration.GetSection("Auth:OAuth"))
+                .ValidateDataAnnotations();
+
+            services.AddOptions<RosettaConfigurationSecurity>()
+                .Bind(this.Configuration.GetSection("KeyDerivation"))
                 .ValidateDataAnnotations();
 
             services.AddAuthentication(JwtAuthenticationOptions.SchemeName)

@@ -17,11 +17,28 @@
 using System;
 using System.Threading.Tasks;
 using Konscious.Security.Cryptography;
+using Microsoft.Extensions.Options;
+using RosettaCTF.Data;
 
 namespace RosettaCTF
 {
+    /// <summary>
+    /// Derives encryption keys from values using Argon2id algorithm.
+    /// </summary>
     public sealed class Argon2idKeyDeriver
     {
+        private int? Parallelism { get; }
+        private int? MemorySize { get; }
+        private int? Iterations { get; }
+
+        public Argon2idKeyDeriver(IOptions<RosettaConfigurationSecurity> opts)
+        {
+            var ov = opts.Value;
+            this.Parallelism = ov.Parallelism <= 0 ? null : ov.Parallelism as int?;
+            this.MemorySize = ov.Memory <= 0 ? null : ov.Memory as int?;
+            this.Iterations = ov.Iterations <= 0 ? null : ov.Iterations as int?;
+        }
+
         public async Task<byte[]> DeriveKeyAsync(byte[] value, byte[] salt, int byteCount)
         {
             // just to be safe
@@ -36,9 +53,9 @@ namespace RosettaCTF
 
             var argon2 = new Argon2id(k)
             {
-                DegreeOfParallelism = Environment.ProcessorCount * 2,
-                MemorySize = 16384, /* 16 MiB */
-                Iterations = 8,
+                DegreeOfParallelism = this.Parallelism ?? (Environment.ProcessorCount * 2),
+                MemorySize = this.MemorySize ?? 16384, /* 16 MiB */
+                Iterations = this.Iterations ?? 8,
                 Salt = s
             };
 
