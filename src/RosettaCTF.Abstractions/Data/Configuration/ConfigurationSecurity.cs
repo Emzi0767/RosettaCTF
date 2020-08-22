@@ -19,24 +19,26 @@ using System.ComponentModel.DataAnnotations;
 namespace RosettaCTF.Data
 {
     /// <summary>
-    /// Represents OAuth2 configuration.
+    /// Represents configuration for the key deriver.
     /// </summary>
-    public sealed class RosettaConfigurationOAuth
+    public sealed class ConfigurationSecurity
     {
         /// <summary>
-        /// Gets or sets whether OAuth authentication is enabled.
+        /// Gets or sets the degree of parallelism when computing the hash.
         /// </summary>
         [Required]
-        public bool Enable { get; set; }
+        public int Parallelism { get; set; }
 
         /// <summary>
-        /// Gets or sets the key used to encrypt OAuth tokens at rest. This key is not used directly; rather, a hash is derived from it.
+        /// Gets or sets how much memory should be used when computing the hash.
         /// </summary>
-        public string TokenKey { get; set; }
+        [Required]
+        public int Memory { get; set; }
 
         /// <summary>
-        /// Gets or sets the collection of configured OAuth providers.
+        /// Gets or sets the number of iterations to use when computing the hash.
         /// </summary>
-        public RosettaConfigurationOAuthProvider[] Providers { get; set; }
+        [Required]
+        public int Iterations { get; set; }
     }
 }

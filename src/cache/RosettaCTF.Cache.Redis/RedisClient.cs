@@ -33,11 +33,11 @@ namespace RosettaCTF
         private const string KeyPrefix = "RosettaCTF";
 
         private ConnectionMultiplexer ConnectionMultiplexer { get; set; }
-        private RosettaConfigurationCache Configuration { get; }
+        private ConfigurationCache Configuration { get; }
         private ILogger<RedisClient> Logger { get; }
 
         public RedisClient(
-            IOptions<RosettaConfigurationCache> config,
+            IOptions<ConfigurationCache> config,
             ILoggerFactory loggerFactory)
         {
             this.Configuration = config.Value;

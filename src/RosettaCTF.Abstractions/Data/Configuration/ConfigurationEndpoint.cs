@@ -14,25 +14,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace RosettaCTF.Data
 {
     /// <summary>
-    /// Represents HTTP configuration options for the application.
+    /// Represents an HTTP listen endpoint.
     /// </summary>
-    public sealed class RosettaConfigurationHttp
+    public sealed class ConfigurationEndpoint
     {
         /// <summary>
-        /// Gets the endpoints to bind to.
+        /// Gets the address to bind to.
         /// </summary>
         [Required]
-        public RosettaConfigurationEndpoint[] Listen { get; set; }
+        public string Address { get; set; }
 
         /// <summary>
-        /// Gets the forward header configuration.
+        /// Gets the port to bind to.
         /// </summary>
-        [Required]
-        public RosettaConfigurationHttpProxy ForwardHeaders { get; set; }
+        [Required, Range(1, 65535)]
+        public int Port { get; set; }
+
+        /// <summary>
+        /// Gets whether requests served on this endpoint should use encryption.
+        /// </summary>
+        public bool UseSsl { get; set; }
+
+        /// <summary>
+        /// Gets the path to certificate file to use for this endpoint.
+        /// </summary>
+        public string CertificateFile { get; set; }
+
+        /// <summary>
+        /// Gets the path to certificate password file to use for this endpoint.
+        /// </summary>
+        public string CertificatePasswordFile { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace RosettaCTF.Data
     /// <summary>
     /// Represents configuration options for persistent datastores (typically an SQL database).
     /// </summary>
-    public sealed class RosettaConfigurationDatastore
+    public sealed class ConfigurationDatastore
     {
         /// <summary>
         /// Gets the type of the datastore to use.

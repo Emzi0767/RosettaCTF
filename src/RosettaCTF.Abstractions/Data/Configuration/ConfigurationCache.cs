@@ -14,37 +14,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace RosettaCTF.Data
 {
     /// <summary>
-    /// Represents configuration for application tokens.
+    /// Represents configuration for a temporary cache, like Redis.
     /// </summary>
-    public sealed class RosettaConfigurationAuthentication
+    public sealed class ConfigurationCache
     {
         /// <summary>
-        /// Gets or sets the signing key.
+        /// Gets the type of the datastore.
         /// </summary>
-        [Required]
-        public string TokenKey { get; set; }
+        [Required, MinLength(1)]
+        public string Type { get; set; }
 
         /// <summary>
-        /// Gets or sets the token issuer to validate against.
+        /// Gets the hostname to connect to.
         /// </summary>
-        [Required]
-        public string TokenIssuer { get; set; }
+        [Required, MinLength(1)]
+        public string Hostname { get; set; }
 
         /// <summary>
-        /// Gets or sets whether local login is enabled.
+        /// Gets the port to connect to.
         /// </summary>
-        [Required]
-        public bool LocalLogin { get; set; }
+        [Required, Range(1, 65535)]
+        public int Port { get; set; }
 
         /// <summary>
-        /// Gets or sets OAuth2 configuration.
+        /// Gets the index of the datastore to use.
         /// </summary>
-        [Required]
-        public RosettaConfigurationOAuth OAuth { get; set; }
+        [Required, Range(0, int.MaxValue)]
+        public int Index { get; set; }
+
+        /// <summary>
+        /// Gets the password used to authenticate with the datastore.
+        /// </summary>
+        public string Password { get; set; }
+
+        /// <summary>
+        /// Gets whether to use encryption for datastore connection.
+        /// </summary>
+        public bool UseSsl { get; set; }
     }
 }

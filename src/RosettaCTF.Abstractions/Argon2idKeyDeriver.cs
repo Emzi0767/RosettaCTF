@@ -31,7 +31,7 @@ namespace RosettaCTF
         private int? MemorySize { get; }
         private int? Iterations { get; }
 
-        public Argon2idKeyDeriver(IOptions<RosettaConfigurationSecurity> opts)
+        public Argon2idKeyDeriver(IOptions<ConfigurationSecurity> opts)
         {
             var ov = opts.Value;
             this.Parallelism = ov.Parallelism <= 0 ? null : ov.Parallelism as int?;

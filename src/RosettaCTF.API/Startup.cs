@@ -132,35 +132,35 @@ namespace RosettaCTF.API
                 x.HeaderName = "X-Rosetta-XSRF";
             });
 
-            services.AddOptions<RosettaConfigurationRoot>()
+            services.AddOptions<Data.ConfigurationRoot>()
                 .Bind(this.Configuration)
                 .ValidateDataAnnotations();
 
-            services.AddOptions<RosettaConfigurationDatastore>()
+            services.AddOptions<ConfigurationDatastore>()
                 .Bind(this.Configuration.GetSection("Database"))
                 .ValidateDataAnnotations();
 
-            services.AddOptions<RosettaConfigurationCache>()
+            services.AddOptions<ConfigurationCache>()
                 .Bind(this.Configuration.GetSection("Cache"))
                 .ValidateDataAnnotations();
 
-            services.AddOptions<RosettaConfigurationHttp>()
+            services.AddOptions<ConfigurationHttp>()
                 .Bind(this.Configuration.GetSection("Http"))
                 .ValidateDataAnnotations();
 
-            services.AddOptions<RosettaConfigurationHttpProxy>()
+            services.AddOptions<ConfigurationHttpProxy>()
                 .Bind(this.Configuration.GetSection("Http:ForwardHeaders"))
                 .ValidateDataAnnotations();
 
-            services.AddOptions<RosettaConfigurationAuthentication>()
+            services.AddOptions<ConfigurationAuthentication>()
                 .Bind(this.Configuration.GetSection("Auth"))
                 .ValidateDataAnnotations();
 
-            services.AddOptions<RosettaConfigurationOAuth>()
+            services.AddOptions<ConfigurationOAuth>()
                 .Bind(this.Configuration.GetSection("Auth:OAuth"))
                 .ValidateDataAnnotations();
 
-            services.AddOptions<RosettaConfigurationSecurity>()
+            services.AddOptions<ConfigurationSecurity>()
                 .Bind(this.Configuration.GetSection("KeyDerivation"))
                 .ValidateDataAnnotations();
 
@@ -178,7 +178,7 @@ namespace RosettaCTF.API
 
             services.AddTransient<UserPreviewRepository>()
                 .AddTransient<ChallengePreviewRepository>()
-                .AddSingleton<DiscordTokenHandler>()
+                .AddSingleton<OAuthTokenHandler>()
                 .AddSingleton<HttpClient>()
                 .AddScoped<DiscordHandler>()
                 .AddSingleton<JwtHandler>()
@@ -210,7 +210,7 @@ namespace RosettaCTF.API
             IApplicationBuilder app,
             IWebHostEnvironment env,
             IAntiforgery xsrf,
-            IOptions<RosettaConfigurationHttpProxy> proxyOpts)
+            IOptions<ConfigurationHttpProxy> proxyOpts)
         {
             if (env.IsDevelopment())
             {

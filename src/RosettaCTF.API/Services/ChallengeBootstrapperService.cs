@@ -29,12 +29,12 @@ namespace RosettaCTF.Services
     public sealed class ChallengeBootstrapperService : IHostedService
     {
         private IServiceProvider Services { get; }
-        private RosettaConfigurationRoot Configuration { get; }
+        private ConfigurationRoot Configuration { get; }
         private DatastoreImplementationSelector DatastoreSelector { get; }
 
         public ChallengeBootstrapperService(
             IServiceProvider services,
-            IOptions<RosettaConfigurationRoot> config,
+            IOptions<ConfigurationRoot> config,
             DatastoreImplementationSelector dsiSelector)
         {
             this.Services = services;

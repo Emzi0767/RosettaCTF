@@ -19,26 +19,38 @@ using System.ComponentModel.DataAnnotations;
 namespace RosettaCTF.Data
 {
     /// <summary>
-    /// Represents configuration for the key deriver.
+    /// Represents the root of RosettaCTF basic configuration.
     /// </summary>
-    public sealed class RosettaConfigurationSecurity
+    public sealed class ConfigurationRoot
     {
         /// <summary>
-        /// Gets or sets the degree of parallelism when computing the hash.
+        /// Gets the path to event configuration file.
         /// </summary>
-        [Required]
-        public int Parallelism { get; set; }
+        [ValidFilePath]
+        public string EventConfiguration { get; set; }
 
         /// <summary>
-        /// Gets or sets how much memory should be used when computing the hash.
+        /// Gets or sets the persistent datastore configuration.
         /// </summary>
         [Required]
-        public int Memory { get; set; }
+        public ConfigurationDatastore Database { get; set; }
 
         /// <summary>
-        /// Gets or sets the number of iterations to use when computing the hash.
+        /// Gets or sets the cache datastore configuration.
         /// </summary>
         [Required]
-        public int Iterations { get; set; }
+        public ConfigurationCache Cache { get; set; }
+
+        /// <summary>
+        /// Gets or sets the HTTP configuration.
+        /// </summary>
+        [Required]
+        public ConfigurationHttp Http { get; set; }
+
+        /// <summary>
+        /// Gets or sets the application token configuration.
+        /// </summary>
+        [Required]
+        public ConfigurationAuthentication Tokens { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace RosettaCTF.Data
     /// <summary>
     /// Represents a configuration for an OAuth2 provider.
     /// </summary>
-    public sealed class RosettaConfigurationOAuthProvider
+    public sealed class ConfigurationOAuthProvider
     {
         /// <summary>
         /// Gets or sets the type of configured provider.
@@ -65,5 +65,20 @@ namespace RosettaCTF.Data
         /// Gets or sets the URL of the token revoke endpoint. Optional.
         /// </summary>
         public string RevokeUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the URL of the user info endpoint.
+        /// </summary>
+        public string UserUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the authorization scopes used by this provider.
+        /// </summary>
+        public string[] Scopes { get; set; }
+
+        /// <summary>
+        /// Gets or sets the mappings used to extract information about a user.
+        /// </summary>
+        public ConfigurationOAuthProviderMapping Mappings { get; set; }
     }
 }

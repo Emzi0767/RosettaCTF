@@ -31,7 +31,7 @@ namespace RosettaCTF.Services
     /// </summary>
     public sealed class JwtHandler
     {
-        private RosettaConfigurationAuthentication Configuration { get; }
+        private ConfigurationAuthentication Configuration { get; }
 
         private TokenValidationParameters JwtValidationParameters { get; }
         private SymmetricSecurityKey Key { get; }
@@ -42,7 +42,7 @@ namespace RosettaCTF.Services
         /// </summary>
         /// <param name="cfg">Configuration to use.</param>
         public JwtHandler(
-            IOptions<RosettaConfigurationAuthentication> cfg,
+            IOptions<ConfigurationAuthentication> cfg,
             Argon2idKeyDeriver keyDeriver)
         {
             this.Configuration = cfg.Value;

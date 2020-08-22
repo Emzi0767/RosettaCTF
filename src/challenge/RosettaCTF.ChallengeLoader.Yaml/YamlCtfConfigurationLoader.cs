@@ -37,7 +37,7 @@ namespace RosettaCTF
         /// Creates a new instance of the loader.
         /// </summary>
         /// <param name="opts">Application configuration.</param>
-        public YamlCtfConfigurationLoader(IOptions<RosettaConfigurationRoot> opts)
+        public YamlCtfConfigurationLoader(IOptions<ConfigurationRoot> opts)
         {
             var des = new SerializerSettings
             {

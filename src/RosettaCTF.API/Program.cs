@@ -39,7 +39,7 @@ namespace RosettaCTF.API
                     .UseKestrel(kopts =>
                     {
                         kopts.AddServerHeader = false;
-                        var kcfg = kopts.ApplicationServices.GetRequiredService<IOptions<RosettaConfigurationHttp>>().Value;
+                        var kcfg = kopts.ApplicationServices.GetRequiredService<IOptions<ConfigurationHttp>>().Value;
 
                         if (kcfg == null || kcfg.Listen == null || kcfg.Listen.Length <= 0)
                         {

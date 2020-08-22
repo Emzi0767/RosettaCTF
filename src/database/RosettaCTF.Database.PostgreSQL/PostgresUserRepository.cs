@@ -28,9 +28,9 @@ namespace RosettaCTF
     internal sealed class PostgresUserRepository : IUserRepository
     {
         private PostgresDbContext Database { get; }
-        private DiscordTokenHandler TokenHandler { get; }
+        private OAuthTokenHandler TokenHandler { get; }
 
-        public PostgresUserRepository(PostgresDbContext db, DiscordTokenHandler tokenHandler)
+        public PostgresUserRepository(PostgresDbContext db, OAuthTokenHandler tokenHandler)
         {
             this.Database = db;
             this.TokenHandler = tokenHandler;

@@ -14,41 +14,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace RosettaCTF.Data
 {
     /// <summary>
-    /// Represents an HTTP listen endpoint.
+    /// Represents OAuth2 configuration.
     /// </summary>
-    public sealed class RosettaConfigurationEndpoint
+    public sealed class ConfigurationOAuth
     {
         /// <summary>
-        /// Gets the address to bind to.
+        /// Gets or sets whether OAuth authentication is enabled.
         /// </summary>
         [Required]
-        public string Address { get; set; }
+        public bool Enable { get; set; }
 
         /// <summary>
-        /// Gets the port to bind to.
+        /// Gets or sets the key used to encrypt OAuth tokens at rest. This key is not used directly; rather, a hash is derived from it.
         /// </summary>
-        [Required, Range(1, 65535)]
-        public int Port { get; set; }
+        public string TokenKey { get; set; }
 
         /// <summary>
-        /// Gets whether requests served on this endpoint should use encryption.
+        /// Gets or sets the collection of configured OAuth providers.
         /// </summary>
-        public bool UseSsl { get; set; }
-
-        /// <summary>
-        /// Gets the path to certificate file to use for this endpoint.
-        /// </summary>
-        public string CertificateFile { get; set; }
-
-        /// <summary>
-        /// Gets the path to certificate password file to use for this endpoint.
-        /// </summary>
-        public string CertificatePasswordFile { get; set; }
+        public ConfigurationOAuthProvider[] Providers { get; set; }
     }
 }

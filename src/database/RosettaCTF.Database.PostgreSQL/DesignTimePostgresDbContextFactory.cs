@@ -29,13 +29,13 @@ namespace RosettaCTF
         public PostgresDbContext CreateDbContext(string[] args)
         {
             var configFile = new FileInfo("../../RosettaCTF.API/config.json");
-            RosettaConfigurationRoot config;
+            ConfigurationRoot config;
             using (var fs = configFile.OpenRead())
             {
                 Span<byte> json = stackalloc byte[(int)fs.Length];
                 fs.Read(json);
 
-                config = JsonSerializer.Deserialize<RosettaConfigurationRoot>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                config = JsonSerializer.Deserialize<ConfigurationRoot>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
             }
 
             var pcp = new PostgresConfigurationProvider(config.Database);

@@ -25,9 +25,9 @@ using RosettaCTF.Data;
 namespace RosettaCTF
 {
     /// <summary>
-    /// Handles encryption and decryption of Discord tokens for the purpose of storage.
+    /// Handles encryption and decryption of OAuth2 tokens for the purpose of storage.
     /// </summary>
-    public sealed class DiscordTokenHandler
+    public sealed class OAuthTokenHandler
     {
         private Argon2idKeyDeriver KeyDeriver { get; }
 
@@ -37,8 +37,8 @@ namespace RosettaCTF
         /// Instantiates the handler and configures the encryption key.
         /// </summary>
         /// <param name="cfg">Configuration for the handler.</param>
-        public DiscordTokenHandler(
-            IOptions<RosettaConfigurationDiscord> cfg,
+        public OAuthTokenHandler(
+            IOptions<ConfigurationOAuth> cfg,
             Argon2idKeyDeriver keyDeriver)
         {
             this.KeyDeriver = keyDeriver;
