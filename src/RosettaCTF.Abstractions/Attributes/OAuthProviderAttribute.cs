@@ -1,5 +1,5 @@
 ﻿// This file is part of RosettaCTF project.
-//
+// 
 // Copyright 2020 Emzi0767
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,9 +19,10 @@ using System;
 namespace RosettaCTF.Attributes
 {
     /// <summary>
-    /// Designates the ctf configuration loader provider implementation.
+    /// Designates the OAuth provider implementation.
     /// </summary>
-    public sealed class CtfConfigurationLoaderProviderAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = true)]
+    public sealed class OAuthProviderAttribute : Attribute
     {
         /// <summary>
         /// Gets the ID of this implementation.
@@ -34,11 +35,11 @@ namespace RosettaCTF.Attributes
         public Type InitializerType { get; }
 
         /// <summary>
-        /// Designates this ctf configuration loader provider implementation.
+        /// Designates this OAuth provider implementation.
         /// </summary>
         /// <param name="id">ID of this implementation.</param>
         /// <param name="initializer">Tyep of service collection initializer.</param>
-        public CtfConfigurationLoaderProviderAttribute(string id, Type initializer)
+        public OAuthProviderAttribute(string id, Type initializer)
         {
             if (string.IsNullOrWhiteSpace(id))
                 throw new ArgumentNullException(nameof(id));
@@ -46,8 +47,8 @@ namespace RosettaCTF.Attributes
             if (initializer == null)
                 throw new ArgumentNullException(nameof(initializer));
 
-            if (!typeof(ICtfConfigurationLoaderServiceInitializer).IsAssignableFrom(initializer) || !initializer.IsClass || initializer.IsAbstract)
-                throw new ArgumentException("Supplied initializer type must be a non-abstract, non-static class, implementing ICtfConfigurationLoaderServiceInitializer interface.", nameof(initializer));
+            if (!typeof(IOAuthProviderServiceInitializer).IsAssignableFrom(initializer) || !initializer.IsClass || initializer.IsAbstract)
+                throw new ArgumentException("Supplied initializer type must be a non-abstract, non-static class, implementing IOAuthProviderServiceInitializer interface.", nameof(initializer));
 
             this.Id = id;
             this.InitializerType = initializer;
@@ -56,8 +57,8 @@ namespace RosettaCTF.Attributes
         /// <summary>
         /// Gets an instance of service initializer for this provider.
         /// </summary>
-        /// <returns>An <see cref="ICtfConfigurationLoaderServiceInitializer"/> instance.</returns>
-        public ICtfConfigurationLoaderServiceInitializer GetServiceInitializer()
-            => Activator.CreateInstance(this.InitializerType) as ICtfConfigurationLoaderServiceInitializer;
+        /// <returns>An <see cref="IOAuthProviderServiceInitializer"/> instance.</returns>
+        public IOAuthProviderServiceInitializer GetServiceInitializer()
+            => Activator.CreateInstance(this.InitializerType) as IOAuthProviderServiceInitializer;
     }
 }

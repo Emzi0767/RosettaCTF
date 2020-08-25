@@ -18,9 +18,9 @@ using System;
 using System.Text;
 using System.Text.Json;
 
-namespace RosettaCTF.Filters
+namespace RosettaCTF.Data
 {
-    public sealed class SnakeCaseNamingPolicy : JsonNamingPolicy
+    internal sealed class SnakeCaseNamingPolicy : JsonNamingPolicy
     {
         private const string Separator = "_";
 

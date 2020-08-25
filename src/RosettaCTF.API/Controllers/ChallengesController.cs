@@ -35,14 +35,14 @@ namespace RosettaCTF.Controllers
     [ServiceFilter(typeof(EventStartedFilter))]
     [ElapsedPopulatorFilter]
     [ValidateAntiForgeryToken]
-    public sealed class ChallengeController : RosettaControllerBase
+    public sealed class ChallengesController : RosettaControllerBase
     {
         private ICtfChallengeRepository ChallengeRepository { get; }
         private ChallengePreviewRepository ChallengePreviewRepository { get; }
         private ICtfChallengeCacheRepository ChallengeCacheRepository { get; }
         private IScoringModel ScoringModel { get; }
 
-        public ChallengeController(
+        public ChallengesController(
             ILoggerFactory loggerFactory,
             IUserRepository userRepository,
             UserPreviewRepository userPreviewRepository,
@@ -127,7 +127,7 @@ namespace RosettaCTF.Controllers
 
         [HttpPost]
         [ServiceFilter(typeof(EventNotOverFilter))]
-        [Route("{id}")]
+        [Route("{id}/solves")]
         public async Task<ActionResult<ApiResult<bool>>> SubmitFlag([FromRoute] string id, [FromBody] ChallengeFlagModel challengeFlag, CancellationToken cancellationToken = default)
         {
             var challenge = await this.ChallengeRepository.GetChallengeAsync(id, cancellationToken);

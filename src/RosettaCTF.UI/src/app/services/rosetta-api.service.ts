@@ -65,9 +65,9 @@ export class RosettaApiService {
         };
     }
 
-    async getLoginUrl(): Promise<IApiResult<string>> {
+    async getLoginUrl(provider: string): Promise<IApiResult<string>> {
         try {
-            const response = await this.http.get<IApiResult<string>>("/api/session/endpoint", this.getOptions()).toPromise();
+            const response = await this.http.get<IApiResult<string>>(`/api/session/endpoint/${provider}`, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 
@@ -160,7 +160,7 @@ export class RosettaApiService {
 
     async inviteMember(userId: string): Promise<IApiResult<ITeam>> {
         try {
-            const response = await this.http.post<IApiResult<ITeam>>(`/api/team/invite/${userId}`, null, this.getOptions()).toPromise();
+            const response = await this.http.post<IApiResult<ITeam>>(`/api/team/invites/${userId}`, null, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 
@@ -171,7 +171,8 @@ export class RosettaApiService {
 
     async acceptInvite(teamId: string): Promise<IApiResult<ITeam>> {
         try {
-            const response = await this.http.patch<IApiResult<ITeam>>(`/api/team/invite/${teamId}`, null, this.getOptions()).toPromise();
+            // tslint:disable-next-line: max-line-length
+            const response = await this.http.post<IApiResult<ITeam>>(`/api/team/invites/${teamId}/accept`, null, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 
@@ -182,7 +183,7 @@ export class RosettaApiService {
 
     async getInvites(): Promise<IApiResult<ITeamInvite[]>> {
         try {
-            const response = await this.http.get<IApiResult<ITeamInvite[]>>("/api/team/invite", this.getOptions()).toPromise();
+            const response = await this.http.get<IApiResult<ITeamInvite[]>>("/api/team/invites", this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 
@@ -207,7 +208,7 @@ export class RosettaApiService {
     async getCategories(): Promise<IApiResult<IChallengeCategory[]>> {
         try {
             // tslint:disable-next-line: max-line-length
-            const response = await this.http.get<IApiResult<IChallengeCategory[]>>("/api/challenge/categories", this.getOptions()).toPromise();
+            const response = await this.http.get<IApiResult<IChallengeCategory[]>>("/api/challenges/categories", this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 
@@ -218,7 +219,7 @@ export class RosettaApiService {
 
     async getChallenge(id: string): Promise<IApiResult<IChallenge>> {
         try {
-            const response = await this.http.get<IApiResult<IChallenge>>(`/api/challenge/${id}`, this.getOptions()).toPromise();
+            const response = await this.http.get<IApiResult<IChallenge>>(`/api/challenges/${id}`, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 
@@ -230,7 +231,7 @@ export class RosettaApiService {
     async submitSolve(flag: IApiFlag): Promise<IApiResult<boolean>> {
         try {
             // tslint:disable-next-line: max-line-length
-            const response = await this.http.post<IApiResult<boolean>>(`/api/challenge/${flag.id}`, { flag: flag.flag }, this.getOptions()).toPromise();
+            const response = await this.http.post<IApiResult<boolean>>(`/api/challenges/${flag.id}/solves`, { flag: flag.flag }, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 
@@ -242,7 +243,7 @@ export class RosettaApiService {
     async getSolves(challengeId: string): Promise<IApiResult<ISolve[]>> {
         try {
             // tslint:disable-next-line: max-line-length
-            const response = await this.http.get<IApiResult<ISolve[]>>(`/api/challenge/${challengeId}/solves`, this.getOptions()).toPromise();
+            const response = await this.http.get<IApiResult<ISolve[]>>(`/api/challenges/${challengeId}/solves`, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 
@@ -254,7 +255,7 @@ export class RosettaApiService {
     async getTeamSolves(teamId: string): Promise<IApiResult<ISolve[]>> {
         try {
             // tslint:disable-next-line: max-line-length
-            const response = await this.http.get<IApiResult<ISolve[]>>(`/api/challenge/solves/team/${teamId}`, this.getOptions()).toPromise();
+            const response = await this.http.get<IApiResult<ISolve[]>>(`/api/challenges/solves/team/${teamId}`, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 

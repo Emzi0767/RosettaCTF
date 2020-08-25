@@ -111,7 +111,7 @@ namespace RosettaCTF.Controllers
         [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
         [Authorize(Roles = JwtAuthenticationOptions.RoleTeamMember)]
         [ServiceFilter(typeof(EventNotStartedFilter))]
-        [Route("invite/{userId}")]
+        [Route("invites/{userId}")]
         public async Task<ActionResult<ApiResult<TeamPreview>>> Invite(long userId, CancellationToken cancellationToken = default)
         {
             if (DateTimeOffset.UtcNow >= this.EventConfiguration.StartTime)
@@ -133,11 +133,11 @@ namespace RosettaCTF.Controllers
             return this.Ok(ApiResult.FromResult(rteam));
         }
 
-        [HttpPatch]
+        [HttpPost]
         [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
         [Authorize(Roles = JwtAuthenticationOptions.RoleUnteamed)]
         [ServiceFilter(typeof(EventNotStartedFilter))]
-        [Route("invite/{teamId}")]
+        [Route("invites/{teamId}/accept")]
         public async Task<ActionResult<ApiResult<TeamPreview>>> AcceptInvite(long teamId, CancellationToken cancellationToken = default)
         {
             if (DateTimeOffset.UtcNow >= this.EventConfiguration.StartTime)
@@ -159,7 +159,7 @@ namespace RosettaCTF.Controllers
         [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
         [Authorize(Roles = JwtAuthenticationOptions.RoleUnteamed)]
         [ServiceFilter(typeof(EventNotStartedFilter))]
-        [Route("invite")]
+        [Route("invites")]
         public async Task<ActionResult<ApiResult<IEnumerable<TeamInvitePreview>>>> GetInvites(CancellationToken cancellationToken = default)
         {
             if (DateTimeOffset.UtcNow >= this.EventConfiguration.StartTime)

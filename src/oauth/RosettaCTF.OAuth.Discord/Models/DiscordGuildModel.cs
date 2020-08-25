@@ -16,7 +16,7 @@
 
 namespace RosettaCTF.Models
 {
-    public sealed class DiscordGuildModel
+    internal sealed class DiscordGuildModel
     {
         public string Id { get; set; }
         public string Name { get; set; }

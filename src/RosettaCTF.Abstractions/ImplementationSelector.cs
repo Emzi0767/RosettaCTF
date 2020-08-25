@@ -16,7 +16,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -29,7 +28,7 @@ namespace RosettaCTF
     /// <summary>
     /// Provides selector mechanisms for selecting and initializing datastore implementations.
     /// </summary>
-    public sealed class DatastoreImplementationSelector
+    public sealed class ImplementationSelector
     {
         private readonly IReadOnlyDictionary<string, DatabaseProviderAttribute> _databaseProviders;
         private readonly IReadOnlyDictionary<string, CacheProviderAttribute> _cacheProviders;
@@ -38,7 +37,7 @@ namespace RosettaCTF
         /// <summary>
         /// Initializes the selector.
         /// </summary>
-        public DatastoreImplementationSelector()
+        public ImplementationSelector()
         {
             var implAssemblies = AbstractionUtilities.AssemblyCache
                 .Select(x => new 

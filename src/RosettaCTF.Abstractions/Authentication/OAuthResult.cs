@@ -14,13 +14,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace RosettaCTF.Models
+namespace RosettaCTF.Authentication
 {
     /// <summary>
-    /// Represents an OAuth token response.
+    /// Represents a result of OAuth authentication attempt.
     /// </summary>
-    public sealed class OAuthAuthenticationResponse
+    public sealed class OAuthResult
     {
+        /// <summary>
+        /// Gets or sets whether the result is a succssful result.
+        /// </summary>
+        public bool IsSuccess { get; set; }
+
         /// <summary>
         /// Gets or sets the access token.
         /// </summary>

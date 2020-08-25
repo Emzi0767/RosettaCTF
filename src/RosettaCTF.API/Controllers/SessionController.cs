@@ -31,7 +31,7 @@ namespace RosettaCTF.Controllers
     [ValidateAntiForgeryToken]
     public class SessionController : RosettaControllerBase
     {
-        private DiscordHandler Discord { get; }
+        private DiscordOAuthProvider Discord { get; }
         private JwtHandler Jwt { get; }
         private IOAuthStateRepository OAuthStateRepository { get; }
 
@@ -40,7 +40,7 @@ namespace RosettaCTF.Controllers
             IUserRepository userRepository,
             ICtfConfigurationLoader ctfConfigurationLoader,
             UserPreviewRepository userPreviewRepository,
-            DiscordHandler discord,
+            DiscordOAuthProvider discord,
             JwtHandler jwt,
             IOAuthStateRepository oAuthStateRepository)
             : base(loggerFactory, userRepository, userPreviewRepository, ctfConfigurationLoader)
@@ -52,8 +52,8 @@ namespace RosettaCTF.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("endpoint")]
-        public async Task<ActionResult<ApiResult<string>>> Endpoint(CancellationToken cancellationToken = default)
+        [Route("endpoint/{provider}")]
+        public async Task<ActionResult<ApiResult<string>>> Endpoint(string provider, CancellationToken cancellationToken = default)
         {
             var state = await this.OAuthStateRepository.GenerateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), cancellationToken);
             return this.Ok(ApiResult.FromResult(this.Discord.GetAuthenticationUrl(this.HttpContext, state)));

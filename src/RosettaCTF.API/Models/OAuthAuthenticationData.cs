@@ -34,5 +34,11 @@ namespace RosettaCTF.Models
         /// </summary>
         [Required]
         public string State { get; set; }
+
+        /// <summary>
+        /// OAuth referrer.
+        /// </summary>
+        [Required]
+        public string Referrer { get; set; }
     }
 }

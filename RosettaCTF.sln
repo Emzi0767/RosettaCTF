@@ -45,6 +45,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{4C03E8
 		.github\FUNDING.yml = .github\FUNDING.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "oauth", "oauth", "{44F7E246-3993-4EC6-84D8-6E155874399C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RosettaCTF.OAuth.Discord", "src\oauth\RosettaCTF.OAuth.Discord\RosettaCTF.OAuth.Discord.csproj", "{FE9C9749-D71D-4D81-BF9B-75B066185FDA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +75,10 @@ Global
 		{E5B063B6-BE3E-4B83-8168-CE062598DC5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5B063B6-BE3E-4B83-8168-CE062598DC5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5B063B6-BE3E-4B83-8168-CE062598DC5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE9C9749-D71D-4D81-BF9B-75B066185FDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE9C9749-D71D-4D81-BF9B-75B066185FDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE9C9749-D71D-4D81-BF9B-75B066185FDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE9C9749-D71D-4D81-BF9B-75B066185FDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,6 +95,8 @@ Global
 		{E5B063B6-BE3E-4B83-8168-CE062598DC5A} = {5A0B4659-991C-43D5-BD45-92283FA84D39}
 		{E958165C-F77D-495D-9CC6-5F1F165CE94C} = {F014F57A-68AE-4F86-BF34-0FC23B45429C}
 		{4C03E8D8-3BE3-4B5D-8927-0FF103765F32} = {F014F57A-68AE-4F86-BF34-0FC23B45429C}
+		{44F7E246-3993-4EC6-84D8-6E155874399C} = {5196EBA1-008A-445A-B0DC-302827C2E7AB}
+		{FE9C9749-D71D-4D81-BF9B-75B066185FDA} = {44F7E246-3993-4EC6-84D8-6E155874399C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CB1F14CB-3FFE-4D9E-B9C4-D24C26CE6A52}

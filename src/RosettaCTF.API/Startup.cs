@@ -44,11 +44,6 @@ namespace RosettaCTF.API
 {
     public class Startup
     {
-        internal static JsonSerializerOptions DefaultJsonOptions { get; } = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-
         public IConfiguration Configuration { get; }
 #if DEBUG
         private SpaConfigurationAttribute SpaConfiguration { get; }
@@ -170,17 +165,16 @@ namespace RosettaCTF.API
             services.AddAuthorization();
 
             // Configure datastore providers
-            var dsiSelector = new DatastoreImplementationSelector();
-            services.AddSingleton(dsiSelector);
-            dsiSelector.ConfigureCtfConfigurationLoaderProvider("yaml", services);
-            dsiSelector.ConfigureDatabaseProvider(this.Configuration["Database:Type"], services);
-            dsiSelector.ConfigureCacheProvider(this.Configuration["Cache:Type"], services);
+            var implSelector = new ImplementationSelector();
+            services.AddSingleton(implSelector);
+            implSelector.ConfigureCtfConfigurationLoaderProvider("yaml", services);
+            implSelector.ConfigureDatabaseProvider(this.Configuration["Database:Type"], services);
+            implSelector.ConfigureCacheProvider(this.Configuration["Cache:Type"], services);
 
             services.AddTransient<UserPreviewRepository>()
                 .AddTransient<ChallengePreviewRepository>()
                 .AddSingleton<OAuthTokenHandler>()
                 .AddSingleton<HttpClient>()
-                .AddScoped<DiscordHandler>()
                 .AddSingleton<JwtHandler>()
                 .AddTransient<Argon2idKeyDeriver>()
                 .AddSingleton<EnumDisplayConverter>()
@@ -283,7 +277,7 @@ namespace RosettaCTF.API
                 error = new ApiError(ApiErrorCode.GenericError, $"HTTP Error {ctx.Response.StatusCode}.");
             }
 
-            await JsonSerializer.SerializeAsync(ctx.Response.Body, ApiResult.FromError<object>(error), DefaultJsonOptions);
+            await JsonSerializer.SerializeAsync(ctx.Response.Body, ApiResult.FromError<object>(error), AbstractionUtilities.DefaultJsonOptions);
         }
     }
 }

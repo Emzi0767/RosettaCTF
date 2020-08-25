@@ -22,17 +22,12 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
-using RosettaCTF.API;
-using RosettaCTF.Data;
-using RosettaCTF.Filters;
 using RosettaCTF.Models;
 
-namespace RosettaCTF.Services
+namespace RosettaCTF.Authentication
 {
-    public sealed class DiscordHandler
+    public sealed class DiscordOAuthProvider : IOAuthProvider
     {
         private const string EndpointHostname = "discord.com";
         private const string EndpointAuthorize = "/api/v7/oauth2/authorize";
@@ -48,17 +43,10 @@ namespace RosettaCTF.Services
         private const string GrantTypeToken = "authorization_code";
         private const string GrantTypeRefresh = "refresh_token";
 
-        private static JsonSerializerOptions JsonOptionsCamelCase { get; } = Startup.DefaultJsonOptions;
-
-        private static JsonSerializerOptions JsonOptionsSnakeCase { get; } = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = new SnakeCaseNamingPolicy()
-        };
-
         private HttpClient Http { get; }
         private RosettaConfigurationDiscord Configuration { get; }
 
-        public DiscordHandler(
+        public DiscordOAuthProvider(
             HttpClient http,
             IOptions<RosettaConfigurationDiscord> discordCfg)
         {
@@ -66,32 +54,32 @@ namespace RosettaCTF.Services
             this.Configuration = discordCfg.Value;
         }
 
-        public string GetRedirectUrl(HttpContext ctx)
+        public string GetRedirectUrl(AuthenticationContext ctx)
             => new UriBuilder
             {
-                Scheme = ctx.Request.Scheme,
+                Scheme = ctx.CallbackUrl.Scheme,
                 Host = this.Configuration.Hostname,
                 Port = this.Configuration.Port,
                 Path = "/session/callback"
             }.Uri.ToString();
 
-        public string GetAuthenticationUrl(HttpContext ctx, string state)
+        public string GetAuthenticationUrl(AuthenticationContext ctx)
             => QueryHelpers.AddQueryString(this.GetDiscordUrl(EndpointAuthorize).ToString(), new Dictionary<string, string>(5)
             {
                 ["client_id"] = this.Configuration.ClientId.AsString(),
                 ["redirect_uri"] = this.GetRedirectUrl(ctx),
                 ["response_type"] = ResponseType,
                 ["scope"] = Scopes,
-                ["state"] = state
+                ["state"] = ctx.State
             });
 
-        public async Task<OAuthAuthenticationResponse> CompleteLoginAsync(HttpContext ctx, OAuthAuthenticationData authData, CancellationToken cancellationToken = default)
-            => await this.ExchangeTokenAsync(ctx, authData.Code, GrantTypeToken, cancellationToken);
+        public async Task<OAuthResult> CompleteLoginAsync(AuthenticationContext ctx, string code, CancellationToken cancellationToken = default)
+            => await this.ExchangeTokenAsync(ctx, code, GrantTypeToken, cancellationToken);
 
-        public async Task<OAuthAuthenticationResponse> RefreshTokenAsync(HttpContext ctx, string refreshToken, CancellationToken cancellationToken = default)
+        public async Task<OAuthResult> RefreshTokenAsync(AuthenticationContext ctx, string refreshToken, CancellationToken cancellationToken = default)
             => await this.ExchangeTokenAsync(ctx, refreshToken, GrantTypeRefresh, cancellationToken);
 
-        public async Task<bool> LogoutAsync(HttpContext ctx, string token, CancellationToken cancellationToken = default)
+        public async Task<bool> LogoutAsync(AuthenticationContext ctx, string token, CancellationToken cancellationToken = default)
         {
             using (var post = new HttpRequestMessage(HttpMethod.Post, this.GetDiscordUrl(EndpointTokenRevoke)))
             {
@@ -109,9 +97,9 @@ namespace RosettaCTF.Services
             }
         }
 
-        public async Task<DiscordUserModel> GetUserAsync(HttpContext ctx, string token, CancellationToken cancellationToken = default)
+        public async Task<OAuthUser> GetUserAsync(AuthenticationContext ctx, string token, CancellationToken cancellationToken = default)
         {
-            DiscordUserModel user;
+            DiscordUserModel duser;
             using (var get = new HttpRequestMessage(HttpMethod.Get, this.GetDiscordUrl(EndpointCurrentUser)))
             {
                 this.AddToken(get, token);
@@ -122,10 +110,11 @@ namespace RosettaCTF.Services
                         return null;
 
                     using (var dat = await res.Content.ReadAsStreamAsync())
-                        user = await JsonSerializer.DeserializeAsync<DiscordUserModel>(dat, JsonOptionsCamelCase, cancellationToken);
+                        duser = await JsonSerializer.DeserializeAsync<DiscordUserModel>(dat, AbstractionUtilities.DefaultJsonOptions, cancellationToken);
                 }
             }
 
+            OAuthUser user;
             using (var get = new HttpRequestMessage(HttpMethod.Get, this.GetDiscordUrl(EndpointGuilds)))
             {
                 this.AddToken(get, token);
@@ -137,16 +126,27 @@ namespace RosettaCTF.Services
 
                     IEnumerable<DiscordGuildModel> guilds;
                     using (var dat = await res.Content.ReadAsStreamAsync())
-                        guilds = await JsonSerializer.DeserializeAsync<IEnumerable<DiscordGuildModel>>(dat, JsonOptionsCamelCase, cancellationToken);
+                        guilds = await JsonSerializer.DeserializeAsync<IEnumerable<DiscordGuildModel>>(dat, AbstractionUtilities.DefaultJsonOptions, cancellationToken);
 
-                    user.IsAuthorized = guilds.Any(x => x.Id == this.Configuration.GuildId);
+                    var authorized = guilds.Any(x => x.Id == this.Configuration.GuildId);
+                    var uname = string.Create(duser.Username.Length + 5, duser, (buff, d) =>
+                    {
+                        var du = d.Username.AsSpan();
+                        var dul = du.Length;
+
+                        d.Discriminator.AsSpan().CopyTo(buff.Slice(dul + 1));
+                        buff[^5] = '#';
+                        du.CopyTo(buff);
+                    });
+
+                    user = new OAuthUser(duser.Id, uname, authorized);
                 }
             }
 
             return user;
         }
 
-        private async Task<OAuthAuthenticationResponse> ExchangeTokenAsync(HttpContext ctx, string credential, string grantType, CancellationToken cancellationToken = default)
+        private async Task<OAuthResult> ExchangeTokenAsync(AuthenticationContext ctx, string credential, string grantType, CancellationToken cancellationToken = default)
         {
             using (var post = new HttpRequestMessage(HttpMethod.Post, this.GetDiscordUrl(EndpointTokenExchange)))
             {
@@ -178,7 +178,9 @@ namespace RosettaCTF.Services
                         return null;
 
                     using (var dat = await res.Content.ReadAsStreamAsync())
-                        return await JsonSerializer.DeserializeAsync<OAuthAuthenticationResponse>(dat, JsonOptionsSnakeCase, cancellationToken);
+                    {
+                        return await JsonSerializer.DeserializeAsync<OAuthResult>(dat, AbstractionUtilities.SnakeCaseJsonOptions, cancellationToken);
+                    }
                 }
             }
         }

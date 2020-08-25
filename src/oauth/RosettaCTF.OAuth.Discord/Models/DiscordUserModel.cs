@@ -16,7 +16,7 @@
 
 namespace RosettaCTF.Models
 {
-    public sealed class DiscordUserModel
+    internal sealed class DiscordUserModel
     {
         public string Id { get; set; }
         public string Username { get; set; }

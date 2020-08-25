@@ -30,7 +30,7 @@ namespace RosettaCTF.Attributes
         public string Id { get; }
 
         /// <summary>
-        /// Type of the service collection initializer.
+        /// Gets the type of the service collection initializer.
         /// </summary>
         public Type InitializerType { get; }
 
@@ -38,6 +38,7 @@ namespace RosettaCTF.Attributes
         /// Designates this cache provider implementation.
         /// </summary>
         /// <param name="id">ID of this implementation.</param>
+        /// <param name="initializer">Tyep of service collection initializer.</param>
         public CacheProviderAttribute(string id, Type initializer)
         {
             if (string.IsNullOrWhiteSpace(id))

@@ -64,6 +64,7 @@
     <PluginProject Include="../challenge/**/*.csproj" />
     <PluginProject Include="../database/**/*.csproj" />
     <PluginProject Include="../cache/**/*.csproj" />
+    <PluginProject Include="../oauth/**/*.csproj" />
     
     <ProjectReference Include="@(PluginProject)">
       <PrivateAssets>All</PrivateAssets>

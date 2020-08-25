@@ -22,8 +22,10 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 using Humanizer;
 using Humanizer.Localisation;
+using RosettaCTF.Data;
 
 namespace RosettaCTF
 {
@@ -53,6 +55,22 @@ namespace RosettaCTF
         /// Gets loadable assemblies from assembly's directory.
         /// </summary>
         private static IEnumerable<FileInfo> LoadableAssemblies { get; }
+
+        /// <summary>
+        /// Gets default JSON serializer options.
+        /// </summary>
+        public static JsonSerializerOptions DefaultJsonOptions { get; } = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
+        /// <summary>
+        /// Gets the snake_case JSON naming serializer options.
+        /// </summary>
+        public static JsonSerializerOptions SnakeCaseJsonOptions { get; } = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = new SnakeCaseNamingPolicy()
+        };
 
         static AbstractionUtilities()
         {
