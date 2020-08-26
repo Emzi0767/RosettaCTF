@@ -22,12 +22,13 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using RosettaCTF.Models;
 
 namespace RosettaCTF.Authentication
 {
-    public sealed class DiscordOAuthProvider : IOAuthProvider
+    internal sealed class DiscordOAuthProvider : IOAuthProvider
     {
         private const string EndpointHostname = "discord.com";
         private const string EndpointAuthorize = "/api/v7/oauth2/authorize";

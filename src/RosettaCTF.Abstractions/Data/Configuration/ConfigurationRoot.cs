@@ -51,6 +51,6 @@ namespace RosettaCTF.Data
         /// Gets or sets the application token configuration.
         /// </summary>
         [Required]
-        public ConfigurationAuthentication Tokens { get; set; }
+        public ConfigurationAuthentication Authentication { get; set; }
     }
 }

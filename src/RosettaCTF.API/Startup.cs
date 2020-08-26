@@ -148,11 +148,11 @@ namespace RosettaCTF.API
                 .ValidateDataAnnotations();
 
             services.AddOptions<ConfigurationAuthentication>()
-                .Bind(this.Configuration.GetSection("Auth"))
+                .Bind(this.Configuration.GetSection("Authentication"))
                 .ValidateDataAnnotations();
 
             services.AddOptions<ConfigurationOAuth>()
-                .Bind(this.Configuration.GetSection("Auth:OAuth"))
+                .Bind(this.Configuration.GetSection("Authentication:OAuth"))
                 .ValidateDataAnnotations();
 
             services.AddOptions<ConfigurationSecurity>()

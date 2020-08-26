@@ -30,7 +30,7 @@ namespace RosettaCTF.Services
     {
         private IServiceProvider Services { get; }
         private ConfigurationRoot Configuration { get; }
-        private ImplementationSelector DatastoreSelector { get; }
+        private ImplementationSelector ImplementationSelector { get; }
 
         public ChallengeBootstrapperService(
             IServiceProvider services,
@@ -39,14 +39,18 @@ namespace RosettaCTF.Services
         {
             this.Services = services;
             this.Configuration = config.Value;
-            this.DatastoreSelector = dsiSelector;
+            this.ImplementationSelector = dsiSelector;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await this.DatastoreSelector.InitializeCtfConfigurationLoaderProviderAsync("yaml", this.Services, cancellationToken);
-            await this.DatastoreSelector.InitializeDatabaseProviderAsync(this.Configuration.Database.Type, this.Services, cancellationToken);
-            await this.DatastoreSelector.InitializeCacheProviderAsync(this.Configuration.Cache.Type, this.Services, cancellationToken);
+            await this.ImplementationSelector.InitializeCtfConfigurationLoaderProviderAsync("yaml", this.Services, cancellationToken);
+            await this.ImplementationSelector.InitializeDatabaseProviderAsync(this.Configuration.Database.Type, this.Services, cancellationToken);
+            await this.ImplementationSelector.InitializeCacheProviderAsync(this.Configuration.Cache.Type, this.Services, cancellationToken);
+
+            var oauth = this.Configuration.Authentication.OAuth;
+            if (oauth?.Enable == true)
+                await this.ImplementationSelector.InitializeOAuthProvidersAsync(oauth.Providers.Select(x => x.Type), this.Services, cancellationToken);
 
             using (var scope = this.Services.CreateScope())
             {
