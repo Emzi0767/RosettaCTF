@@ -33,6 +33,7 @@ namespace RosettaCTF.Authentication
         internal const string ProviderType = "discord";
 
         private const string EndpointHostname = "discord.com";
+        private const string EndpointHostnameOld = "discord.com";
         private const string EndpointAuthorize = "/api/v7/oauth2/authorize";
         private const string EndpointTokenExchange = "/api/v7/oauth2/token";
         private const string EndpointTokenRevoke = "/api/v7/oauth2/token/revoke";
@@ -59,6 +60,18 @@ namespace RosettaCTF.Authentication
 
         public bool HasId(string id)
             => string.Equals(id, ProviderType, StringComparison.OrdinalIgnoreCase);
+
+        public bool SupportsReferrer(Uri referrer, out string id)
+        {
+            if (string.Equals(referrer.Host, EndpointHostname, StringComparison.OrdinalIgnoreCase) || string.Equals(referrer.Host, EndpointHostnameOld, StringComparison.OrdinalIgnoreCase))
+            {
+                id = ProviderType;
+                return true;
+            }
+
+            id = null;
+            return false;
+        }
 
         public string GetRedirectUrl(AuthenticationContext ctx)
             => new UriBuilder

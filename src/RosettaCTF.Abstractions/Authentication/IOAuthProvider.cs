@@ -33,6 +33,14 @@ namespace RosettaCTF.Authentication
         bool HasId(string id);
 
         /// <summary>
+        /// Gets whether this provider handles specified referring URI. If it does, provides it via the <paramref name="id"/> parameter.
+        /// </summary>
+        /// <param name="referrer">Referrer URL to match against.</param>
+        /// <param name="id">ID of the handling provider.</param>
+        /// <returns>Whether this implementation handles this referrer.</returns>
+        bool SupportsReferrer(Uri referrer, out string id);
+
+        /// <summary>
         /// Gets the URL to send the client to in order for him to authenticate.
         /// </summary>
         /// <param name="ctx">Context in which authentication happens.</param>

@@ -82,6 +82,11 @@ namespace RosettaCTF.Data
         public string[] Scopes { get; set; }
 
         /// <summary>
+        /// Gets or sets hostnames for this provider.
+        /// </summary>
+        public string[] Hostnames { get; set; }
+
+        /// <summary>
         /// Gets or sets the mappings used to extract information about a user.
         /// </summary>
         public ConfigurationOAuthProviderMapping Mappings { get; set; }

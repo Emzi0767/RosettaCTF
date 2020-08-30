@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -42,5 +43,15 @@ namespace RosettaCTF.Authentication
         /// <returns>Requested provider.</returns>
         public IOAuthProvider GetById(string providerId)
             => this.Providers.FirstOrDefault(x => x.HasId(providerId));
+
+        /// <summary>
+        /// Gets a provider ID by the referring URL.
+        /// </summary>
+        /// <param name="referrer">Referring URL of the provider.</param>
+        /// <returns>Matched provider ID.</returns>
+        public string IdFromReferrer(Uri referrer)
+            => this.Providers.Select(x => new { handles = x.SupportsReferrer(referrer, out var id), id })
+                .FirstOrDefault(x => x.handles)
+                ?.id;
     }
 }

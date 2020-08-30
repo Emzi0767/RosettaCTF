@@ -24,6 +24,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Emzi0767.Utilities;
+using Microsoft.AspNetCore.WebUtilities;
 using RosettaCTF.Authentication;
 using RosettaCTF.Data;
 
@@ -56,6 +57,12 @@ namespace RosettaCTF
         public bool HasId(string id)
             => this.Configuration.ContainsKey(id);
 
+        public bool SupportsReferrer(Uri referrer, out string id)
+        {
+            id = this.Configuration.SingleOrDefault(x => x.Value.Hostnames.Contains(referrer.Host, StringComparer.OrdinalIgnoreCase)).Key;
+            return id != null;
+        }
+
         public string GetRedirectUrl(AuthenticationContext ctx)
             => new UriBuilder
             {
@@ -68,7 +75,14 @@ namespace RosettaCTF
         public Uri GetAuthenticationUrl(AuthenticationContext ctx)
         {
             var cfg = this.GetConfiguration(ctx.ProviderId);
-            return new Uri(cfg.AuthorizeUrl);
+            return new Uri(QueryHelpers.AddQueryString(cfg.AuthorizeUrl, new Dictionary<string, string>(5)
+            {
+                ["client_id"] = cfg.ClientId,
+                ["redirect_uri"] = this.GetRedirectUrl(ctx),
+                ["response_type"] = ResponseType,
+                ["scope"] = string.Join(" ", cfg.Scopes),
+                ["state"] = ctx.State
+            }));
         }
 
         public async Task<OAuthResult> CompleteLoginAsync(AuthenticationContext ctx, string code, CancellationToken cancellationToken = default)

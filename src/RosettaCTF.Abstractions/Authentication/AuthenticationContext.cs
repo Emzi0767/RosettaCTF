@@ -34,13 +34,19 @@ namespace RosettaCTF.Authentication
         public string ProviderId { get; }
 
         /// <summary>
+        /// Gets the state string for the request.
+        /// </summary>
+        public string State { get; }
+
+        /// <summary>
         /// Creates a new authentication context.
         /// </summary>
         /// <param name="scheme">Current URI scheme.</param>
         /// <param name="host">Current hostname.</param>
         /// <param name="port">Current port.</param>
         /// <param name="providerId">ID of the authentication provider.</param>
-        public AuthenticationContext(string scheme, string host, int port, string providerId)
+        /// <param name="state">State string for the request.</param>
+        public AuthenticationContext(string scheme, string host, int port, string providerId, string state)
         {
             this.CallbackUrl = new UriBuilder
             {
@@ -51,6 +57,7 @@ namespace RosettaCTF.Authentication
             }.Uri;
 
             this.ProviderId = providerId;
+            this.State = state;
         }
     }
 }

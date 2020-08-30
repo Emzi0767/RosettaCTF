@@ -61,7 +61,7 @@ namespace RosettaCTF.Controllers
                 return this.NotFound(ApiResult.FromError<string>(new ApiError(ApiErrorCode.InvalidProvider, "Specified provider does not exist.")));
 
             var state = await this.OAuthStateRepository.GenerateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), cancellationToken);
-            return this.Ok(ApiResult.FromResult(oauth.GetAuthenticationUrl(this.CreateContext(provider))));
+            return this.Ok(ApiResult.FromResult(oauth.GetAuthenticationUrl(this.CreateContext(provider, state))));
         }
 
         [HttpGet]
@@ -92,11 +92,12 @@ namespace RosettaCTF.Controllers
             if (data.State == null || !await this.OAuthStateRepository.ValidateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), data.State, cancellationToken))
                 return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.Unauthorized, "OAuth state validation failed.")));
 
+            var provider = this.OAuthSelector.IdFromReferrer(new Uri(data.Referrer));
             var oauth = this.OAuthSelector.GetById(provider);
             if (oauth == null)
                 return this.NotFound(ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidProvider, "Specified provider does not exist.")));
 
-            var ctx = this.CreateContext(provider);
+            var ctx = this.CreateContext(provider, data.State);
             var tokens = await oauth.CompleteLoginAsync(ctx, data.Code, cancellationToken);
             if (tokens == null)
                 return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.ExternalAuthenticationError, "Failed to authenticate with Discord.")));
@@ -142,7 +143,7 @@ namespace RosettaCTF.Controllers
             return this.Ok(ApiResult.FromResult<object>(null));
         }
 
-        private AuthenticationContext CreateContext(string provider = null)
+        private AuthenticationContext CreateContext(string provider = null, string state = null)
         {
             var req = this.HttpContext.Request;
 
@@ -150,7 +151,7 @@ namespace RosettaCTF.Controllers
             var host = req.Host.Host;
             var port = req.Host.Port ?? 0;
 
-            return new AuthenticationContext(scheme, host, port, provider);
+            return new AuthenticationContext(scheme, host, port, provider, state);
         }
     }
 }
