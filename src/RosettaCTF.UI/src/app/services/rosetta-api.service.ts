@@ -76,10 +76,10 @@ export class RosettaApiService {
         };
     }
 
-    async completeLogin(provider: string, code: string, state: string): Promise<IApiResult<ISession>> {
+    async completeLogin(code: string, state: string, referrer: string): Promise<IApiResult<ISession>> {
         try {
-            const response = await this.http.post<IApiResult<ISession>>(`/api/session/${provider}`,
-                { code, state },
+            const response = await this.http.post<IApiResult<ISession>>("/api/session",
+                { code, state, referrer },
                 this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }

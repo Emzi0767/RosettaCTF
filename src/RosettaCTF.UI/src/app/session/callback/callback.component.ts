@@ -52,7 +52,7 @@ export class CallbackComponent implements OnInit {
             return;
         }
 
-        this.api.completeLogin(args.get("code"), args.get("state")).then(x => {
+        this.api.completeLogin(args.get("code"), args.get("state"), document.referrer).then(x => {
             if (!x.isSuccess) {
                 this.eventDispatcher.emit("dialog",
                     {
