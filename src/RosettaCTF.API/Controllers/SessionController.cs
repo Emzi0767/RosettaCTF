@@ -87,6 +87,7 @@ namespace RosettaCTF.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [Route("oauth")]
         public async Task<ActionResult<ApiResult<SessionPreview>>> Login([FromBody] OAuthAuthenticationData data, CancellationToken cancellationToken = default)
         {
             if (data.State == null || !await this.OAuthStateRepository.ValidateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), data.State, cancellationToken))
