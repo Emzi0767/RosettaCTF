@@ -80,6 +80,11 @@ namespace RosettaCTF.Models
         /// </summary>
         UserNotFound = 2003,
 
+        /// <summary>
+        /// Requested authentication provider does not exist.
+        /// </summary>
+        InvalidProvider = 2004,
+
         // 3xxx - creation errors
 
         /// <summary>

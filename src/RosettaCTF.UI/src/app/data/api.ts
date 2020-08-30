@@ -81,6 +81,11 @@ export enum ApiErrorCode {
      */
     UserNotFound = 2003,
 
+    /**
+     * Requested authentication provider does not exist.
+     */
+    InvalidProvider = 2004,
+
     // --------------------------------------------------------------------------------------------
     // 3xxx - creation errors
 

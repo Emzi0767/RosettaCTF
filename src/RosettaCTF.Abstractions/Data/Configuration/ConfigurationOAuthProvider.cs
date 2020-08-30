@@ -30,6 +30,11 @@ namespace RosettaCTF.Data
         public string Type { get; set; }
 
         /// <summary>
+        /// Gets or sets the ID of the provider. Used to distinguish custom providers.
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
         /// Gets or sets the client ID for this provider.
         /// </summary>
         [Required]

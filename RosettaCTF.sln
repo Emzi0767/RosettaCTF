@@ -47,7 +47,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{4C03E8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "oauth", "oauth", "{44F7E246-3993-4EC6-84D8-6E155874399C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RosettaCTF.OAuth.Discord", "src\oauth\RosettaCTF.OAuth.Discord\RosettaCTF.OAuth.Discord.csproj", "{FE9C9749-D71D-4D81-BF9B-75B066185FDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RosettaCTF.OAuth.Discord", "src\oauth\RosettaCTF.OAuth.Discord\RosettaCTF.OAuth.Discord.csproj", "{FE9C9749-D71D-4D81-BF9B-75B066185FDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RosettaCTF.OAuth.Custom", "src\oauth\RosettaCTF.OAuth.Custom\RosettaCTF.OAuth.Custom.csproj", "{C517C1F8-0982-4239-B1AB-F4EBB3BBAFB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +81,10 @@ Global
 		{FE9C9749-D71D-4D81-BF9B-75B066185FDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE9C9749-D71D-4D81-BF9B-75B066185FDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE9C9749-D71D-4D81-BF9B-75B066185FDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C517C1F8-0982-4239-B1AB-F4EBB3BBAFB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C517C1F8-0982-4239-B1AB-F4EBB3BBAFB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C517C1F8-0982-4239-B1AB-F4EBB3BBAFB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C517C1F8-0982-4239-B1AB-F4EBB3BBAFB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{4C03E8D8-3BE3-4B5D-8927-0FF103765F32} = {F014F57A-68AE-4F86-BF34-0FC23B45429C}
 		{44F7E246-3993-4EC6-84D8-6E155874399C} = {5196EBA1-008A-445A-B0DC-302827C2E7AB}
 		{FE9C9749-D71D-4D81-BF9B-75B066185FDA} = {44F7E246-3993-4EC6-84D8-6E155874399C}
+		{C517C1F8-0982-4239-B1AB-F4EBB3BBAFB6} = {44F7E246-3993-4EC6-84D8-6E155874399C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CB1F14CB-3FFE-4D9E-B9C4-D24C26CE6A52}

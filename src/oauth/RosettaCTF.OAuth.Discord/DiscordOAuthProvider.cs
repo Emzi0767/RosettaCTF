@@ -23,13 +23,15 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Options;
+using RosettaCTF.Data;
 using RosettaCTF.Models;
 
 namespace RosettaCTF.Authentication
 {
     internal sealed class DiscordOAuthProvider : IOAuthProvider
     {
+        internal const string ProviderType = "discord";
+
         private const string EndpointHostname = "discord.com";
         private const string EndpointAuthorize = "/api/v7/oauth2/authorize";
         private const string EndpointTokenExchange = "/api/v7/oauth2/token";
@@ -45,34 +47,37 @@ namespace RosettaCTF.Authentication
         private const string GrantTypeRefresh = "refresh_token";
 
         private HttpClient Http { get; }
-        private RosettaConfigurationDiscord Configuration { get; }
+        private ConfigurationOAuthProvider Configuration { get; }
 
         public DiscordOAuthProvider(
             HttpClient http,
-            IOptions<RosettaConfigurationDiscord> discordCfg)
+            OAuthConfigurationProvider cfgProvider)
         {
             this.Http = http;
-            this.Configuration = discordCfg.Value;
+            this.Configuration = cfgProvider.GetById(ProviderType);
         }
+
+        public bool HasId(string id)
+            => string.Equals(id, ProviderType, StringComparison.OrdinalIgnoreCase);
 
         public string GetRedirectUrl(AuthenticationContext ctx)
             => new UriBuilder
             {
                 Scheme = ctx.CallbackUrl.Scheme,
-                Host = this.Configuration.Hostname,
-                Port = this.Configuration.Port,
+                Host = ctx.CallbackUrl.Host,
+                Port = ctx.CallbackUrl.Port,
                 Path = "/session/callback"
             }.Uri.ToString();
 
-        public string GetAuthenticationUrl(AuthenticationContext ctx)
-            => QueryHelpers.AddQueryString(this.GetDiscordUrl(EndpointAuthorize).ToString(), new Dictionary<string, string>(5)
+        public Uri GetAuthenticationUrl(AuthenticationContext ctx)
+            => new Uri(QueryHelpers.AddQueryString(this.GetDiscordUrl(EndpointAuthorize).ToString(), new Dictionary<string, string>(5)
             {
-                ["client_id"] = this.Configuration.ClientId.AsString(),
+                ["client_id"] = this.Configuration.ClientId,
                 ["redirect_uri"] = this.GetRedirectUrl(ctx),
                 ["response_type"] = ResponseType,
                 ["scope"] = Scopes,
                 ["state"] = ctx.State
-            });
+            }));
 
         public async Task<OAuthResult> CompleteLoginAsync(AuthenticationContext ctx, string code, CancellationToken cancellationToken = default)
             => await this.ExchangeTokenAsync(ctx, code, GrantTypeToken, cancellationToken);
@@ -91,7 +96,7 @@ namespace RosettaCTF.Authentication
                 });
 
                 post.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(
-                    AbstractionUtilities.UTF8.GetBytes($"{this.Configuration.ClientId}:{this.Configuration.Secret}")));
+                    AbstractionUtilities.UTF8.GetBytes($"{this.Configuration.ClientId}:{this.Configuration.ClientSecret}")));
 
                 using (var res = await this.Http.SendAsync(post, cancellationToken))
                     return res.IsSuccessStatusCode;
@@ -129,7 +134,10 @@ namespace RosettaCTF.Authentication
                     using (var dat = await res.Content.ReadAsStreamAsync())
                         guilds = await JsonSerializer.DeserializeAsync<IEnumerable<DiscordGuildModel>>(dat, AbstractionUtilities.DefaultJsonOptions, cancellationToken);
 
-                    var authorized = guilds.Any(x => x.Id == this.Configuration.GuildId);
+                    var authorized = guilds.Select(x => x.Id.ParseAsUlong())
+                        .Intersect(this.Configuration.AuthorizedGuilds)
+                        .Any();
+
                     var uname = string.Create(duser.Username.Length + 5, duser, (buff, d) =>
                     {
                         var du = d.Username.AsSpan();
@@ -153,8 +161,8 @@ namespace RosettaCTF.Authentication
             {
                 var postData = new Dictionary<string, string>(6)
                 {
-                    ["client_id"] = this.Configuration.ClientId.AsString(),
-                    ["client_secret"] = this.Configuration.Secret,
+                    ["client_id"] = this.Configuration.ClientId,
+                    ["client_secret"] = this.Configuration.ClientSecret,
                     ["grant_type"] = grantType,
                     ["redirect_uri"] = this.GetRedirectUrl(ctx),
                     ["scope"] = Scopes
@@ -180,7 +188,9 @@ namespace RosettaCTF.Authentication
 
                     using (var dat = await res.Content.ReadAsStreamAsync())
                     {
-                        return await JsonSerializer.DeserializeAsync<OAuthResult>(dat, AbstractionUtilities.SnakeCaseJsonOptions, cancellationToken);
+                        var result = await JsonSerializer.DeserializeAsync<OAuthResult>(dat, AbstractionUtilities.SnakeCaseJsonOptions, cancellationToken);
+                        result.IsSuccess = true;
+                        return result;
                     }
                 }
             }

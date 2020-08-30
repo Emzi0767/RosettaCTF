@@ -18,18 +18,18 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using RosettaCTF;
 using RosettaCTF.Attributes;
-using RosettaCTF.Authentication;
 
-[assembly: OAuthProvider(DiscordOAuthProvider.ProviderType, typeof(DiscordOAuthInitializer))]
+[assembly: OAuthProvider(CustomOAuthProvider.ProviderType, typeof(CustomOAuthInitializer))]
 
-namespace RosettaCTF.Authentication
+namespace RosettaCTF
 {
-    internal sealed class DiscordOAuthInitializer : IOAuthProviderServiceInitializer
+    internal sealed class CustomOAuthInitializer : IOAuthProviderServiceInitializer
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IOAuthProvider, DiscordOAuthProvider>();
+            services.AddSingleton<CustomOAuthProvider>();
         }
 
         public Task InitializeServicesAsync(IServiceProvider services, CancellationToken cancellationToken = default)

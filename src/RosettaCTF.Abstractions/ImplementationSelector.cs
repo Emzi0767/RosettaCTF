@@ -54,19 +54,19 @@ namespace RosettaCTF
 
             this._databaseProviders = implAssemblies.Where(x => x.database != null)
                 .Select(x => x.database)
-                .ToDictionary(x => x.Id, x => x, StringComparer.InvariantCultureIgnoreCase);
+                .ToDictionary(x => x.Id, StringComparer.InvariantCultureIgnoreCase);
 
             this._cacheProviders = implAssemblies.Where(x => x.cache != null)
                 .Select(x => x.cache)
-                .ToDictionary(x => x.Id, x => x, StringComparer.InvariantCultureIgnoreCase);
+                .ToDictionary(x => x.Id, StringComparer.InvariantCultureIgnoreCase);
 
             this._configurationLoaderProviders = implAssemblies.Where(x => x.configurationLoader != null)
                 .Select(x => x.configurationLoader)
-                .ToDictionary(x => x.Id, x => x, StringComparer.CurrentCultureIgnoreCase);
+                .ToDictionary(x => x.Id, StringComparer.CurrentCultureIgnoreCase);
 
             this._oauthProviders = implAssemblies.Where(x => x.oauth != null)
                 .Select(x => x.oauth)
-                .ToDictionary(x => x.Id, x => x, StringComparer.CurrentCultureIgnoreCase);
+                .ToDictionary(x => x.Id, StringComparer.CurrentCultureIgnoreCase);
         }
 
         /// <summary>

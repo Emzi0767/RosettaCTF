@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RosettaCTF.Authentication;
 using RosettaCTF.Data;
 using RosettaCTF.Filters;
 using RosettaCTF.Models;
@@ -31,7 +32,7 @@ namespace RosettaCTF.Controllers
     [ValidateAntiForgeryToken]
     public class SessionController : RosettaControllerBase
     {
-        private DiscordOAuthProvider Discord { get; }
+        private OAuthProviderSelector OAuthSelector { get; }
         private JwtHandler Jwt { get; }
         private IOAuthStateRepository OAuthStateRepository { get; }
 
@@ -40,12 +41,12 @@ namespace RosettaCTF.Controllers
             IUserRepository userRepository,
             ICtfConfigurationLoader ctfConfigurationLoader,
             UserPreviewRepository userPreviewRepository,
-            DiscordOAuthProvider discord,
+            OAuthProviderSelector oauthSelector,
             JwtHandler jwt,
             IOAuthStateRepository oAuthStateRepository)
             : base(loggerFactory, userRepository, userPreviewRepository, ctfConfigurationLoader)
         {
-            this.Discord = discord;
+            this.OAuthSelector = oauthSelector;
             this.Jwt = jwt;
             this.OAuthStateRepository = oAuthStateRepository;
         }
@@ -55,8 +56,12 @@ namespace RosettaCTF.Controllers
         [Route("endpoint/{provider}")]
         public async Task<ActionResult<ApiResult<string>>> Endpoint(string provider, CancellationToken cancellationToken = default)
         {
+            var oauth = this.OAuthSelector.GetById(provider);
+            if (oauth == null)
+                return this.NotFound(ApiResult.FromError<string>(new ApiError(ApiErrorCode.InvalidProvider, "Specified provider does not exist.")));
+
             var state = await this.OAuthStateRepository.GenerateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), cancellationToken);
-            return this.Ok(ApiResult.FromResult(this.Discord.GetAuthenticationUrl(this.HttpContext, state)));
+            return this.Ok(ApiResult.FromResult(oauth.GetAuthenticationUrl(this.CreateContext(provider))));
         }
 
         [HttpGet]
@@ -87,21 +92,26 @@ namespace RosettaCTF.Controllers
             if (data.State == null || !await this.OAuthStateRepository.ValidateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), data.State, cancellationToken))
                 return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.Unauthorized, "OAuth state validation failed.")));
 
-            var tokens = await this.Discord.CompleteLoginAsync(this.HttpContext, data, cancellationToken);
+            var oauth = this.OAuthSelector.GetById(provider);
+            if (oauth == null)
+                return this.NotFound(ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidProvider, "Specified provider does not exist.")));
+
+            var ctx = this.CreateContext(provider);
+            var tokens = await oauth.CompleteLoginAsync(ctx, data.Code, cancellationToken);
             if (tokens == null)
                 return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.ExternalAuthenticationError, "Failed to authenticate with Discord.")));
 
             var expires = DateTimeOffset.UtcNow.AddSeconds(tokens.ExpiresIn - 20);
-            var duser = await this.Discord.GetUserAsync(this.HttpContext, tokens.AccessToken, cancellationToken);
-            if (duser == null || !duser.IsAuthorized)
+            var ouser = await oauth.GetUserAsync(ctx, tokens.AccessToken, cancellationToken);
+            if (ouser == null || !ouser.IsAuthorized)
                 return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.Unauthorized, "You are not authorized to participate.")));
 
-            var did = duser.Id.ParseAsUlong();
-            var user = await this.UserRepository.GetUserAsync((long)did, cancellationToken);
+            var oid = ouser.Id;
+            var user = await this.UserRepository.GetUserAsync(oid, cancellationToken);
             if (user == null)
-                user = await this.UserRepository.CreateUserAsync($"{duser.Username}#{duser.Discriminator}", did, tokens.AccessToken, tokens.RefreshToken, expires, duser.IsAuthorized, cancellationToken);
+                user = await this.UserRepository.CreateUserAsync(ouser.Username, ouser.Id, tokens.AccessToken, tokens.RefreshToken, expires, ouser.IsAuthorized, cancellationToken);
             else
-                await this.UserRepository.UpdateTokensAsync((long)did, tokens.AccessToken, tokens.RefreshToken, expires, cancellationToken);
+                await this.UserRepository.UpdateTokensAsync(oid, tokens.AccessToken, tokens.RefreshToken, expires, cancellationToken);
 
             var ruser = this.UserPreviewRepository.GetUser(user);
             var token = this.Jwt.IssueToken(ruser);
@@ -130,6 +140,17 @@ namespace RosettaCTF.Controllers
             await this.UserRepository.EnableHiddenChallengesAsync(this.RosettaUser.Id, true, cancellationToken);
 
             return this.Ok(ApiResult.FromResult<object>(null));
+        }
+
+        private AuthenticationContext CreateContext(string provider = null)
+        {
+            var req = this.HttpContext.Request;
+
+            var scheme = req.Scheme;
+            var host = req.Host.Host;
+            var port = req.Host.Port ?? 0;
+
+            return new AuthenticationContext(scheme, host, port, provider);
         }
     }
 }

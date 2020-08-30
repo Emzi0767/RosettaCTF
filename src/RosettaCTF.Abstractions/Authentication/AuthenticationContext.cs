@@ -21,7 +21,7 @@ namespace RosettaCTF.Authentication
     /// <summary>
     /// Represents the context of an authentication request.
     /// </summary>
-    public struct AuthenticationContext
+    public sealed class AuthenticationContext
     {
         /// <summary>
         /// Gets the callback URL for the web application.
@@ -29,14 +29,9 @@ namespace RosettaCTF.Authentication
         public Uri CallbackUrl { get; }
 
         /// <summary>
-        /// Gets the referer for authentication callback.
+        /// Gets the ID of the provider.
         /// </summary>
-        public Uri Referer { get; }
-
-        /// <summary>
-        /// Gets the state for the current request.
-        /// </summary>
-        public string State { get; }
+        public string ProviderId { get; }
 
         /// <summary>
         /// Creates a new authentication context.
@@ -44,9 +39,8 @@ namespace RosettaCTF.Authentication
         /// <param name="scheme">Current URI scheme.</param>
         /// <param name="host">Current hostname.</param>
         /// <param name="port">Current port.</param>
-        /// <param name="referer">Referring website. Used for callbacks, to determine which provider to pass the request to.</param>
-        /// <param name="state">Authentication state. Used for validating callbacks.</param>
-        public AuthenticationContext(string scheme, string host, int port, string referer, string state)
+        /// <param name="providerId">ID of the authentication provider.</param>
+        public AuthenticationContext(string scheme, string host, int port, string providerId)
         {
             this.CallbackUrl = new UriBuilder
             {
@@ -56,11 +50,7 @@ namespace RosettaCTF.Authentication
                 Path = "/session/callback"
             }.Uri;
 
-            this.Referer = referer != null
-                ? new Uri(referer)
-                : null;
-
-            this.State = state;
+            this.ProviderId = providerId;
         }
     }
 }

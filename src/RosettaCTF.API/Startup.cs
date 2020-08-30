@@ -39,6 +39,7 @@ using RosettaCTF.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Options;
 using System.Net;
+using RosettaCTF.Authentication;
 
 namespace RosettaCTF.API
 {
@@ -178,7 +179,9 @@ namespace RosettaCTF.API
                 .AddSingleton<JwtHandler>()
                 .AddTransient<Argon2idKeyDeriver>()
                 .AddSingleton<EnumDisplayConverter>()
-                .AddTransient<IScoringModel, SlowLogisticDecayScoringModel>();
+                .AddTransient<IScoringModel, SlowLogisticDecayScoringModel>()
+                .AddSingleton<OAuthConfigurationProvider>()
+                .AddScoped<OAuthProviderSelector>();
 
             services.AddHostedService<ChallengeBootstrapperService>();
 

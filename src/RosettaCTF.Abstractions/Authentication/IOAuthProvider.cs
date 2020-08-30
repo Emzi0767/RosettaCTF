@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,11 +26,18 @@ namespace RosettaCTF.Authentication
     public interface IOAuthProvider
     {
         /// <summary>
+        /// Gets whether this provider provides authentication for specified ID.
+        /// </summary>
+        /// <param name="id">ID to check for.</param>
+        /// <returns>Whether the ID is contained or not.</returns>
+        bool HasId(string id);
+
+        /// <summary>
         /// Gets the URL to send the client to in order for him to authenticate.
         /// </summary>
         /// <param name="ctx">Context in which authentication happens.</param>
-        /// <returns>URL of the authentication page, as a string.</returns>
-        string GetAuthenticationUrl(AuthenticationContext ctx);
+        /// <returns>URL of the authentication page.</returns>
+        Uri GetAuthenticationUrl(AuthenticationContext ctx);
 
         /// <summary>
         /// Completes OAuth authentication dance by exchanging a code for a token.
