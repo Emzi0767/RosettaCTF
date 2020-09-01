@@ -177,6 +177,8 @@ namespace RosettaCTF.API
                 .AddSingleton<OAuthTokenHandler>()
                 .AddSingleton<HttpClient>()
                 .AddSingleton<JwtHandler>()
+                .AddTransient<PasswordHandler>()
+                .AddSingleton<IdGenerator>()
                 .AddTransient<Argon2idKeyDeriver>()
                 .AddSingleton<EnumDisplayConverter>()
                 .AddTransient<IScoringModel, SlowLogisticDecayScoringModel>()

@@ -58,6 +58,11 @@ namespace RosettaCTF.Models
         /// </summary>
         AlreadyLoggedIn = 1004,
 
+        /// <summary>
+        /// Specified credentials were invalid.
+        /// </summary>
+        InvalidCredentials = 1005,
+
         // 2xxx - retrieval errors
 
         /// <summary>
@@ -121,6 +126,11 @@ namespace RosettaCTF.Models
         /// Specified user already has a team.
         /// </summary>
         UserAlreadyOnTeam = 3006,
+
+        /// <summary>
+        /// Specified name contained invalid characters.
+        /// </summary>
+        InvalidName = 3007,
 
         // 4xxx - generic errors
 

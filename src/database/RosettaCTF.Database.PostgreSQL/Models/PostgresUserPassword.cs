@@ -14,13 +14,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.ComponentModel.DataAnnotations;
-
 namespace RosettaCTF.Models
 {
-    public sealed class TeamCreateModel
+    internal sealed class PostgresUserPassword
     {
-        [Required, MinLength(2), MaxLength(48), RegularExpression(AbstractionUtilities.NameRegexPattern)]
-        public string Name { get; set; }
+        public byte[] PasswordHash { get; set; }
+
+        public long UserId { get; set; }
+
+        public PostgresUser UserInternal { get; set; }
     }
 }

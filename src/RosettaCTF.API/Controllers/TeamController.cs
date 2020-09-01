@@ -69,13 +69,9 @@ namespace RosettaCTF.Controllers
             if (DateTimeOffset.UtcNow >= this.EventConfiguration.StartTime)
                 return this.StatusCode(403, ApiResult.FromError<TeamPreview>(new ApiError(ApiErrorCode.EventStarted, "Cannot modify team composition after the event has started.")));
 
-            ITeam team;
-            try
-            {
-                team = await this.UserRepository.CreateTeamAsync(teamCreate.Name, cancellationToken);
-            }
-            catch
-            { return this.Conflict(ApiResult.FromError<TeamPreview>(new ApiError(ApiErrorCode.DuplicateTeamName, "A team with given name already exists."))); }
+            var team = await this.UserRepository.CreateTeamAsync(teamCreate.Name, cancellationToken);
+            if (team == null)
+                return this.Conflict(ApiResult.FromError<TeamPreview>(new ApiError(ApiErrorCode.DuplicateTeamName, "A team with given name already exists.")));
 
             await this.UserRepository.AssignTeamMembershipAsync(this.RosettaUser.Id, team.Id, cancellationToken);
 

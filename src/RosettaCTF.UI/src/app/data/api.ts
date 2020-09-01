@@ -58,6 +58,11 @@ export enum ApiErrorCode {
      */
     AlreadyLoggedIn = 1004,
 
+    /**
+     * Specified credentials were invalid.
+     */
+    InvalidCredentials = 1005,
+
     // --------------------------------------------------------------------------------------------
     // 2xxx - retrieval errors
 
@@ -124,6 +129,11 @@ export enum ApiErrorCode {
      */
     UserAlreadyOnTeam = 3006,
 
+    /**
+     * Specified name contained invalid characters.
+     */
+    InvalidName = 3007,
+
     // --------------------------------------------------------------------------------------------
     // 4xxx - generic errors
 
@@ -185,6 +195,96 @@ export interface ICreateTeamInvite {
      * Gets or sets the ID of the user to invite.
      */
     id: string;
+}
+
+/**
+ * Contains information necessary to register a user.
+ */
+export interface IUserRegister {
+
+    /**
+     * Gets or sets the username for the new user.
+     */
+    username: string;
+
+    /**
+     * Gets or sets the password for the new user.
+     */
+    password: string;
+
+    /**
+     * Gets or sets the confirm password for the new user.
+     */
+    confirmPassword: string;
+}
+
+/**
+ * Contains information necessary to login a user.
+ */
+export interface IUserLogin {
+
+    /**
+     * Gets or sets the username to log in as.
+     */
+    username: string;
+
+    /**
+     * Gets or sets the password to authenticate with.
+     */
+    password: string;
+}
+
+/**
+ * Contains information necessary to complete a login with MFA.
+ */
+export interface IMfa {
+
+    /**
+     * Gets or sets the MFA code to authenticate with.
+     */
+    mfaCode: number;
+}
+
+/**
+ * Contains information necessary to change a user's password.
+ */
+export interface IUserPasswordChange {
+
+    /**
+     * Gets or sets the old password.
+     */
+    oldPassword: string;
+
+    /**
+     * Gets or sets the new password.
+     */
+    newPassword: string;
+
+    /**
+     * Gets or sets the confirm new password.
+     */
+    confirmPassword: string;
+
+    /**
+     * Gets or sets the MFA code if one is required.
+     */
+    mfaCode?: number;
+}
+
+/**
+ * Contains information necessary to remove a user's password.
+ */
+export interface IUserPasswordRemove {
+
+    /**
+     * Gets or sets the password to validate.
+     */
+    password: string;
+
+    /**
+     * Gets or sets the MFA code if one is required.
+     */
+    mfaCode?: number;
 }
 
 /**

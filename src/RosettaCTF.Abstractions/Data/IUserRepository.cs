@@ -35,17 +35,21 @@ namespace RosettaCTF.Data
         Task<IUser> GetUserAsync(long id, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Retrieves a user by their name.
+        /// </summary>
+        /// <param name="username">Username of the user to retrieve.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
+        /// <returns>Requested user.</returns>
+        Task<IUser> GetUserAsync(string username, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Creates a new user with specified parameters. This method will fail if a user with this name exists.
         /// </summary>
         /// <param name="username">Username for the user.</param>
-        /// <param name="discordId">Discord ID of the user.</param>
-        /// <param name="token">Discord OAuth2 authentication token.</param>
-        /// <param name="refreshToken">Discord OAuth2 refresh token.</param>
-        /// <param name="tokenExpiresAt">Exact timestamp at which this OAuth2 token expires.</param>
         /// <param name="isAuthorized">Whether the user is authorized.</param>
         /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>Created user.</returns>
-        Task<IUser> CreateUserAsync(string username, ulong discordId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, bool isAuthorized, CancellationToken cancellationToken = default);
+        Task<IUser> CreateUserAsync(string username, bool isAuthorized, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Deletes a user by their ID.
@@ -89,15 +93,71 @@ namespace RosettaCTF.Data
         Task AssignTeamMembershipAsync(long userId, long? teamId, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Updates a user with a new password, or disables password login.
+        /// </summary>
+        /// <param name="userId">ID of the user to update.</param>
+        /// <param name="password">Password to set, or null to disable.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
+        /// <returns>A task encapsulating the operation.</returns>
+        Task UpdateUserPasswordAsync(long userId, byte[] password, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets the password hash to authenticate the user with.
+        /// </summary>
+        /// <param name="userId">ID of the user to get the password for.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
+        /// <returns>The retrieved password hash.</returns>
+        Task<byte[]> GetUserPasswordAsync(long userId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Creates a new external account connection for specified user.
+        /// </summary>
+        /// <param name="userId">ID of the user to create an external connection for.</param>
+        /// <param name="extId">ID of the user at the external account provider.</param>
+        /// <param name="extName">Username at the external account provider.</param>
+        /// <param name="providerId">ID of the provider of this account.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
+        /// <returns>Created connection.</returns>
+        Task<IExternalUser> ConnectExternalAccountAsync(long userId, string extId, string extName, string providerId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Removes an external account connection for specified user.
+        /// </summary>
+        /// <param name="userId">ID of the user to remove an external connection from.</param>
+        /// <param name="providerId">ID of the external account provider.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
+        /// <returns>A task encapsulating the operation.</returns>
+        Task RemoveExternalAccountAsync(long userId, string providerId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets an external account connection for specified user.
+        /// </summary>
+        /// <param name="userId">ID of the user to get an external connection for.</param>
+        /// <param name="providerId">ID of the external account provider.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
+        /// <returns>Retrieved account connection.</returns>
+        Task<IExternalUser> GetExternalAccountAsync(long userId, string providerId, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets an external account by its ID.
+        /// </summary>
+        /// <param name="id">ID of the external account.</param>
+        /// <param name="providerId">ID of the external account provider.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
+        /// <returns>Retrieved account connection.</returns>
+        Task<IExternalUser> GetExternalAccountAsync(string id, string providerId, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Updates OAuth2 authentication data for a user.
         /// </summary>
         /// <param name="userId">ID of the user to update authentication data for.</param>
+        /// <param name="providerId">ID of the external account provider.</param>
         /// <param name="token">New Discord OAuth2 authentication token.</param>
         /// <param name="refreshToken">New Discord OAuth2 refresh token.</param>
         /// <param name="tokenExpiresAt">New expiration timestamp for the token.</param>
         /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>A task encapsulating the operation.</returns>
-        Task UpdateTokensAsync(long userId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, CancellationToken cancellationToken = default);
+        Task UpdateTokensAsync(long userId, string providerId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Updates a user's ability to view hidden challenges and categories.

@@ -23,6 +23,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Humanizer;
 using Humanizer.Localisation;
 using RosettaCTF.Data;
@@ -34,6 +35,11 @@ namespace RosettaCTF
     /// </summary>
     public static class AbstractionUtilities
     {
+        /// <summary>
+        /// Gets the regex pattern used to validate usernames and team names.
+        /// </summary>
+        public const string NameRegexPattern = @"^[a-zA-Z0-9!@#$%^&*()\-_+=;:'""\\|,<.>\/?€~` ]{2,48}$";
+
         private static HashSet<string> AntiforgeryTypeNames { get; }
 
         /// <summary>
@@ -71,6 +77,11 @@ namespace RosettaCTF
         {
             PropertyNamingPolicy = new SnakeCaseNamingPolicy()
         };
+
+        /// <summary>
+        /// Gets the regex used to validate usernames and team names.
+        /// </summary>
+        public static Regex NameRegex { get; } = new Regex(NameRegexPattern, RegexOptions.Compiled | RegexOptions.ECMAScript);
 
         static AbstractionUtilities()
         {
@@ -160,6 +171,36 @@ namespace RosettaCTF
             => double.IsNaN(d)
                 ? Math.Max(0, min)
                 : Math.Max(Math.Min(d, max), min);
+
+        /// <summary>
+        /// Performs a constant-time comparisons of 2 values.
+        /// </summary>
+        /// <param name="input">First value.</param>
+        /// <param name="known">Second value.</param>
+        /// <param name="expectedLength">Expected length of input data.</param>
+        /// <returns>Whether the two values are equal.</returns>
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public static bool ConstantTimeEquals(this ReadOnlySpan<byte> input, ReadOnlySpan<byte> known, int expectedLength)
+        {
+            // https://github.com/jbtule/keyczar-dotnet/blob/aac6e90ffa2cee3bf1e5bf9e3b8c7caf077b6343/Keyczar/Keyczar/Util/Secure.cs#L98-L148
+            // https://github.com/sdrapkin/SecurityDriven.Inferno/blob/cfba069191247c8e24b096fd0f2dd899b5a25747/Utils.cs
+
+            // fill dummy array for comparisons shoud lengths mismatch
+            ReadOnlySpan<byte> ind = stackalloc byte[2] { 0x01, 0xFE };
+
+            // count differences
+            var diffBits = 0;
+            var len = Math.Max(input.Length, known.Length);
+            for (var i = 0; i < expectedLength; i++)
+            {
+                if (i >= len)
+                    diffBits |= ind[0] ^ ind[1];
+                else
+                    diffBits |= input[i] ^ known[i];
+            }
+
+            return input.Length == known.Length & input.Length == expectedLength & diffBits == 0;
+        }
 
         private static void ForceLoadAssemblies()
         {

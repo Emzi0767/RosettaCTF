@@ -15,7 +15,7 @@
 // limitations under the License.
 
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
@@ -37,12 +37,18 @@ export class LoginComponent implements OnInit, OnDestroy {
     constructor(private eventDispatcher: EventDispatcherService,
                 private api: RosettaApiService,
                 private router: Router,
-                private sessionProvider: SessionProviderService) { }
+                private sessionProvider: SessionProviderService,
+                private currentRoute: ActivatedRoute) { }
 
     ngOnInit(): void {
+        const args = this.currentRoute.snapshot.queryParamMap;
+        const provider = args.has("provider")
+            ? args.get("provider")
+            : null;
+
         this.sessionProvider.sessionChange
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(x => this.beginLogin(x));
+            .subscribe(x => this.beginLogin(x, provider));
     }
 
     ngOnDestroy(): void {
@@ -50,13 +56,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
     }
 
-    private async beginLogin(session: ISession): Promise<void> {
+    private async beginLogin(session: ISession, provider: string): Promise<void> {
         if (session.isAuthenticated) {
             this.router.navigate(["/"]);
             return;
         }
 
-        const endpoint = await this.api.getLoginUrl();
+        const endpoint = await this.api.getLoginUrl(provider);
         if (!endpoint.isSuccess) {
             this.eventDispatcher.emit("dialog",
                 {

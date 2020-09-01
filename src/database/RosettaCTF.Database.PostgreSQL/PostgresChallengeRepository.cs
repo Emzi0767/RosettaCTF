@@ -179,10 +179,14 @@ namespace RosettaCTF
                 Score = score
             };
 
-            await this.Database.Solves.AddAsync(solve, cancellationToken);
-            await this.Database.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await this.Database.Solves.AddAsync(solve, cancellationToken);
+                await this.Database.SaveChangesAsync(cancellationToken);
 
-            return solve;
+                return solve;
+            }
+            catch { return null; }
         }
 
         public async Task<IEnumerable<ICtfSolveSubmission>> GetSuccessfulSolvesAsync(CancellationToken cancellationToken = default)

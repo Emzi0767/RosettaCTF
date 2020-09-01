@@ -18,9 +18,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RosettaCTF.Models
 {
-    public sealed class TeamCreateModel
+    /// <summary>
+    /// Contains information required to finish authentication via MFA.
+    /// </summary>
+    public class UserMfaModel
     {
-        [Required, MinLength(2), MaxLength(48), RegularExpression(AbstractionUtilities.NameRegexPattern)]
-        public string Name { get; set; }
+        /// <summary>
+        /// Gets or sets the MFA code sent by the user.
+        /// </summary>
+        [Required]
+        public int MfaCode { get; set; }
     }
 }

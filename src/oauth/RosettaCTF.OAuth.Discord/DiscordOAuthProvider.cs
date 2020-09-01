@@ -151,17 +151,7 @@ namespace RosettaCTF.Authentication
                         .Intersect(this.Configuration.AuthorizedGuilds)
                         .Any();
 
-                    var uname = string.Create(duser.Username.Length + 5, duser, (buff, d) =>
-                    {
-                        var du = d.Username.AsSpan();
-                        var dul = du.Length;
-
-                        d.Discriminator.AsSpan().CopyTo(buff.Slice(dul + 1));
-                        buff[^5] = '#';
-                        du.CopyTo(buff);
-                    });
-
-                    user = new OAuthUser(duser.Id, uname, authorized);
+                    user = new OAuthUser(duser.Id, duser.Username, authorized);
                 }
             }
 

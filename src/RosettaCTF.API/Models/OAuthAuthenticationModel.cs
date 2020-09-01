@@ -14,23 +14,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace RosettaCTF.Models
 {
     /// <summary>
-    /// Contains a token and expiration time.
+    /// Contains arguments for PUT /session
     /// </summary>
-    public struct JwtTokenData
+    public sealed class OAuthAuthenticationModel
     {
         /// <summary>
-        /// Gets or sets the token.
+        /// OAuth authentication code to exchange for a token.
         /// </summary>
-        public string Token { get; set; }
+        [Required]
+        public string Code { get; set; }
 
         /// <summary>
-        /// Gets or sets the token's expiration time.
+        /// OAuth state to validate.
         /// </summary>
-        public DateTimeOffset ExpiresAt { get; set; }
+        [Required]
+        public string State { get; set; }
+
+        /// <summary>
+        /// OAuth referrer.
+        /// </summary>
+        [Required]
+        public string Referrer { get; set; }
     }
 }

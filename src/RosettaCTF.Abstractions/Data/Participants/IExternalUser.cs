@@ -15,53 +15,47 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 
 namespace RosettaCTF.Data
 {
     /// <summary>
-    /// Represents an individual user.
+    /// Represents a user sourced from an external authentication provider.
     /// </summary>
-    public interface IUser
+    public interface IExternalUser
     {
         /// <summary>
-        /// Gets the ID of the user.
+        /// Gets the external ID of this account.
         /// </summary>
-        long Id { get; }
+        string Id { get; }
 
         /// <summary>
-        /// Gets the name of the suer.
+        /// Gets the external username of this account.
         /// </summary>
         string Username { get; }
 
         /// <summary>
-        /// Gets the URL of the user's avatar.
+        /// Gets the ID of the account provider.
         /// </summary>
-        Uri AvatarUrl { get; }
+        string ProviderId { get; }
 
         /// <summary>
-        /// Gets the stored password. This will generally not be included with the object.
+        /// Gets the OAuth token for this user.
         /// </summary>
-        byte[] Password { get; }
+        string Token { get; }
 
         /// <summary>
-        /// Gets whether the user is authorized to take part in challenges.
+        /// Gets the OAuth refresh token for this user.
         /// </summary>
-        bool IsAuthorized { get; }
+        string RefreshToken { get; }
 
         /// <summary>
-        /// Gets whether the user has access to hidden challenges and categories.
+        /// Gets the time at which the token expires.
         /// </summary>
-        bool HasHiddenAccess { get; }
+        DateTimeOffset? TokenExpirationTime { get; }
 
         /// <summary>
-        /// Gets the team this user belongs to.
+        /// Gets the user the account is associated with.
         /// </summary>
-        ITeam Team { get; }
-
-        /// <summary>
-        /// Gets the external accounts associated with this user.
-        /// </summary>
-        IEnumerable<IExternalUser> ConnectedAccounts { get; }
+        IUser User { get; }
     }
 }

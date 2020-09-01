@@ -52,6 +52,10 @@ const routes: Routes = [
         component: LoginComponent
     },
     {
+        path: "session/login/:provider",
+        component: LoginComponent
+    },
+    {
         path: "session/logout",
         component: LogoutComponent
     },

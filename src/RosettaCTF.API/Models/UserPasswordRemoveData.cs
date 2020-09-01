@@ -18,9 +18,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RosettaCTF.Models
 {
-    public sealed class TeamCreateModel
+    public sealed class UserPasswordRemoveData
     {
-        [Required, MinLength(2), MaxLength(48), RegularExpression(AbstractionUtilities.NameRegexPattern)]
-        public string Name { get; set; }
+        /// <summary>
+        /// Gets or sets the password.
+        /// </summary>
+        [Required]
+        public string Password { get; set; }
+
+        /// <summary>
+        /// Gets or sets the MFA code for the request.
+        /// </summary>
+        public int? MfaCode { get; set; }
     }
 }

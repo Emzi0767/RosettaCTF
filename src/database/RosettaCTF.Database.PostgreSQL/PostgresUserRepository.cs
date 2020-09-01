@@ -29,57 +29,48 @@ namespace RosettaCTF
     {
         private PostgresDbContext Database { get; }
         private OAuthTokenHandler TokenHandler { get; }
+        private IdGenerator IdGenerator { get; }
 
-        public PostgresUserRepository(PostgresDbContext db, OAuthTokenHandler tokenHandler)
+        public PostgresUserRepository(PostgresDbContext db, OAuthTokenHandler tokenHandler, IdGenerator idgen)
         {
             this.Database = db;
             this.TokenHandler = tokenHandler;
+            this.IdGenerator = idgen;
         }
 
         public async Task<IUser> GetUserAsync(long id, CancellationToken cancellationToken = default)
-        {
-            var user = await this.Database.Users
+            => await this.Database.Users
                 .Include(x => x.TeamInternal)
                 .ThenInclude(x => x.MembersInternal)
+                .Include(x => x.ConnectedAccountsInternal)
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-            return user != null
-                ? await new PostgresUserDecrypted(user).DecryptTokensAsync(this.TokenHandler)
-                : null;
-        }
+        public async Task<IUser> GetUserAsync(string username, CancellationToken cancellationToken = default)
+            => await this.Database.Users
+                .Include(x => x.TeamInternal)
+                .ThenInclude(x => x.MembersInternal)
+                .Include(x => x.ConnectedAccountsInternal)
+                .FirstOrDefaultAsync(x => x.Username == username, cancellationToken);
 
-        public async Task<IUser> CreateUserAsync(string username, ulong discordId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, bool isAuthorized, CancellationToken cancellationToken = default)
+        public async Task<IUser> CreateUserAsync(string username, bool isAuthorized, CancellationToken cancellationToken = default)
         {
-            if (token != null && refreshToken != null)
-            {
-                token = await this.TokenHandler.EncryptAsync(token);
-                refreshToken = await this.TokenHandler.EncryptAsync(refreshToken);
-            }
-            else
-            {
-                token = null;
-                refreshToken = null;
-            }
-
             var user = new PostgresUser
             {
-                Id = (long)discordId,
+                Id = this.IdGenerator.Generate(),
                 Username = username,
                 AvatarUrl = null,
-                DiscordId = discordId,
-                Token = token,
-                RefreshToken = refreshToken,
-                TokenExpirationTime = token != null && refreshToken != null
-                    ? tokenExpiresAt as DateTimeOffset?
-                    : null,
                 IsAuthorized = isAuthorized,
                 HasHiddenAccess = false
             };
 
-            await this.Database.Users.AddAsync(user, cancellationToken);
-            await this.Database.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await this.Database.Users.AddAsync(user, cancellationToken);
+                await this.Database.SaveChangesAsync(cancellationToken);
 
-            return await new PostgresUserDecrypted(user).DecryptTokensAsync(this.TokenHandler);
+                return user;
+            }
+            catch { return null; }
         }
 
         public async Task DeleteUserAsync(long id, CancellationToken cancellationToken = default)
@@ -110,10 +101,15 @@ namespace RosettaCTF
                 Name = name,
                 AvatarUrl = null
             };
-            await this.Database.Teams.AddAsync(team, cancellationToken);
-            await this.Database.SaveChangesAsync(cancellationToken);
 
-            return team;
+            try
+            {
+                await this.Database.Teams.AddAsync(team, cancellationToken);
+                await this.Database.SaveChangesAsync(cancellationToken);
+
+                return team;
+            }
+            catch { return null; }
         }
 
         public async Task DeleteTeamAsync(long id, CancellationToken cancellationToken = default)
@@ -141,30 +137,109 @@ namespace RosettaCTF
             await this.Database.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task UpdateTokensAsync(long userId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, CancellationToken cancellationToken = default)
+        public async Task UpdateUserPasswordAsync(long userId, byte[] password, CancellationToken cancellationToken = default)
         {
-            if (token != null && refreshToken != null)
+            var pwd = await this.Database.UserPasswords.FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+            if (pwd != null)
             {
-                token = await this.TokenHandler.EncryptAsync(token);
-                refreshToken = await this.TokenHandler.EncryptAsync(refreshToken);
+                if (password != null)
+                {
+                    pwd.PasswordHash = password;
+                    this.Database.UserPasswords.Update(pwd);
+                }
+                else
+                {
+                    this.Database.UserPasswords.Remove(pwd);
+                }
             }
             else
             {
-                token = null;
-                refreshToken = null;
+                pwd = new PostgresUserPassword
+                {
+                    PasswordHash = password,
+                    UserId = userId
+                };
+                await this.Database.UserPasswords.AddAsync(pwd, cancellationToken);
             }
 
-            var user = await this.Database.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
-            if (user == null)
+            await this.Database.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<byte[]> GetUserPasswordAsync(long userId, CancellationToken cancellationToken = default)
+        {
+            var pwd = await this.Database.UserPasswords.FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+            return pwd?.PasswordHash;
+        }
+
+        public async Task<IExternalUser> ConnectExternalAccountAsync(long userId, string extId, string extName, string providerId, CancellationToken cancellationToken = default)
+        {
+            var extUser = new PostgresExternalUser
+            {
+                Id = extId,
+                Username = extName,
+                ProviderId = providerId,
+                UserId = userId
+            };
+
+            await this.Database.ConnectedAccounts.AddAsync(extUser, cancellationToken);
+            await this.Database.SaveChangesAsync(cancellationToken);
+
+            return extUser;
+        }
+
+        public async Task RemoveExternalAccountAsync(long userId, string providerId, CancellationToken cancellationToken = default)
+        {
+            var extUser = await this.Database.ConnectedAccounts.FirstOrDefaultAsync(x => x.UserId == userId && x.ProviderId == providerId, cancellationToken);
+            if (extUser == null)
                 return;
 
-            user.Token = token;
-            user.RefreshToken = refreshToken;
-            user.TokenExpirationTime = token != null && refreshToken != null
+            this.Database.ConnectedAccounts.Remove(extUser);
+            await this.Database.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<IExternalUser> GetExternalAccountAsync(long userId, string providerId, CancellationToken cancellationToken = default)
+        {
+            var extUser = await this.Database.ConnectedAccounts
+                .Include(x => x.UserInternal)
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.ProviderId == providerId, cancellationToken);
+            if (extUser == null)
+                return null;
+
+            return await new PostgresExternalUserDecrypted(extUser).DecryptTokensAsync(this.TokenHandler);
+        }
+
+        public async Task<IExternalUser> GetExternalAccountAsync(string id, string providerId, CancellationToken cancellationToken = default)
+        {
+            var extUser = await this.Database.ConnectedAccounts
+                .Include(x => x.UserInternal)
+                .FirstOrDefaultAsync(x => x.Id == id && x.ProviderId == providerId, cancellationToken);
+            if (extUser == null)
+                return null;
+
+            return await new PostgresExternalUserDecrypted(extUser).DecryptTokensAsync(this.TokenHandler);
+        }
+
+        public async Task UpdateTokensAsync(long userId, string providerId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, CancellationToken cancellationToken = default)
+        {
+            token = token != null
+                ? await this.TokenHandler.EncryptAsync(token)
+                : null;
+
+            refreshToken = refreshToken != null
+                ? await this.TokenHandler.EncryptAsync(refreshToken)
+                : null;
+
+            var extUser = await this.Database.ConnectedAccounts.FirstOrDefaultAsync(x => x.UserId == userId && x.ProviderId == providerId, cancellationToken);
+            if (extUser == null)
+                return;
+
+            extUser.Token = token;
+            extUser.RefreshToken = refreshToken;
+            extUser.TokenExpirationTime = token != null && refreshToken != null
                 ? tokenExpiresAt as DateTimeOffset?
                 : null;
 
-            this.Database.Users.Update(user);
+            this.Database.ConnectedAccounts.Update(extUser);
             await this.Database.SaveChangesAsync(cancellationToken);
         }
 

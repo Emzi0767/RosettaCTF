@@ -45,7 +45,7 @@ export class CallbackComponent implements OnInit {
                     {
                         message: args.get("error") === "access_denied"
                             ? "You refused to authorize the application. You need to allow access for login to work."
-                            : "Discord login failed. Please try again.\n\nIf the problem persists, contact the organizers."
+                            : "Login failed. Please try again.\n\nIf the problem persists, contact the organizers."
                     }
                 });
             this.router.navigate(["/"]);
@@ -60,8 +60,8 @@ export class CallbackComponent implements OnInit {
                         defaults:
                         {
                             message: !!x.error?.message
-                                ? `Discord login failed. Please try again.\n\nIf the problem persists, contact the organizers, with the following error message: ${x.error.message}`
-                                : "Discord login failed. Please try again.\n\nIf the problem persists, contact the organizers."
+                                ? `Login failed. Please try again.\n\nIf the problem persists, contact the organizers, with the following error message: ${x.error.message}`
+                                : "Login failed. Please try again.\n\nIf the problem persists, contact the organizers."
                         }
                     });
                 this.router.navigate(["/"]);

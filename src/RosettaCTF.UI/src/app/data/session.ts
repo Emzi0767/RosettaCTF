@@ -24,7 +24,7 @@ export interface IUser {
     id: string;
 
     /**
-     * Gets the name of the user. Format is discord_username#discord_discriminator
+     * Gets the name of the user.
      */
     username: string;
 

@@ -150,12 +150,9 @@ namespace RosettaCTF.Controllers
                     await this.ChallengeCacheRepository.IncrementBaselineSolveCountAsync(cancellationToken);
             }
 
-            try
-            {
-                await this.ChallengeRepository.SubmitSolveAsync(flag, valid, challenge.Id, this.RosettaUser.Id, this.RosettaUser.Team.Id, null, cancellationToken);
-            }
-            catch
-            { return this.Conflict(ApiResult.FromError<bool>(new ApiError(ApiErrorCode.AlreadySolved, "Your team already solved this challenge."))); }
+            var solve = await this.ChallengeRepository.SubmitSolveAsync(flag, valid, challenge.Id, this.RosettaUser.Id, this.RosettaUser.Team.Id, null, cancellationToken);
+            if (solve == null)
+                return this.Conflict(ApiResult.FromError<bool>(new ApiError(ApiErrorCode.AlreadySolved, "Your team already solved this challenge.")));
 
             return this.Ok(ApiResult.FromResult(valid));
         }

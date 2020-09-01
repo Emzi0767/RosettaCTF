@@ -15,6 +15,7 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -34,6 +35,7 @@ namespace RosettaCTF.Controllers
     {
         private OAuthProviderSelector OAuthSelector { get; }
         private JwtHandler Jwt { get; }
+        private PasswordHandler Password { get; }
         private IOAuthStateRepository OAuthStateRepository { get; }
 
         public SessionController(
@@ -41,13 +43,15 @@ namespace RosettaCTF.Controllers
             IUserRepository userRepository,
             ICtfConfigurationLoader ctfConfigurationLoader,
             UserPreviewRepository userPreviewRepository,
-            OAuthProviderSelector oauthSelector,
+            OAuthProviderSelector oAuthSelector,
             JwtHandler jwt,
+            PasswordHandler pwdHandler,
             IOAuthStateRepository oAuthStateRepository)
             : base(loggerFactory, userRepository, userPreviewRepository, ctfConfigurationLoader)
         {
-            this.OAuthSelector = oauthSelector;
+            this.OAuthSelector = oAuthSelector;
             this.Jwt = jwt;
+            this.Password = pwdHandler;
             this.OAuthStateRepository = oAuthStateRepository;
         }
 
@@ -88,7 +92,7 @@ namespace RosettaCTF.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("oauth")]
-        public async Task<ActionResult<ApiResult<SessionPreview>>> Login([FromBody] OAuthAuthenticationData data, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResult<SessionPreview>>> Login([FromBody] OAuthAuthenticationModel data, CancellationToken cancellationToken = default)
         {
             if (data.State == null || !await this.OAuthStateRepository.ValidateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), data.State, cancellationToken))
                 return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.Unauthorized, "OAuth state validation failed.")));
@@ -101,7 +105,7 @@ namespace RosettaCTF.Controllers
             var ctx = this.CreateContext(provider, data.State);
             var tokens = await oauth.CompleteLoginAsync(ctx, data.Code, cancellationToken);
             if (tokens == null)
-                return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.ExternalAuthenticationError, "Failed to authenticate with Discord.")));
+                return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.ExternalAuthenticationError, "Failed to authenticate with the OAuth provider.")));
 
             var expires = DateTimeOffset.UtcNow.AddSeconds(tokens.ExpiresIn - 20);
             var ouser = await oauth.GetUserAsync(ctx, tokens.AccessToken, cancellationToken);
@@ -109,15 +113,92 @@ namespace RosettaCTF.Controllers
                 return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.Unauthorized, "You are not authorized to participate.")));
 
             var oid = ouser.Id;
-            var user = await this.UserRepository.GetUserAsync(oid, cancellationToken);
-            if (user == null)
-                user = await this.UserRepository.CreateUserAsync(ouser.Username, ouser.Id, tokens.AccessToken, tokens.RefreshToken, expires, ouser.IsAuthorized, cancellationToken);
-            else
-                await this.UserRepository.UpdateTokensAsync(oid, tokens.AccessToken, tokens.RefreshToken, expires, cancellationToken);
+            var euser = await this.UserRepository.GetExternalAccountAsync(oid, provider, cancellationToken);
+            var user = euser?.User;
+            if (euser == null)
+            {
+                if (!AbstractionUtilities.NameRegex.IsMatch(ouser.Username))
+                    return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidName, "Specified username contained invalid characters.")));
+
+                user = await this.UserRepository.CreateUserAsync(ouser.Username, ouser.IsAuthorized, cancellationToken);
+                euser = await this.UserRepository.ConnectExternalAccountAsync(user.Id, ouser.Id, ouser.Username, provider, cancellationToken);
+            }
+
+            await this.UserRepository.UpdateTokensAsync(user.Id, euser.ProviderId, tokens.AccessToken, tokens.RefreshToken, expires, cancellationToken);
 
             var ruser = this.UserPreviewRepository.GetUser(user);
             var token = this.Jwt.IssueToken(ruser);
             return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(ruser, token.Token, token.ExpiresAt)));
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult<ApiResult<SessionPreview>>> Login([FromBody] UserAuthenticationModel data, CancellationToken cancellationToken = default)
+        {
+            var user = await this.UserRepository.GetUserAsync(data.Username, cancellationToken);
+            if (user == null)
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
+
+            var pwd = await this.UserRepository.GetUserPasswordAsync(user.Id, cancellationToken);
+            if (!await this.Password.ValidatePasswordHashAsync(data.Password, pwd))
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
+
+            var ruser = this.UserPreviewRepository.GetUser(user);
+            var token = this.Jwt.IssueToken(ruser);
+            return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(ruser, token.Token, token.ExpiresAt)));
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("register")]
+        public async Task<ActionResult<ApiResult<bool>>> Register([FromBody] UserRegistrationData data, CancellationToken cancellationToken = default)
+        {
+            var pwd = await this.Password.CreatePasswordHashAsync(data.Password);
+
+            var user = await this.UserRepository.CreateUserAsync(data.Username, true, cancellationToken);
+            if (user == null)
+                return this.Conflict(ApiResult.FromError<bool>(new ApiError(ApiErrorCode.DuplicateUsername, "A user with given name already exists.")));
+
+            await this.UserRepository.UpdateUserPasswordAsync(user.Id, pwd, cancellationToken);
+            return this.Ok(ApiResult.FromResult(true));
+        }
+
+        [HttpPatch]
+        [Authorize]
+        [ServiceFilter(typeof(ValidRosettaUserFilter))]
+        [Route("password")]
+        public async Task<ActionResult<ApiResult<bool>>> ChangePassword([FromBody] UserPasswordChangeData data, CancellationToken cancellationToken = default)
+        {
+            var user = this.RosettaUser;
+            var pwd = await this.UserRepository.GetUserPasswordAsync(user.Id, cancellationToken);
+
+            if (pwd != null && data.OldPassword == null)
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
+
+            if (pwd != null && !await this.Password.ValidatePasswordHashAsync(data.OldPassword, pwd))
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
+
+            var npwd = await this.Password.CreatePasswordHashAsync(data.NewPassword);
+            await this.UserRepository.UpdateUserPasswordAsync(user.Id, npwd, cancellationToken);
+            return this.Ok(ApiResult.FromResult(true));
+        }
+
+        [HttpDelete]
+        [Authorize]
+        [ServiceFilter(typeof(ValidRosettaUserFilter))]
+        [Route("password")]
+        public async Task<ActionResult<ApiResult<bool>>> RemovePassword([FromBody] UserPasswordRemoveData data, CancellationToken cancellationToken = default)
+        {
+            var user = this.RosettaUser;
+            if (!user.ConnectedAccounts.Any())
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.GenericError, "To disable a password, at least one external account must be connected to this account.")));
+
+            var pwd = await this.UserRepository.GetUserPasswordAsync(user.Id, cancellationToken);
+            if (pwd == null || !await this.Password.ValidatePasswordHashAsync(data.Password, pwd))
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
+
+            await this.UserRepository.UpdateUserPasswordAsync(user.Id, null, cancellationToken);
+            return this.Ok(ApiResult.FromResult(true));
         }
 
         [HttpDelete]
@@ -125,10 +206,14 @@ namespace RosettaCTF.Controllers
         [ServiceFilter(typeof(ValidRosettaUserFilter))]
         public async Task<ActionResult<ApiResult<SessionPreview>>> Logout(CancellationToken cancellationToken = default)
         {
-            if (!await this.Discord.LogoutAsync(this.HttpContext, this.RosettaUser.Token, cancellationToken))
-                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.NotLoggedIn, "User is not logged in.")));
+            foreach (var xeuser in this.RosettaUser.ConnectedAccounts.Where(x => x.Token != null))
+            {
+                var oauth = this.OAuthSelector.GetById(xeuser.Id);
+                var euser = await this.UserRepository.GetExternalAccountAsync(this.RosettaUser.Id, xeuser.ProviderId, cancellationToken);
+                await oauth.LogoutAsync(this.CreateContext(euser.ProviderId), euser.Token, cancellationToken);
+                await this.UserRepository.UpdateTokensAsync(this.RosettaUser.Id, euser.ProviderId, null, null, DateTimeOffset.MinValue, cancellationToken);
+            }
 
-            await this.UserRepository.UpdateTokensAsync(this.RosettaUser.Id, null, null, DateTimeOffset.MinValue, cancellationToken);
             return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(null)));
         }
 

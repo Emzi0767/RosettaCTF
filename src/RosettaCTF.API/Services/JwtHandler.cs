@@ -74,7 +74,7 @@ namespace RosettaCTF.Services
         /// </summary>
         /// <param name="user">User to issue token for.</param>
         /// <returns>The issued token and its expiration time.</returns>
-        public JwtTokenData IssueToken(UserPreview user)
+        public JwtTokenModel IssueToken(UserPreview user)
         {
             var claims = new[]
             {
@@ -90,7 +90,7 @@ namespace RosettaCTF.Services
                 expires: expires,
                 signingCredentials: this.Credentials);
 
-            return new JwtTokenData
+            return new JwtTokenModel
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 ExpiresAt = expires

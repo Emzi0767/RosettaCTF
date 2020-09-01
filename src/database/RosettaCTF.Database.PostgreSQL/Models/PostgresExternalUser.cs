@@ -14,13 +14,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.ComponentModel.DataAnnotations;
+using System;
+using RosettaCTF.Data;
 
 namespace RosettaCTF.Models
 {
-    public sealed class TeamCreateModel
+    internal sealed class PostgresExternalUser : IExternalUser
     {
-        [Required, MinLength(2), MaxLength(48), RegularExpression(AbstractionUtilities.NameRegexPattern)]
-        public string Name { get; set; }
+        public string Id { get; set; }
+
+        public string Username { get; set; }
+
+        public string ProviderId { get; set; }
+
+        public string Token { get; set; }
+
+        public string RefreshToken { get; set; }
+
+        public DateTimeOffset? TokenExpirationTime { get; set; }
+
+        public long UserId { get; set; }
+
+        public PostgresUser UserInternal { get; set; }
+
+        public IUser User => this.UserInternal;
     }
 }

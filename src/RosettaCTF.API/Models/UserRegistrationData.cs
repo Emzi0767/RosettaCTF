@@ -19,26 +19,26 @@ using System.ComponentModel.DataAnnotations;
 namespace RosettaCTF.Models
 {
     /// <summary>
-    /// Contains arguments for PUT /session
+    /// Contains data for user registration.
     /// </summary>
-    public sealed class OAuthAuthenticationData
+    public sealed class UserRegistrationData
     {
         /// <summary>
-        /// OAuth authentication code to exchange for a token.
+        /// Gets or sets the username of the registered user.
         /// </summary>
-        [Required]
-        public string Code { get; set; }
+        [Required, MinLength(2), MaxLength(48), RegularExpression(AbstractionUtilities.NameRegexPattern)]
+        public string Username { get; set; }
 
         /// <summary>
-        /// OAuth state to validate.
+        /// Gets or sets the password to use for the registered user.
         /// </summary>
-        [Required]
-        public string State { get; set; }
+        [Required, MinLength(6), MaxLength(512)]
+        public string Password { get; set; }
 
         /// <summary>
-        /// OAuth referrer.
+        /// Gets or sets the confirm password.
         /// </summary>
-        [Required]
-        public string Referrer { get; set; }
+        [Required, MinLength(6), MaxLength(512), Compare(nameof(Password))]
+        public string ConfirmPassword { get; set; }
     }
 }

@@ -20,15 +20,13 @@ using RosettaCTF.Data;
 
 namespace RosettaCTF.Models
 {
-    internal sealed class PostgresUserDecrypted : IUser
+    internal sealed class PostgresExternalUserDecrypted : IExternalUser
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         public string Username { get; set; }
 
-        public ulong DiscordId { get; set; }
-
-        public Uri AvatarUrl { get; set; }
+        public string ProviderId { get; set; }
 
         public string Token { get; set; }
 
@@ -36,27 +34,22 @@ namespace RosettaCTF.Models
 
         public DateTimeOffset? TokenExpirationTime { get; set; }
 
-        public bool IsAuthorized { get; set; }
+        public PostgresUser UserInternal { get; set; }
 
-        public bool HasHiddenAccess { get; set; }
+        public IUser User => this.UserInternal;
 
-        public ITeam Team { get; set; }
-
-        public PostgresUserDecrypted(PostgresUser pgUser)
+        public PostgresExternalUserDecrypted(PostgresExternalUser pgExtUser)
         {
-            this.Id = pgUser.Id;
-            this.Username = pgUser.Username;
-            this.DiscordId = pgUser.DiscordId;
-            this.AvatarUrl = pgUser.AvatarUrl;
-            this.Token = pgUser.Token;
-            this.RefreshToken = pgUser.RefreshToken;
-            this.TokenExpirationTime = pgUser.TokenExpirationTime;
-            this.IsAuthorized = pgUser.IsAuthorized;
-            this.HasHiddenAccess = pgUser.HasHiddenAccess;
-            this.Team = pgUser.Team;
+            this.Id = pgExtUser.Id;
+            this.Username = pgExtUser.Username;
+            this.ProviderId = pgExtUser.ProviderId;
+            this.Token = pgExtUser.Token;
+            this.RefreshToken = pgExtUser.RefreshToken;
+            this.TokenExpirationTime = pgExtUser.TokenExpirationTime;
+            this.UserInternal = pgExtUser.UserInternal;
         }
 
-        public async Task<PostgresUserDecrypted> DecryptTokensAsync(OAuthTokenHandler tokenHandler)
+        public async Task<PostgresExternalUserDecrypted> DecryptTokensAsync(OAuthTokenHandler tokenHandler)
         {
             if (this.Token != null)
                 this.Token = await tokenHandler.DecryptAsync(this.Token);

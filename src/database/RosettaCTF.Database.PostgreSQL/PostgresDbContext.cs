@@ -24,6 +24,8 @@ namespace RosettaCTF
     internal sealed class PostgresDbContext : DbContext
     {
         public DbSet<PostgresUser> Users { get; set; }
+        public DbSet<PostgresUserPassword> UserPasswords { get; set; }
+        public DbSet<PostgresExternalUser> ConnectedAccounts { get; set; }
         public DbSet<PostgresTeam> Teams { get; set; }
         public DbSet<PostgresChallenge> Challenges { get; set; }
         public DbSet<PostgresChallengeCategory> ChallengeCategories { get; set; }
@@ -53,9 +55,10 @@ namespace RosettaCTF
             modelBuilder.Entity<PostgresUser>(e =>
             {
                 e.ToTable("users")
-                    .Ignore(m => m.DiscordId)
                     .Ignore(m => m.Team)
-                    .Ignore(m => m.AvatarUrl);
+                    .Ignore(m => m.AvatarUrl)
+                    .Ignore(m => m.ConnectedAccounts)
+                    .Ignore(m => m.Password);
 
                 e.Property(m => m.Id)
                     .IsRequired()
@@ -66,26 +69,9 @@ namespace RosettaCTF
                     .IsRequired()
                     .HasColumnName("name");
 
-                e.Property(m => m.DiscordIdInternal)
-                    .IsRequired()
-                    .HasColumnName("discord_id");
-
                 e.Property(m => m.AvatarUrlInternal)
                     .HasColumnName("avatar")
                     .HasColumnType("text")
-                    .HasDefaultValue(null);
-
-                e.Property(m => m.Token)
-                    .HasColumnName("token")
-                    .HasDefaultValue(null);
-
-                e.Property(m => m.RefreshToken)
-                    .HasColumnName("refresh_token")
-                    .HasDefaultValue(null);
-
-                e.Property(m => m.TokenExpirationTime)
-                    .HasColumnName("token_expires_at")
-                    .HasColumnType("timestamptz")
                     .HasDefaultValue(null);
 
                 e.Property(m => m.IsAuthorized)
@@ -111,6 +97,81 @@ namespace RosettaCTF
                     .HasForeignKey(m => m.TeamId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fkey_user_team");
+            });
+
+            // User passwords
+            modelBuilder.Entity<PostgresUserPassword>(e =>
+            {
+                e.ToTable("passwords");
+
+                e.Property(m => m.UserId)
+                    .IsRequired()
+                    .ValueGeneratedNever()
+                    .HasColumnName("name");
+
+                e.Property(m => m.PasswordHash)
+                    .HasColumnName("hash")
+                    .HasColumnType("bytea")
+                    .HasDefaultValue(null);
+
+                e.HasKey(m => m.UserId)
+                    .HasName("pkey_user_pwd_id");
+
+                e.HasOne(m => m.UserInternal)
+                    .WithOne(m => m.PasswordInternal)
+                    .HasForeignKey<PostgresUserPassword>(m => m.UserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("fkey_user_pwd");
+            });
+
+            // Connected accounts
+            modelBuilder.Entity<PostgresExternalUser>(e =>
+            {
+                e.ToTable("users_oauth")
+                    .Ignore(m => m.User);
+
+                e.Property(m => m.Id)
+                    .IsRequired()
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+
+                e.Property(m => m.Username)
+                    .IsRequired()
+                    .HasColumnName("username");
+
+                e.Property(m => m.ProviderId)
+                    .IsRequired()
+                    .ValueGeneratedNever()
+                    .HasColumnName("provider");
+
+                e.Property(m => m.Token)
+                    .HasColumnName("token")
+                    .HasDefaultValue(null);
+
+                e.Property(m => m.RefreshToken)
+                    .HasColumnName("refresh_token")
+                    .HasDefaultValue(null);
+
+                e.Property(m => m.TokenExpirationTime)
+                    .HasColumnName("token_expires_at")
+                    .HasColumnType("timestamptz")
+                    .HasDefaultValue(null);
+
+                e.Property(m => m.UserId)
+                    .IsRequired()
+                    .HasColumnName("user");
+
+                e.HasKey(m => new { m.UserId, m.ProviderId })
+                    .HasName("pkey_user_oauth_id_provider");
+
+                e.HasAlternateKey(m => new { m.Id, m.ProviderId })
+                    .HasName("ukey_user_oauth_name_provider");
+
+                e.HasOne(m => m.UserInternal)
+                    .WithMany(m => m.ConnectedAccountsInternal)
+                    .HasForeignKey(m => m.UserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("fkey_user_oauth_user");
             });
 
             // Team

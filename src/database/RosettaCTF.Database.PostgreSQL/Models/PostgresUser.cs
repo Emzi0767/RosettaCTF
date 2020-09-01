@@ -15,7 +15,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using RosettaCTF.Data;
 
@@ -27,27 +26,17 @@ namespace RosettaCTF.Models
 
         public string Username { get; set; }
 
-        public long DiscordIdInternal { get; set; }
-
-        public ulong DiscordId
-        {
-            get => (ulong)this.DiscordIdInternal;
-            set => this.DiscordIdInternal = (long)value;
-        }
-
         public string AvatarUrlInternal { get; set; }
+
+        public PostgresUserPassword PasswordInternal { get; set; }
+
+        public byte[] Password => this.PasswordInternal?.PasswordHash;
 
         public Uri AvatarUrl
         {
             get => this.AvatarUrlInternal != null ? new Uri(this.AvatarUrlInternal) : null;
             set => this.AvatarUrlInternal = value?.ToString();
         }
-
-        public string Token { get; set; }
-
-        public string RefreshToken { get; set; }
-
-        public DateTimeOffset? TokenExpirationTime { get; set; }
 
         public bool IsAuthorized { get; set; }
 
@@ -58,6 +47,10 @@ namespace RosettaCTF.Models
         public PostgresTeam TeamInternal { get; set; }
 
         public ITeam Team => this.TeamInternal;
+
+        public IEnumerable<PostgresExternalUser> ConnectedAccountsInternal { get; set; }
+
+        public IEnumerable<IExternalUser> ConnectedAccounts => this.ConnectedAccountsInternal;
 
         public IEnumerable<PostgresSolveSubmission> SolvesInternal { get; set; }
 

@@ -14,13 +14,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace RosettaCTF.Models
 {
-    public sealed class TeamCreateModel
+    /// <summary>
+    /// Contains a token and expiration time.
+    /// </summary>
+    public struct JwtTokenModel
     {
-        [Required, MinLength(2), MaxLength(48), RegularExpression(AbstractionUtilities.NameRegexPattern)]
-        public string Name { get; set; }
+        /// <summary>
+        /// Gets or sets the token.
+        /// </summary>
+        public string Token { get; set; }
+
+        /// <summary>
+        /// Gets or sets the token's expiration time.
+        /// </summary>
+        public DateTimeOffset ExpiresAt { get; set; }
     }
 }
