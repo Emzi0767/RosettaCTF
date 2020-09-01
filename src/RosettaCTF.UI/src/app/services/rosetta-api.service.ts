@@ -17,7 +17,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
-import { IApiResult, IApiEventConfiguration, IApiFlag, IScoreboardEntry, IChallengeCategory, IChallenge, ISolve } from "../data/api";
+import { IApiResult, IApiEventConfiguration, IApiFlag, IScoreboardEntry, IChallengeCategory, IChallenge, ISolve, IUserPasswordChange, IUserPasswordRemove, IUserRegister, IUserLogin } from "../data/api";
 import { ISession, ITeam, ITeamInvite } from "../data/session";
 import { SessionProviderService } from "./session-provider.service";
 
@@ -89,9 +89,53 @@ export class RosettaApiService {
         };
     }
 
+    async login(login: IUserLogin): Promise<IApiResult<boolean>> {
+        try {
+            const response = await this.http.post<IApiResult<boolean>>("/api/session", login, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
     async logout(): Promise<IApiResult<ISession>> {
         try {
             const response = await this.http.delete<IApiResult<ISession>>("/api/session", this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    async register(register: IUserRegister): Promise<IApiResult<boolean>> {
+        try {
+            const response = await this.http.post<IApiResult<boolean>>("/api/session/register", register, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    async changePassword(pwd: IUserPasswordChange): Promise<IApiResult<boolean>> {
+        try {
+            const response = await this.http.patch<IApiResult<boolean>>("/api/session/password", pwd, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    async removePassword(pwd: IUserPasswordRemove): Promise<IApiResult<boolean>> {
+        try {
+            const response = await this.http.patch<IApiResult<boolean>>("/api/session/password/remove", pwd, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 

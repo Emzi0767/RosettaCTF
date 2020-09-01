@@ -183,10 +183,10 @@ namespace RosettaCTF.Controllers
             return this.Ok(ApiResult.FromResult(true));
         }
 
-        [HttpDelete]
+        [HttpPatch]
         [Authorize]
         [ServiceFilter(typeof(ValidRosettaUserFilter))]
-        [Route("password")]
+        [Route("password/remove")]
         public async Task<ActionResult<ApiResult<bool>>> RemovePassword([FromBody] UserPasswordRemoveData data, CancellationToken cancellationToken = default)
         {
             var user = this.RosettaUser;
