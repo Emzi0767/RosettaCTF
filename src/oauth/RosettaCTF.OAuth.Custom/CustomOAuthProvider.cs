@@ -57,6 +57,11 @@ namespace RosettaCTF
         public bool HasId(string id)
             => this.Configuration.ContainsKey(id);
 
+        public string GetName(string id)
+            => this.Configuration.TryGetValue(id, out var provider)
+                ? provider.Name
+                : null;
+
         public bool SupportsReferrer(Uri referrer, out string id)
         {
             id = this.Configuration.SingleOrDefault(x => x.Value.Hostnames.Contains(referrer.Host, StringComparer.OrdinalIgnoreCase)).Key;

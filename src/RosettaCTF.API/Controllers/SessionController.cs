@@ -25,6 +25,7 @@ using RosettaCTF.Authentication;
 using RosettaCTF.Data;
 using RosettaCTF.Filters;
 using RosettaCTF.Models;
+using RosettaCTF.Models.Previews;
 using RosettaCTF.Services;
 
 namespace RosettaCTF.Controllers
@@ -37,6 +38,7 @@ namespace RosettaCTF.Controllers
         private JwtHandler Jwt { get; }
         private PasswordHandler Password { get; }
         private IOAuthStateRepository OAuthStateRepository { get; }
+        private LoginSettingsRepository LoginSettingsRepository { get; }
 
         public SessionController(
             ILoggerFactory loggerFactory,
@@ -46,14 +48,22 @@ namespace RosettaCTF.Controllers
             OAuthProviderSelector oAuthSelector,
             JwtHandler jwt,
             PasswordHandler pwdHandler,
-            IOAuthStateRepository oAuthStateRepository)
+            IOAuthStateRepository oAuthStateRepository,
+            LoginSettingsRepository loginSettingsRepository)
             : base(loggerFactory, userRepository, userPreviewRepository, ctfConfigurationLoader)
         {
             this.OAuthSelector = oAuthSelector;
             this.Jwt = jwt;
             this.Password = pwdHandler;
             this.OAuthStateRepository = oAuthStateRepository;
+            this.LoginSettingsRepository = loginSettingsRepository;
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("settings")]
+        public ActionResult<ApiResult<LoginSettingsPreview>> Settings()
+            => this.Ok(ApiResult.FromResult(this.LoginSettingsRepository.LoginSettings));
 
         [HttpGet]
         [AllowAnonymous]

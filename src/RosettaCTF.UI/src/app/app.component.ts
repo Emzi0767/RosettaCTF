@@ -69,6 +69,8 @@ export class AppComponent implements OnInit, OnDestroy {
                 if (y.isSuccess) {
                     this.sessionProvider.updateSession(y.result);
                     this.api.refreshXsrf();
+                } else {
+                    this.sessionProvider.manuallyFinishInit();
                 }
             });
         });

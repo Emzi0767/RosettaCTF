@@ -17,6 +17,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
+// tslint:disable-next-line: max-line-length
 import { IApiResult, IApiEventConfiguration, IApiFlag, IScoreboardEntry, IChallengeCategory, IChallenge, ISolve, IUserPasswordChange, IUserPasswordRemove, IUserRegister, IUserLogin } from "../data/api";
 import { ISession, ITeam, ITeamInvite } from "../data/session";
 import { SessionProviderService } from "./session-provider.service";
@@ -57,7 +58,7 @@ export class RosettaApiService {
     async getSession(): Promise<IApiResult<ISession>> {
         try {
             const response = await this.http.get<IApiResult<ISession>>("/api/session", this.getOptions()).toPromise();
-            return response.body;
+            return response.body ?? { isSuccess: false };
         } catch (ex) { }
 
         return {

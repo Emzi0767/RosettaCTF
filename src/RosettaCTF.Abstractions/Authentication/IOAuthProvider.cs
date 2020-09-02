@@ -33,6 +33,13 @@ namespace RosettaCTF.Authentication
         bool HasId(string id);
 
         /// <summary>
+        /// Gets the name for specified provider ID.
+        /// </summary>
+        /// <param name="id">ID of the provider to get a name for.</param>
+        /// <returns>The name of the provider.</returns>
+        string GetName(string id);
+
+        /// <summary>
         /// Gets whether this provider handles specified referring URI. If it does, provides it via the <paramref name="id"/> parameter.
         /// </summary>
         /// <param name="referrer">Referrer URL to match against.</param>

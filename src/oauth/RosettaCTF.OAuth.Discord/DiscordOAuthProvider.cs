@@ -61,6 +61,11 @@ namespace RosettaCTF.Authentication
         public bool HasId(string id)
             => string.Equals(id, ProviderType, StringComparison.OrdinalIgnoreCase);
 
+        public string GetName(string id)
+            => string.Equals(id, ProviderType, StringComparison.OrdinalIgnoreCase)
+                ? "Discord"
+                : null;
+
         public bool SupportsReferrer(Uri referrer, out string id)
         {
             if (string.Equals(referrer.Host, EndpointHostname, StringComparison.OrdinalIgnoreCase) || string.Equals(referrer.Host, EndpointHostnameOld, StringComparison.OrdinalIgnoreCase))

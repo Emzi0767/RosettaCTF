@@ -35,6 +35,11 @@ namespace RosettaCTF.Data
         public string Id { get; set; }
 
         /// <summary>
+        /// Gets or sets the Name of the provider. Used in the UI.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
         /// Gets or sets the client ID for this provider.
         /// </summary>
         [Required]

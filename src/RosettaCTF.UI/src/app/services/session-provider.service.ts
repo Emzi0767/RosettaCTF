@@ -25,7 +25,7 @@ import { ISession } from "../data/session";
 export class SessionProviderService implements OnDestroy {
     sessionChange: ReplaySubject<ISession> = new ReplaySubject<ISession>(1);
     private currentSession: ISession;
-    
+
     private init$: Promise<void>;
     private initResolve;
 

@@ -183,7 +183,8 @@ namespace RosettaCTF.API
                 .AddSingleton<EnumDisplayConverter>()
                 .AddTransient<IScoringModel, SlowLogisticDecayScoringModel>()
                 .AddSingleton<OAuthConfigurationProvider>()
-                .AddScoped<OAuthProviderSelector>();
+                .AddScoped<OAuthProviderSelector>()
+                .AddScoped<LoginSettingsRepository>();
 
             services.AddHostedService<ChallengeBootstrapperService>();
 
