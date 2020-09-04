@@ -29,7 +29,7 @@ namespace RosettaCTF
     /// </summary>
     public sealed class OAuthTokenHandler
     {
-        private Argon2idKeyDeriver KeyDeriver { get; }
+        private IKeyDeriver KeyDeriver { get; }
 
         private byte[] Key { get; }
 
@@ -39,7 +39,7 @@ namespace RosettaCTF
         /// <param name="cfg">Configuration for the handler.</param>
         public OAuthTokenHandler(
             IOptions<ConfigurationOAuth> cfg,
-            Argon2idKeyDeriver keyDeriver)
+            IKeyDeriver keyDeriver)
         {
             this.KeyDeriver = keyDeriver;
             this.Key = AbstractionUtilities.UTF8.GetBytes(cfg.Value.TokenKey);

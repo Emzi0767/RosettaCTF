@@ -23,15 +23,15 @@ using RosettaCTF.Data;
 namespace RosettaCTF
 {
     /// <summary>
-    /// Derives encryption keys from values using Argon2id algorithm.
+    /// Derives password hashes from values using Argon2id algorithm.
     /// </summary>
-    public sealed class Argon2idKeyDeriver
+    public sealed class Argon2idHashDeriver : IPasswordHashDeriver
     {
         private int? Parallelism { get; }
         private int? MemorySize { get; }
         private int? Iterations { get; }
 
-        public Argon2idKeyDeriver(IOptions<ConfigurationSecurity> opts)
+        public Argon2idHashDeriver(IOptions<ConfigurationSecurity> opts)
         {
             var ov = opts.Value;
             this.Parallelism = ov.Parallelism <= 0 ? null : ov.Parallelism as int?;
@@ -39,7 +39,7 @@ namespace RosettaCTF
             this.Iterations = ov.Iterations <= 0 ? null : ov.Iterations as int?;
         }
 
-        public async Task<byte[]> DeriveKeyAsync(byte[] value, byte[] salt, int byteCount)
+        public async Task<byte[]> DeriveHashAsync(byte[] value, byte[] salt, int byteCount)
         {
             // just to be safe
             var k = new byte[value.Length];
@@ -54,12 +54,15 @@ namespace RosettaCTF
             var argon2 = new Argon2id(k)
             {
                 DegreeOfParallelism = this.Parallelism ?? (Environment.ProcessorCount * 2),
-                MemorySize = this.MemorySize ?? 16384, /* 16 MiB */
-                Iterations = this.Iterations ?? 8,
+                MemorySize = this.MemorySize ?? 131072, /* 128 MiB */
+                Iterations = this.Iterations ?? ComputeIterations(Environment.ProcessorCount),
                 Salt = s
             };
 
             return await argon2.GetBytesAsync(byteCount);
         }
+
+        private static int ComputeIterations(int processors)
+            => (int)Math.Ceiling(0.6667 * processors + 3.3333);
     }
 }

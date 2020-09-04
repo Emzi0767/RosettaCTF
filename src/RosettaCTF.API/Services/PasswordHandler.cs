@@ -25,16 +25,16 @@ namespace RosettaCTF.Services
     /// </summary>
     public sealed class PasswordHandler
     {
-        private const int PasswordSize = 96; // in bytes
-        private const int SaltSize = 32;     // in bytes
+        private const int PasswordSize = 480; // in bytes
+        private const int SaltSize = 32;      // in bytes
 
-        private Argon2idKeyDeriver KeyDeriver { get; }
+        private IPasswordHashDeriver KeyDeriver { get; }
 
         /// <summary>
         /// Creates a new password handler instance.
         /// </summary>
         /// <param name="keyDeriver">Deriver implementation.</param>
-        public PasswordHandler(Argon2idKeyDeriver keyDeriver)
+        public PasswordHandler(IPasswordHashDeriver keyDeriver)
         {
             this.KeyDeriver = keyDeriver;
         }
@@ -53,7 +53,7 @@ namespace RosettaCTF.Services
                 rng.GetBytes(salt);
 
             var utfinput = AbstractionUtilities.UTF8.GetBytes(input);
-            var output = await this.KeyDeriver.DeriveKeyAsync(utfinput, salt, PasswordSize);
+            var output = await this.KeyDeriver.DeriveHashAsync(utfinput, salt, PasswordSize);
 
             salt.AsSpan().CopyTo(buff);
             output.AsSpan().CopyTo(buff.AsSpan().Slice(SaltSize));
@@ -72,7 +72,7 @@ namespace RosettaCTF.Services
             var salt = reference.AsSpan(0, SaltSize).ToArray();
 
             var utfinput = AbstractionUtilities.UTF8.GetBytes(input);
-            var output = await this.KeyDeriver.DeriveKeyAsync(utfinput, salt, PasswordSize);
+            var output = await this.KeyDeriver.DeriveHashAsync(utfinput, salt, PasswordSize);
 
             return AbstractionUtilities.ConstantTimeEquals(output, reference.AsSpan().Slice(SaltSize), PasswordSize);
         }

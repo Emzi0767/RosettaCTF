@@ -23,7 +23,7 @@
     <h1>Log in</h1>
     <div class="login-wrapper">
         <div class="login-part login-ext" *ngIf="loginSettings.externalLoginEnabled">
-            <button *ngFor="let provider of loginSettings.externalAccountProviders" [routerLink]="['/session', 'login', provider.id]" [title]="'Log in with ' + provider.name" [style]="{ background: provider.colour }">
+            <button *ngFor="let provider of loginSettings.externalAccountProviders" [routerLink]="['/session', 'login', provider.id]" [title]="'Log in with ' + provider.name" [style]="{ background: provider.colour }" [disabled]="lockControls">
                 Log in with {{ provider.name }}
             </button>
         </div>

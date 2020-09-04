@@ -17,6 +17,8 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using Emzi0767.Utilities;
 using Microsoft.Extensions.Options;
@@ -43,16 +45,24 @@ namespace RosettaCTF.Services
         /// <param name="cfg">Configuration to use.</param>
         public JwtHandler(
             IOptions<ConfigurationAuthentication> cfg,
-            Argon2idKeyDeriver keyDeriver)
+            IKeyDeriver keyDeriver)
         {
             this.Configuration = cfg.Value;
+
+            var keyBase = AbstractionUtilities.UTF8.GetBytes(this.Configuration.TokenKey);
+            if (keyBase.Length < 8)
+                throw new ArgumentException("Token key must be at least 8 bytes-long.", nameof(cfg));
+
+            var saltBase = MemoryMarshal.Read<long>(keyBase);
+            saltBase *= 13;
+            var saltBytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref saltBase, 1));
 
             var async = new AsyncExecutor();
             this.Key = new SymmetricSecurityKey(
                 async.Execute(
                     keyDeriver.DeriveKeyAsync(
-                        value: AbstractionUtilities.UTF8.GetBytes(this.Configuration.TokenKey), 
-                        salt: null, 
+                        value: keyBase, 
+                        salt: saltBytes.ToArray(), 
                         byteCount: 512 / 8)));
 
             this.Credentials = new SigningCredentials(this.Key, SecurityAlgorithms.HmacSha512);
