@@ -1,0 +1,331 @@
+﻿// This file is part of RosettaCTF project.
+// 
+// Copyright 2020 Emzi0767
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using Microsoft.EntityFrameworkCore.Migrations;
+
+namespace RosettaCTF.Migrations
+{
+    public partial class M05_Countries : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn<string>(
+                name: "country",
+                table: "users",
+                nullable: true);
+
+            migrationBuilder.CreateTable(
+                name: "countries",
+                columns: table => new
+                {
+                    code = table.Column<string>(nullable: false),
+                    name = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("fkey_country", x => x.code);
+                    table.UniqueConstraint("ukey_country", x => x.name);
+                });
+
+            migrationBuilder.InsertData(
+                table: "countries",
+                columns: new[] { "code", "name" },
+                values: new object[,]
+                {
+                    { "af", "Afghanistan" },
+                    { "nc", "New Caledonia" },
+                    { "nz", "New Zealand" },
+                    { "ni", "Nicaragua" },
+                    { "ne", "Niger" },
+                    { "ng", "Nigeria" },
+                    { "nu", "Niue" },
+                    { "nf", "Norfolk Island" },
+                    { "mk", "North Macedonia" },
+                    { "mp", "Northern Mariana Islands" },
+                    { "no", "Norway" },
+                    { "om", "Oman" },
+                    { "pk", "Pakistan" },
+                    { "pw", "Palau" },
+                    { "ps", "Palestine, State of" },
+                    { "pa", "Panama" },
+                    { "pg", "Papua New Guinea" },
+                    { "py", "Paraguay" },
+                    { "pe", "Peru" },
+                    { "ph", "Philippines" },
+                    { "pn", "Pitcairn" },
+                    { "pl", "Poland" },
+                    { "pt", "Portugal" },
+                    { "pr", "Puerto Rico" },
+                    { "qa", "Qatar" },
+                    { "re", "Réunion" },
+                    { "ro", "Romania" },
+                    { "ru", "Russian Federation" },
+                    { "nl", "Netherlands" },
+                    { "rw", "Rwanda" },
+                    { "np", "Nepal" },
+                    { "na", "Namibia" },
+                    { "lr", "Liberia" },
+                    { "ly", "Libya" },
+                    { "li", "Liechtenstein" },
+                    { "lt", "Lithuania" },
+                    { "lu", "Luxembourg" },
+                    { "mo", "Macao" },
+                    { "mg", "Madagascar" },
+                    { "mw", "Malawi" },
+                    { "my", "Malaysia" },
+                    { "mv", "Maldives" },
+                    { "ml", "Mali" },
+                    { "mt", "Malta" },
+                    { "mh", "Marshall Islands" },
+                    { "mq", "Martinique" },
+                    { "mr", "Mauritania" },
+                    { "mu", "Mauritius" },
+                    { "yt", "Mayotte" },
+                    { "mx", "Mexico" },
+                    { "fm", "Micronesia (Federated States of)" },
+                    { "md", "Moldova, Republic of" },
+                    { "mc", "Monaco" },
+                    { "mn", "Mongolia" },
+                    { "me", "Montenegro" },
+                    { "ms", "Montserrat" },
+                    { "ma", "Morocco" },
+                    { "mz", "Mozambique" },
+                    { "mm", "Myanmar" },
+                    { "nr", "Nauru" },
+                    { "bl", "Saint Barthélemy" },
+                    { "sh", "Saint Helena, Ascension and Tristan da Cunha" },
+                    { "kn", "Saint Kitts and Nevis" },
+                    { "th", "Thailand" },
+                    { "tl", "Timor-Leste" },
+                    { "tg", "Togo" },
+                    { "tk", "Tokelau" },
+                    { "to", "Tonga" },
+                    { "tt", "Trinidad and Tobago" },
+                    { "tn", "Tunisia" },
+                    { "tr", "Turkey" },
+                    { "tm", "Turkmenistan" },
+                    { "tc", "Turks and Caicos Islands" },
+                    { "tv", "Tuvalu" },
+                    { "ug", "Uganda" },
+                    { "ua", "Ukraine" },
+                    { "ae", "United Arab Emirates" },
+                    { "gb", "United Kingdom of Great Britain and Northern Ireland" },
+                    { "us", "United States of America" },
+                    { "um", "United States Minor Outlying Islands" },
+                    { "uy", "Uruguay" },
+                    { "uz", "Uzbekistan" },
+                    { "vu", "Vanuatu" },
+                    { "ve", "Venezuela (Bolivarian Republic of)" },
+                    { "vn", "Viet Nam" },
+                    { "vg", "Virgin Islands (British)" },
+                    { "vi", "Virgin Islands (U.S.)" },
+                    { "wf", "Wallis and Futuna" },
+                    { "eh", "Western Sahara" },
+                    { "ye", "Yemen" },
+                    { "tz", "Tanzania, United Republic of" },
+                    { "tj", "Tajikistan" },
+                    { "tw", "Taiwan" },
+                    { "sy", "Syrian Arab Republic" },
+                    { "lc", "Saint Lucia" },
+                    { "mf", "Saint Martin (French part)" },
+                    { "pm", "Saint Pierre and Miquelon" },
+                    { "vc", "Saint Vincent and the Grenadines" },
+                    { "ws", "Samoa" },
+                    { "sm", "San Marino" },
+                    { "st", "Sao Tome and Principe" },
+                    { "sa", "Saudi Arabia" },
+                    { "sn", "Senegal" },
+                    { "rs", "Serbia" },
+                    { "sc", "Seychelles" },
+                    { "sl", "Sierra Leone" },
+                    { "sg", "Singapore" },
+                    { "ls", "Lesotho" },
+                    { "sx", "Sint Maarten (Dutch part)" },
+                    { "si", "Slovenia" },
+                    { "sb", "Solomon Islands" },
+                    { "so", "Somalia" },
+                    { "za", "South Africa" },
+                    { "gs", "South Georgia and the South Sandwich Islands" },
+                    { "ss", "South Sudan" },
+                    { "es", "Spain" },
+                    { "lk", "Sri Lanka" },
+                    { "sd", "Sudan" },
+                    { "sr", "Suriname" },
+                    { "sj", "Svalbard and Jan Mayen" },
+                    { "se", "Sweden" },
+                    { "ch", "Switzerland" },
+                    { "sk", "Slovakia" },
+                    { "zm", "Zambia" },
+                    { "lb", "Lebanon" },
+                    { "la", "Lao People's Democratic Republic" },
+                    { "io", "British Indian Ocean Territory" },
+                    { "bn", "Brunei Darussalam" },
+                    { "bg", "Bulgaria" },
+                    { "bf", "Burkina Faso" },
+                    { "bi", "Burundi" },
+                    { "cv", "Cabo Verde" },
+                    { "kh", "Cambodia" },
+                    { "cm", "Cameroon" },
+                    { "ca", "Canada" },
+                    { "ky", "Cayman Islands" },
+                    { "cf", "Central African Republic" },
+                    { "td", "Chad" },
+                    { "cl", "Chile" },
+                    { "cn", "China" },
+                    { "cx", "Christmas Island" },
+                    { "cc", "Cocos (Keeling) Islands" },
+                    { "co", "Colombia" },
+                    { "km", "Comoros" },
+                    { "cg", "Congo" },
+                    { "cd", "Congo, Democratic Republic of the" },
+                    { "ck", "Cook Islands" },
+                    { "cr", "Costa Rica" },
+                    { "ci", "Côte d'Ivoire" },
+                    { "hr", "Croatia" },
+                    { "cu", "Cuba" },
+                    { "cw", "Curaçao" },
+                    { "cy", "Cyprus" },
+                    { "br", "Brazil" },
+                    { "cz", "Czechia" },
+                    { "bv", "Bouvet Island" },
+                    { "ba", "Bosnia and Herzegovina" },
+                    { "ax", "Åland Islands" },
+                    { "al", "Albania" },
+                    { "dz", "Algeria" },
+                    { "as", "American Samoa" },
+                    { "ad", "Andorra" },
+                    { "ao", "Angola" },
+                    { "ai", "Anguilla" },
+                    { "aq", "Antarctica" },
+                    { "ag", "Antigua and Barbuda" },
+                    { "ar", "Argentina" },
+                    { "am", "Armenia" },
+                    { "aw", "Aruba" },
+                    { "au", "Australia" },
+                    { "at", "Austria" },
+                    { "az", "Azerbaijan" },
+                    { "bs", "Bahamas" },
+                    { "bh", "Bahrain" },
+                    { "bd", "Bangladesh" },
+                    { "bb", "Barbados" },
+                    { "by", "Belarus" },
+                    { "be", "Belgium" },
+                    { "bz", "Belize" },
+                    { "bj", "Benin" },
+                    { "bm", "Bermuda" },
+                    { "bt", "Bhutan" },
+                    { "bo", "Bolivia (Plurinational State of)" },
+                    { "bq", "Bonaire, Sint Eustatius and Saba" },
+                    { "bw", "Botswana" },
+                    { "dk", "Denmark" },
+                    { "dj", "Djibouti" },
+                    { "dm", "Dominica" },
+                    { "gy", "Guyana" },
+                    { "ht", "Haiti" },
+                    { "hm", "Heard Island and McDonald Islands" },
+                    { "va", "Holy See" },
+                    { "hn", "Honduras" },
+                    { "hk", "Hong Kong" },
+                    { "hu", "Hungary" },
+                    { "is", "Iceland" },
+                    { "in", "India" },
+                    { "id", "Indonesia" },
+                    { "ir", "Iran (Islamic Republic of)" },
+                    { "iq", "Iraq" },
+                    { "ie", "Ireland" },
+                    { "im", "Isle of Man" },
+                    { "il", "Israel" },
+                    { "it", "Italy" },
+                    { "jm", "Jamaica" },
+                    { "jp", "Japan" },
+                    { "je", "Jersey" },
+                    { "jo", "Jordan" },
+                    { "kz", "Kazakhstan" },
+                    { "ke", "Kenya" },
+                    { "ki", "Kiribati" },
+                    { "kp", "Korea (Democratic People's Republic of)" },
+                    { "kr", "Korea, Republic of" },
+                    { "kw", "Kuwait" },
+                    { "kg", "Kyrgyzstan" },
+                    { "gw", "Guinea-Bissau" },
+                    { "gn", "Guinea" },
+                    { "gg", "Guernsey" },
+                    { "gt", "Guatemala" },
+                    { "do", "Dominican Republic" },
+                    { "ec", "Ecuador" },
+                    { "eg", "Egypt" },
+                    { "sv", "El Salvador" },
+                    { "gq", "Equatorial Guinea" },
+                    { "er", "Eritrea" },
+                    { "ee", "Estonia" },
+                    { "sz", "Eswatini" },
+                    { "et", "Ethiopia" },
+                    { "fk", "Falkland Islands (Malvinas)" },
+                    { "fo", "Faroe Islands" },
+                    { "fj", "Fiji" },
+                    { "fi", "Finland" },
+                    { "lv", "Latvia" },
+                    { "fr", "France" },
+                    { "pf", "French Polynesia" },
+                    { "tf", "French Southern Territories" },
+                    { "ga", "Gabon" },
+                    { "gm", "Gambia" },
+                    { "ge", "Georgia" },
+                    { "de", "Germany" },
+                    { "gh", "Ghana" },
+                    { "gi", "Gibraltar" },
+                    { "gr", "Greece" },
+                    { "gl", "Greenland" },
+                    { "gd", "Grenada" },
+                    { "gp", "Guadeloupe" },
+                    { "gu", "Guam" },
+                    { "gf", "French Guiana" },
+                    { "zw", "Zimbabwe" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_users_country",
+                table: "users",
+                column: "country");
+
+            migrationBuilder.AddForeignKey(
+                name: "fkey_user_country",
+                table: "users",
+                column: "country",
+                principalTable: "countries",
+                principalColumn: "code",
+                onDelete: ReferentialAction.Restrict);
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropForeignKey(
+                name: "fkey_user_country",
+                table: "users");
+
+            migrationBuilder.DropTable(
+                name: "countries");
+
+            migrationBuilder.DropIndex(
+                name: "IX_users_country",
+                table: "users");
+
+            migrationBuilder.DropColumn(
+                name: "country",
+                table: "users");
+        }
+    }
+}

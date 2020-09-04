@@ -211,6 +211,23 @@ namespace RosettaCTF.Controllers
             return this.Ok(ApiResult.FromResult(true));
         }
 
+        [HttpPatch]
+        [Authorize]
+        [ServiceFilter(typeof(ValidRosettaUserFilter))]
+        [ServiceFilter(typeof(EventNotStartedFilter))]
+        [Route("country")]
+        public async Task<ActionResult<ApiResult<SessionPreview>>> UpdateUserCountry([FromBody] UserCountryModel data, CancellationToken cancellationToken = default)
+        {
+            var user = this.RosettaUser;
+            user = await this.UserRepository.UpdateUserCountryAsync(user.Id, data.Code, cancellationToken);
+            if (user == null)
+                return this.BadRequest(ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidName, "Invalid country name specified.")));
+
+            var ruser = this.UserPreviewRepository.GetUser(user);
+            var token = this.Jwt.IssueToken(ruser);
+            return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(ruser, token.Token, token.ExpiresAt)));
+        }
+
         [HttpDelete]
         [Authorize]
         [ServiceFilter(typeof(ValidRosettaUserFilter))]

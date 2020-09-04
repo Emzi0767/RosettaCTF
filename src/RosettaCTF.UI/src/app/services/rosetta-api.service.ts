@@ -156,6 +156,18 @@ export class RosettaApiService {
         };
     }
 
+    async updateCountry(code: string): Promise<IApiResult<ISession>> {
+        try {
+            // tslint:disable-next-line: max-line-length
+            const response = await this.http.patch<IApiResult<ISession>>("/api/session/country", { code }, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
     // REFRESH -------------------------------------------------------
     async refreshToken(): Promise<IApiResult<ISession>> {
         try {

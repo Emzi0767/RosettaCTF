@@ -35,6 +35,11 @@ namespace RosettaCTF.Models
         public string Username { get; }
 
         /// <summary>
+        /// Gets the country code of the user.
+        /// </summary>
+        public string Country { get; }
+
+        /// <summary>
         /// Gets the avatar url of the user.
         /// </summary>
         public Uri AvatarUrl { get; }
@@ -48,6 +53,7 @@ namespace RosettaCTF.Models
         {
             this.Id = user.Id.AsString();
             this.Username = user.Username;
+            this.Country = user.Country?.Code;
             this.AvatarUrl = user.AvatarUrl;
             this.Team = team;
         }

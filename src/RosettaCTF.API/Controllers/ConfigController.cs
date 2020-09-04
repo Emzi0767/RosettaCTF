@@ -14,10 +14,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RosettaCTF.Data;
 using RosettaCTF.Models;
+using RosettaCTF.Models.Previews;
 
 namespace RosettaCTF.Controllers
 {
@@ -25,15 +28,20 @@ namespace RosettaCTF.Controllers
     public sealed class ConfigController : ControllerBase
     {
         private ICtfConfigurationLoader ConfigurationLoader { get; }
+        private IUserRepository UserRepository { get; }
 
-        public ConfigController(ICtfConfigurationLoader cfgLoader)
+        public ConfigController(ICtfConfigurationLoader cfgLoader, IUserRepository userRepository)
         {
             this.ConfigurationLoader = cfgLoader;
+            this.UserRepository = userRepository;
         }
 
         [HttpGet]
-        public ActionResult<ApiResult<ICtfEvent>> Get()
-            => ApiResult.FromResult(this.ConfigurationLoader.LoadEventData());
+        public async Task<ActionResult<ApiResult<CtfConfigurationPreview>>> Get(CancellationToken cancellationToken = default)
+            => ApiResult.FromResult(
+                new CtfConfigurationPreview(
+                    this.ConfigurationLoader.LoadEventData(),
+                    await this.UserRepository.GetAllCountriesAsync(cancellationToken)));
 
         [HttpGet, Route("wiggle")]
         public ActionResult<ApiResult<object>> Wiggle()

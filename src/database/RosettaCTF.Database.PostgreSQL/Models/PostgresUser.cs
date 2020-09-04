@@ -26,6 +26,12 @@ namespace RosettaCTF.Models
 
         public string Username { get; set; }
 
+        public string CountryCode { get; set; }
+
+        public PostgresCountry CountryInternal { get; set; }
+
+        public ICountry Country => this.CountryInternal;
+
         public string AvatarUrlInternal { get; set; }
 
         public PostgresUserPassword PasswordInternal { get; set; }

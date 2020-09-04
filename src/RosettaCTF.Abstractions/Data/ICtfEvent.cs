@@ -27,31 +27,31 @@ namespace RosettaCTF.Data
         /// <summary>
         /// Gets the name of this event.
         /// </summary>
-        public string Name { get; }
+        string Name { get; }
 
         /// <summary>
         /// Gets the organizers of this event.
         /// </summary>
-        public IEnumerable<string> Organizers { get; }
+        IEnumerable<string> Organizers { get; }
 
         /// <summary>
         /// Gets the start time of this event.
         /// </summary>
-        public DateTimeOffset StartTime { get; }
+        DateTimeOffset StartTime { get; }
 
         /// <summary>
         /// Gets the end time of this event.
         /// </summary>
-        public DateTimeOffset EndTime { get; }
+        DateTimeOffset EndTime { get; }
 
         /// <summary>
         /// Gets the scoring mode of the event.
         /// </summary>
-        public CtfScoringMode Scoring { get; }
+        CtfScoringMode Scoring { get; }
 
         /// <summary>
         /// Gets the additional flags for the event.
         /// </summary>
-        public int Flags { get; }
+        int Flags { get; }
     }
 }

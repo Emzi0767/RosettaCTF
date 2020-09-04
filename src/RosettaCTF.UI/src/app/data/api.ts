@@ -374,6 +374,23 @@ export enum ApiEventScoringMode {
 }
 
 /**
+ * Represents basic country data.
+ */
+export interface ICountry
+{
+
+    /**
+     * Gets or sets the ISO-3166-alpha-2 country code.
+     */
+    code: string;
+
+    /**
+     * Gets or sets the name of the country.
+     */
+    name: string;
+}
+
+/**
  * Represents an API connection test response.
  */
 export interface IApiEventConfiguration {
@@ -407,6 +424,11 @@ export interface IApiEventConfiguration {
      * Gets additional settings for this event.
      */
     flags: number;
+
+    /**
+     * Gets the countries defined for the event.
+     */
+    countries: ICountry[];
 }
 
 /**

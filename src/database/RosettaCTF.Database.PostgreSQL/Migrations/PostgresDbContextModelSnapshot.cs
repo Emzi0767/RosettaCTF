@@ -1,5 +1,5 @@
 ﻿// This file is part of RosettaCTF project.
-//
+// 
 // Copyright 2020 Emzi0767
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -226,6 +226,1273 @@ namespace RosettaCTF.Migrations
                     b.ToTable("challenge_hints");
                 });
 
+            modelBuilder.Entity("RosettaCTF.Models.PostgresCountry", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnName("code")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Code")
+                        .HasName("fkey_country");
+
+                    b.HasAlternateKey("Name")
+                        .HasName("ukey_country");
+
+                    b.ToTable("countries");
+
+                    b.HasData(
+                        new
+                        {
+                            Code = "af",
+                            Name = "Afghanistan"
+                        },
+                        new
+                        {
+                            Code = "ax",
+                            Name = "Åland Islands"
+                        },
+                        new
+                        {
+                            Code = "al",
+                            Name = "Albania"
+                        },
+                        new
+                        {
+                            Code = "dz",
+                            Name = "Algeria"
+                        },
+                        new
+                        {
+                            Code = "as",
+                            Name = "American Samoa"
+                        },
+                        new
+                        {
+                            Code = "ad",
+                            Name = "Andorra"
+                        },
+                        new
+                        {
+                            Code = "ao",
+                            Name = "Angola"
+                        },
+                        new
+                        {
+                            Code = "ai",
+                            Name = "Anguilla"
+                        },
+                        new
+                        {
+                            Code = "aq",
+                            Name = "Antarctica"
+                        },
+                        new
+                        {
+                            Code = "ag",
+                            Name = "Antigua and Barbuda"
+                        },
+                        new
+                        {
+                            Code = "ar",
+                            Name = "Argentina"
+                        },
+                        new
+                        {
+                            Code = "am",
+                            Name = "Armenia"
+                        },
+                        new
+                        {
+                            Code = "aw",
+                            Name = "Aruba"
+                        },
+                        new
+                        {
+                            Code = "au",
+                            Name = "Australia"
+                        },
+                        new
+                        {
+                            Code = "at",
+                            Name = "Austria"
+                        },
+                        new
+                        {
+                            Code = "az",
+                            Name = "Azerbaijan"
+                        },
+                        new
+                        {
+                            Code = "bs",
+                            Name = "Bahamas"
+                        },
+                        new
+                        {
+                            Code = "bh",
+                            Name = "Bahrain"
+                        },
+                        new
+                        {
+                            Code = "bd",
+                            Name = "Bangladesh"
+                        },
+                        new
+                        {
+                            Code = "bb",
+                            Name = "Barbados"
+                        },
+                        new
+                        {
+                            Code = "by",
+                            Name = "Belarus"
+                        },
+                        new
+                        {
+                            Code = "be",
+                            Name = "Belgium"
+                        },
+                        new
+                        {
+                            Code = "bz",
+                            Name = "Belize"
+                        },
+                        new
+                        {
+                            Code = "bj",
+                            Name = "Benin"
+                        },
+                        new
+                        {
+                            Code = "bm",
+                            Name = "Bermuda"
+                        },
+                        new
+                        {
+                            Code = "bt",
+                            Name = "Bhutan"
+                        },
+                        new
+                        {
+                            Code = "bo",
+                            Name = "Bolivia (Plurinational State of)"
+                        },
+                        new
+                        {
+                            Code = "bq",
+                            Name = "Bonaire, Sint Eustatius and Saba"
+                        },
+                        new
+                        {
+                            Code = "ba",
+                            Name = "Bosnia and Herzegovina"
+                        },
+                        new
+                        {
+                            Code = "bw",
+                            Name = "Botswana"
+                        },
+                        new
+                        {
+                            Code = "bv",
+                            Name = "Bouvet Island"
+                        },
+                        new
+                        {
+                            Code = "br",
+                            Name = "Brazil"
+                        },
+                        new
+                        {
+                            Code = "io",
+                            Name = "British Indian Ocean Territory"
+                        },
+                        new
+                        {
+                            Code = "bn",
+                            Name = "Brunei Darussalam"
+                        },
+                        new
+                        {
+                            Code = "bg",
+                            Name = "Bulgaria"
+                        },
+                        new
+                        {
+                            Code = "bf",
+                            Name = "Burkina Faso"
+                        },
+                        new
+                        {
+                            Code = "bi",
+                            Name = "Burundi"
+                        },
+                        new
+                        {
+                            Code = "cv",
+                            Name = "Cabo Verde"
+                        },
+                        new
+                        {
+                            Code = "kh",
+                            Name = "Cambodia"
+                        },
+                        new
+                        {
+                            Code = "cm",
+                            Name = "Cameroon"
+                        },
+                        new
+                        {
+                            Code = "ca",
+                            Name = "Canada"
+                        },
+                        new
+                        {
+                            Code = "ky",
+                            Name = "Cayman Islands"
+                        },
+                        new
+                        {
+                            Code = "cf",
+                            Name = "Central African Republic"
+                        },
+                        new
+                        {
+                            Code = "td",
+                            Name = "Chad"
+                        },
+                        new
+                        {
+                            Code = "cl",
+                            Name = "Chile"
+                        },
+                        new
+                        {
+                            Code = "cn",
+                            Name = "China"
+                        },
+                        new
+                        {
+                            Code = "cx",
+                            Name = "Christmas Island"
+                        },
+                        new
+                        {
+                            Code = "cc",
+                            Name = "Cocos (Keeling) Islands"
+                        },
+                        new
+                        {
+                            Code = "co",
+                            Name = "Colombia"
+                        },
+                        new
+                        {
+                            Code = "km",
+                            Name = "Comoros"
+                        },
+                        new
+                        {
+                            Code = "cg",
+                            Name = "Congo"
+                        },
+                        new
+                        {
+                            Code = "cd",
+                            Name = "Congo, Democratic Republic of the"
+                        },
+                        new
+                        {
+                            Code = "ck",
+                            Name = "Cook Islands"
+                        },
+                        new
+                        {
+                            Code = "cr",
+                            Name = "Costa Rica"
+                        },
+                        new
+                        {
+                            Code = "ci",
+                            Name = "Côte d'Ivoire"
+                        },
+                        new
+                        {
+                            Code = "hr",
+                            Name = "Croatia"
+                        },
+                        new
+                        {
+                            Code = "cu",
+                            Name = "Cuba"
+                        },
+                        new
+                        {
+                            Code = "cw",
+                            Name = "Curaçao"
+                        },
+                        new
+                        {
+                            Code = "cy",
+                            Name = "Cyprus"
+                        },
+                        new
+                        {
+                            Code = "cz",
+                            Name = "Czechia"
+                        },
+                        new
+                        {
+                            Code = "dk",
+                            Name = "Denmark"
+                        },
+                        new
+                        {
+                            Code = "dj",
+                            Name = "Djibouti"
+                        },
+                        new
+                        {
+                            Code = "dm",
+                            Name = "Dominica"
+                        },
+                        new
+                        {
+                            Code = "do",
+                            Name = "Dominican Republic"
+                        },
+                        new
+                        {
+                            Code = "ec",
+                            Name = "Ecuador"
+                        },
+                        new
+                        {
+                            Code = "eg",
+                            Name = "Egypt"
+                        },
+                        new
+                        {
+                            Code = "sv",
+                            Name = "El Salvador"
+                        },
+                        new
+                        {
+                            Code = "gq",
+                            Name = "Equatorial Guinea"
+                        },
+                        new
+                        {
+                            Code = "er",
+                            Name = "Eritrea"
+                        },
+                        new
+                        {
+                            Code = "ee",
+                            Name = "Estonia"
+                        },
+                        new
+                        {
+                            Code = "sz",
+                            Name = "Eswatini"
+                        },
+                        new
+                        {
+                            Code = "et",
+                            Name = "Ethiopia"
+                        },
+                        new
+                        {
+                            Code = "fk",
+                            Name = "Falkland Islands (Malvinas)"
+                        },
+                        new
+                        {
+                            Code = "fo",
+                            Name = "Faroe Islands"
+                        },
+                        new
+                        {
+                            Code = "fj",
+                            Name = "Fiji"
+                        },
+                        new
+                        {
+                            Code = "fi",
+                            Name = "Finland"
+                        },
+                        new
+                        {
+                            Code = "fr",
+                            Name = "France"
+                        },
+                        new
+                        {
+                            Code = "gf",
+                            Name = "French Guiana"
+                        },
+                        new
+                        {
+                            Code = "pf",
+                            Name = "French Polynesia"
+                        },
+                        new
+                        {
+                            Code = "tf",
+                            Name = "French Southern Territories"
+                        },
+                        new
+                        {
+                            Code = "ga",
+                            Name = "Gabon"
+                        },
+                        new
+                        {
+                            Code = "gm",
+                            Name = "Gambia"
+                        },
+                        new
+                        {
+                            Code = "ge",
+                            Name = "Georgia"
+                        },
+                        new
+                        {
+                            Code = "de",
+                            Name = "Germany"
+                        },
+                        new
+                        {
+                            Code = "gh",
+                            Name = "Ghana"
+                        },
+                        new
+                        {
+                            Code = "gi",
+                            Name = "Gibraltar"
+                        },
+                        new
+                        {
+                            Code = "gr",
+                            Name = "Greece"
+                        },
+                        new
+                        {
+                            Code = "gl",
+                            Name = "Greenland"
+                        },
+                        new
+                        {
+                            Code = "gd",
+                            Name = "Grenada"
+                        },
+                        new
+                        {
+                            Code = "gp",
+                            Name = "Guadeloupe"
+                        },
+                        new
+                        {
+                            Code = "gu",
+                            Name = "Guam"
+                        },
+                        new
+                        {
+                            Code = "gt",
+                            Name = "Guatemala"
+                        },
+                        new
+                        {
+                            Code = "gg",
+                            Name = "Guernsey"
+                        },
+                        new
+                        {
+                            Code = "gn",
+                            Name = "Guinea"
+                        },
+                        new
+                        {
+                            Code = "gw",
+                            Name = "Guinea-Bissau"
+                        },
+                        new
+                        {
+                            Code = "gy",
+                            Name = "Guyana"
+                        },
+                        new
+                        {
+                            Code = "ht",
+                            Name = "Haiti"
+                        },
+                        new
+                        {
+                            Code = "hm",
+                            Name = "Heard Island and McDonald Islands"
+                        },
+                        new
+                        {
+                            Code = "va",
+                            Name = "Holy See"
+                        },
+                        new
+                        {
+                            Code = "hn",
+                            Name = "Honduras"
+                        },
+                        new
+                        {
+                            Code = "hk",
+                            Name = "Hong Kong"
+                        },
+                        new
+                        {
+                            Code = "hu",
+                            Name = "Hungary"
+                        },
+                        new
+                        {
+                            Code = "is",
+                            Name = "Iceland"
+                        },
+                        new
+                        {
+                            Code = "in",
+                            Name = "India"
+                        },
+                        new
+                        {
+                            Code = "id",
+                            Name = "Indonesia"
+                        },
+                        new
+                        {
+                            Code = "ir",
+                            Name = "Iran (Islamic Republic of)"
+                        },
+                        new
+                        {
+                            Code = "iq",
+                            Name = "Iraq"
+                        },
+                        new
+                        {
+                            Code = "ie",
+                            Name = "Ireland"
+                        },
+                        new
+                        {
+                            Code = "im",
+                            Name = "Isle of Man"
+                        },
+                        new
+                        {
+                            Code = "il",
+                            Name = "Israel"
+                        },
+                        new
+                        {
+                            Code = "it",
+                            Name = "Italy"
+                        },
+                        new
+                        {
+                            Code = "jm",
+                            Name = "Jamaica"
+                        },
+                        new
+                        {
+                            Code = "jp",
+                            Name = "Japan"
+                        },
+                        new
+                        {
+                            Code = "je",
+                            Name = "Jersey"
+                        },
+                        new
+                        {
+                            Code = "jo",
+                            Name = "Jordan"
+                        },
+                        new
+                        {
+                            Code = "kz",
+                            Name = "Kazakhstan"
+                        },
+                        new
+                        {
+                            Code = "ke",
+                            Name = "Kenya"
+                        },
+                        new
+                        {
+                            Code = "ki",
+                            Name = "Kiribati"
+                        },
+                        new
+                        {
+                            Code = "kp",
+                            Name = "Korea (Democratic People's Republic of)"
+                        },
+                        new
+                        {
+                            Code = "kr",
+                            Name = "Korea, Republic of"
+                        },
+                        new
+                        {
+                            Code = "kw",
+                            Name = "Kuwait"
+                        },
+                        new
+                        {
+                            Code = "kg",
+                            Name = "Kyrgyzstan"
+                        },
+                        new
+                        {
+                            Code = "la",
+                            Name = "Lao People's Democratic Republic"
+                        },
+                        new
+                        {
+                            Code = "lv",
+                            Name = "Latvia"
+                        },
+                        new
+                        {
+                            Code = "lb",
+                            Name = "Lebanon"
+                        },
+                        new
+                        {
+                            Code = "ls",
+                            Name = "Lesotho"
+                        },
+                        new
+                        {
+                            Code = "lr",
+                            Name = "Liberia"
+                        },
+                        new
+                        {
+                            Code = "ly",
+                            Name = "Libya"
+                        },
+                        new
+                        {
+                            Code = "li",
+                            Name = "Liechtenstein"
+                        },
+                        new
+                        {
+                            Code = "lt",
+                            Name = "Lithuania"
+                        },
+                        new
+                        {
+                            Code = "lu",
+                            Name = "Luxembourg"
+                        },
+                        new
+                        {
+                            Code = "mo",
+                            Name = "Macao"
+                        },
+                        new
+                        {
+                            Code = "mg",
+                            Name = "Madagascar"
+                        },
+                        new
+                        {
+                            Code = "mw",
+                            Name = "Malawi"
+                        },
+                        new
+                        {
+                            Code = "my",
+                            Name = "Malaysia"
+                        },
+                        new
+                        {
+                            Code = "mv",
+                            Name = "Maldives"
+                        },
+                        new
+                        {
+                            Code = "ml",
+                            Name = "Mali"
+                        },
+                        new
+                        {
+                            Code = "mt",
+                            Name = "Malta"
+                        },
+                        new
+                        {
+                            Code = "mh",
+                            Name = "Marshall Islands"
+                        },
+                        new
+                        {
+                            Code = "mq",
+                            Name = "Martinique"
+                        },
+                        new
+                        {
+                            Code = "mr",
+                            Name = "Mauritania"
+                        },
+                        new
+                        {
+                            Code = "mu",
+                            Name = "Mauritius"
+                        },
+                        new
+                        {
+                            Code = "yt",
+                            Name = "Mayotte"
+                        },
+                        new
+                        {
+                            Code = "mx",
+                            Name = "Mexico"
+                        },
+                        new
+                        {
+                            Code = "fm",
+                            Name = "Micronesia (Federated States of)"
+                        },
+                        new
+                        {
+                            Code = "md",
+                            Name = "Moldova, Republic of"
+                        },
+                        new
+                        {
+                            Code = "mc",
+                            Name = "Monaco"
+                        },
+                        new
+                        {
+                            Code = "mn",
+                            Name = "Mongolia"
+                        },
+                        new
+                        {
+                            Code = "me",
+                            Name = "Montenegro"
+                        },
+                        new
+                        {
+                            Code = "ms",
+                            Name = "Montserrat"
+                        },
+                        new
+                        {
+                            Code = "ma",
+                            Name = "Morocco"
+                        },
+                        new
+                        {
+                            Code = "mz",
+                            Name = "Mozambique"
+                        },
+                        new
+                        {
+                            Code = "mm",
+                            Name = "Myanmar"
+                        },
+                        new
+                        {
+                            Code = "na",
+                            Name = "Namibia"
+                        },
+                        new
+                        {
+                            Code = "nr",
+                            Name = "Nauru"
+                        },
+                        new
+                        {
+                            Code = "np",
+                            Name = "Nepal"
+                        },
+                        new
+                        {
+                            Code = "nl",
+                            Name = "Netherlands"
+                        },
+                        new
+                        {
+                            Code = "nc",
+                            Name = "New Caledonia"
+                        },
+                        new
+                        {
+                            Code = "nz",
+                            Name = "New Zealand"
+                        },
+                        new
+                        {
+                            Code = "ni",
+                            Name = "Nicaragua"
+                        },
+                        new
+                        {
+                            Code = "ne",
+                            Name = "Niger"
+                        },
+                        new
+                        {
+                            Code = "ng",
+                            Name = "Nigeria"
+                        },
+                        new
+                        {
+                            Code = "nu",
+                            Name = "Niue"
+                        },
+                        new
+                        {
+                            Code = "nf",
+                            Name = "Norfolk Island"
+                        },
+                        new
+                        {
+                            Code = "mk",
+                            Name = "North Macedonia"
+                        },
+                        new
+                        {
+                            Code = "mp",
+                            Name = "Northern Mariana Islands"
+                        },
+                        new
+                        {
+                            Code = "no",
+                            Name = "Norway"
+                        },
+                        new
+                        {
+                            Code = "om",
+                            Name = "Oman"
+                        },
+                        new
+                        {
+                            Code = "pk",
+                            Name = "Pakistan"
+                        },
+                        new
+                        {
+                            Code = "pw",
+                            Name = "Palau"
+                        },
+                        new
+                        {
+                            Code = "ps",
+                            Name = "Palestine, State of"
+                        },
+                        new
+                        {
+                            Code = "pa",
+                            Name = "Panama"
+                        },
+                        new
+                        {
+                            Code = "pg",
+                            Name = "Papua New Guinea"
+                        },
+                        new
+                        {
+                            Code = "py",
+                            Name = "Paraguay"
+                        },
+                        new
+                        {
+                            Code = "pe",
+                            Name = "Peru"
+                        },
+                        new
+                        {
+                            Code = "ph",
+                            Name = "Philippines"
+                        },
+                        new
+                        {
+                            Code = "pn",
+                            Name = "Pitcairn"
+                        },
+                        new
+                        {
+                            Code = "pl",
+                            Name = "Poland"
+                        },
+                        new
+                        {
+                            Code = "pt",
+                            Name = "Portugal"
+                        },
+                        new
+                        {
+                            Code = "pr",
+                            Name = "Puerto Rico"
+                        },
+                        new
+                        {
+                            Code = "qa",
+                            Name = "Qatar"
+                        },
+                        new
+                        {
+                            Code = "re",
+                            Name = "Réunion"
+                        },
+                        new
+                        {
+                            Code = "ro",
+                            Name = "Romania"
+                        },
+                        new
+                        {
+                            Code = "ru",
+                            Name = "Russian Federation"
+                        },
+                        new
+                        {
+                            Code = "rw",
+                            Name = "Rwanda"
+                        },
+                        new
+                        {
+                            Code = "bl",
+                            Name = "Saint Barthélemy"
+                        },
+                        new
+                        {
+                            Code = "sh",
+                            Name = "Saint Helena, Ascension and Tristan da Cunha"
+                        },
+                        new
+                        {
+                            Code = "kn",
+                            Name = "Saint Kitts and Nevis"
+                        },
+                        new
+                        {
+                            Code = "lc",
+                            Name = "Saint Lucia"
+                        },
+                        new
+                        {
+                            Code = "mf",
+                            Name = "Saint Martin (French part)"
+                        },
+                        new
+                        {
+                            Code = "pm",
+                            Name = "Saint Pierre and Miquelon"
+                        },
+                        new
+                        {
+                            Code = "vc",
+                            Name = "Saint Vincent and the Grenadines"
+                        },
+                        new
+                        {
+                            Code = "ws",
+                            Name = "Samoa"
+                        },
+                        new
+                        {
+                            Code = "sm",
+                            Name = "San Marino"
+                        },
+                        new
+                        {
+                            Code = "st",
+                            Name = "Sao Tome and Principe"
+                        },
+                        new
+                        {
+                            Code = "sa",
+                            Name = "Saudi Arabia"
+                        },
+                        new
+                        {
+                            Code = "sn",
+                            Name = "Senegal"
+                        },
+                        new
+                        {
+                            Code = "rs",
+                            Name = "Serbia"
+                        },
+                        new
+                        {
+                            Code = "sc",
+                            Name = "Seychelles"
+                        },
+                        new
+                        {
+                            Code = "sl",
+                            Name = "Sierra Leone"
+                        },
+                        new
+                        {
+                            Code = "sg",
+                            Name = "Singapore"
+                        },
+                        new
+                        {
+                            Code = "sx",
+                            Name = "Sint Maarten (Dutch part)"
+                        },
+                        new
+                        {
+                            Code = "sk",
+                            Name = "Slovakia"
+                        },
+                        new
+                        {
+                            Code = "si",
+                            Name = "Slovenia"
+                        },
+                        new
+                        {
+                            Code = "sb",
+                            Name = "Solomon Islands"
+                        },
+                        new
+                        {
+                            Code = "so",
+                            Name = "Somalia"
+                        },
+                        new
+                        {
+                            Code = "za",
+                            Name = "South Africa"
+                        },
+                        new
+                        {
+                            Code = "gs",
+                            Name = "South Georgia and the South Sandwich Islands"
+                        },
+                        new
+                        {
+                            Code = "ss",
+                            Name = "South Sudan"
+                        },
+                        new
+                        {
+                            Code = "es",
+                            Name = "Spain"
+                        },
+                        new
+                        {
+                            Code = "lk",
+                            Name = "Sri Lanka"
+                        },
+                        new
+                        {
+                            Code = "sd",
+                            Name = "Sudan"
+                        },
+                        new
+                        {
+                            Code = "sr",
+                            Name = "Suriname"
+                        },
+                        new
+                        {
+                            Code = "sj",
+                            Name = "Svalbard and Jan Mayen"
+                        },
+                        new
+                        {
+                            Code = "se",
+                            Name = "Sweden"
+                        },
+                        new
+                        {
+                            Code = "ch",
+                            Name = "Switzerland"
+                        },
+                        new
+                        {
+                            Code = "sy",
+                            Name = "Syrian Arab Republic"
+                        },
+                        new
+                        {
+                            Code = "tw",
+                            Name = "Taiwan"
+                        },
+                        new
+                        {
+                            Code = "tj",
+                            Name = "Tajikistan"
+                        },
+                        new
+                        {
+                            Code = "tz",
+                            Name = "Tanzania, United Republic of"
+                        },
+                        new
+                        {
+                            Code = "th",
+                            Name = "Thailand"
+                        },
+                        new
+                        {
+                            Code = "tl",
+                            Name = "Timor-Leste"
+                        },
+                        new
+                        {
+                            Code = "tg",
+                            Name = "Togo"
+                        },
+                        new
+                        {
+                            Code = "tk",
+                            Name = "Tokelau"
+                        },
+                        new
+                        {
+                            Code = "to",
+                            Name = "Tonga"
+                        },
+                        new
+                        {
+                            Code = "tt",
+                            Name = "Trinidad and Tobago"
+                        },
+                        new
+                        {
+                            Code = "tn",
+                            Name = "Tunisia"
+                        },
+                        new
+                        {
+                            Code = "tr",
+                            Name = "Turkey"
+                        },
+                        new
+                        {
+                            Code = "tm",
+                            Name = "Turkmenistan"
+                        },
+                        new
+                        {
+                            Code = "tc",
+                            Name = "Turks and Caicos Islands"
+                        },
+                        new
+                        {
+                            Code = "tv",
+                            Name = "Tuvalu"
+                        },
+                        new
+                        {
+                            Code = "ug",
+                            Name = "Uganda"
+                        },
+                        new
+                        {
+                            Code = "ua",
+                            Name = "Ukraine"
+                        },
+                        new
+                        {
+                            Code = "ae",
+                            Name = "United Arab Emirates"
+                        },
+                        new
+                        {
+                            Code = "gb",
+                            Name = "United Kingdom of Great Britain and Northern Ireland"
+                        },
+                        new
+                        {
+                            Code = "us",
+                            Name = "United States of America"
+                        },
+                        new
+                        {
+                            Code = "um",
+                            Name = "United States Minor Outlying Islands"
+                        },
+                        new
+                        {
+                            Code = "uy",
+                            Name = "Uruguay"
+                        },
+                        new
+                        {
+                            Code = "uz",
+                            Name = "Uzbekistan"
+                        },
+                        new
+                        {
+                            Code = "vu",
+                            Name = "Vanuatu"
+                        },
+                        new
+                        {
+                            Code = "ve",
+                            Name = "Venezuela (Bolivarian Republic of)"
+                        },
+                        new
+                        {
+                            Code = "vn",
+                            Name = "Viet Nam"
+                        },
+                        new
+                        {
+                            Code = "vg",
+                            Name = "Virgin Islands (British)"
+                        },
+                        new
+                        {
+                            Code = "vi",
+                            Name = "Virgin Islands (U.S.)"
+                        },
+                        new
+                        {
+                            Code = "wf",
+                            Name = "Wallis and Futuna"
+                        },
+                        new
+                        {
+                            Code = "eh",
+                            Name = "Western Sahara"
+                        },
+                        new
+                        {
+                            Code = "ye",
+                            Name = "Yemen"
+                        },
+                        new
+                        {
+                            Code = "zm",
+                            Name = "Zambia"
+                        },
+                        new
+                        {
+                            Code = "zw",
+                            Name = "Zimbabwe"
+                        });
+                });
+
             modelBuilder.Entity("RosettaCTF.Models.PostgresExternalUser", b =>
                 {
                     b.Property<long>("UserId")
@@ -395,6 +1662,11 @@ namespace RosettaCTF.Migrations
                         .HasColumnType("text")
                         .HasDefaultValue(null);
 
+                    b.Property<string>("CountryCode")
+                        .HasColumnName("country")
+                        .HasColumnType("text")
+                        .HasDefaultValue(null);
+
                     b.Property<bool>("HasHiddenAccess")
                         .HasColumnName("access_hidden")
                         .HasColumnType("boolean");
@@ -418,6 +1690,8 @@ namespace RosettaCTF.Migrations
 
                     b.HasAlternateKey("Username")
                         .HasName("ukey_user_name");
+
+                    b.HasIndex("CountryCode");
 
                     b.HasIndex("TeamId");
 
@@ -530,6 +1804,11 @@ namespace RosettaCTF.Migrations
 
             modelBuilder.Entity("RosettaCTF.Models.PostgresUser", b =>
                 {
+                    b.HasOne("RosettaCTF.Models.PostgresCountry", "CountryInternal")
+                        .WithMany("UsersInternal")
+                        .HasForeignKey("CountryCode")
+                        .HasConstraintName("fkey_user_country");
+
                     b.HasOne("RosettaCTF.Models.PostgresTeam", "TeamInternal")
                         .WithMany("MembersInternal")
                         .HasForeignKey("TeamId")

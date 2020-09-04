@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using RosettaCTF.Data;
 using RosettaCTF.Models;
+using RosettaCTF.SeedData;
 
 namespace RosettaCTF
 {
@@ -34,6 +35,7 @@ namespace RosettaCTF
         public DbSet<PostgresChallengeAttachment> ChallengeAttachments { get; set; }
         public DbSet<PostgresSolveSubmission> Solves { get; set; }
         public DbSet<PostgresTeamInvite> TeamInvites { get; set; }
+        public DbSet<PostgresCountry> Countries { get; set; }
 
         static PostgresDbContext()
         {
@@ -58,7 +60,8 @@ namespace RosettaCTF
                     .Ignore(m => m.Team)
                     .Ignore(m => m.AvatarUrl)
                     .Ignore(m => m.ConnectedAccounts)
-                    .Ignore(m => m.Password);
+                    .Ignore(m => m.Password)
+                    .Ignore(m => m.Country);
 
                 e.Property(m => m.Id)
                     .IsRequired()
@@ -68,6 +71,10 @@ namespace RosettaCTF
                 e.Property(m => m.Username)
                     .IsRequired()
                     .HasColumnName("name");
+
+                e.Property(m => m.CountryCode)
+                    .HasColumnName("country")
+                    .HasDefaultValue(null);
 
                 e.Property(m => m.AvatarUrlInternal)
                     .HasColumnName("avatar")
@@ -91,6 +98,12 @@ namespace RosettaCTF
 
                 e.HasAlternateKey(m => m.Username)
                     .HasName("ukey_user_name");
+
+                e.HasOne(m => m.CountryInternal)
+                    .WithMany(m => m.UsersInternal)
+                    .HasForeignKey(m => m.CountryCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fkey_user_country");
 
                 e.HasOne(m => m.TeamInternal)
                     .WithMany(m => m.MembersInternal)
@@ -500,6 +513,29 @@ namespace RosettaCTF
                     .HasForeignKey(m => m.TeamId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("fkey_solve_team");
+            });
+
+            // Country
+            modelBuilder.Entity<PostgresCountry>(e =>
+            {
+                e.ToTable("countries");
+
+                e.Property(m => m.Code)
+                    .IsRequired()
+                    .ValueGeneratedNever()
+                    .HasColumnName("code");
+
+                e.Property(m => m.Name)
+                    .IsRequired()
+                    .HasColumnName("name");
+
+                e.HasKey(m => m.Code)
+                    .HasName("fkey_country");
+
+                e.HasAlternateKey(m => m.Name)
+                    .HasName("ukey_country");
+
+                e.HasData(CountrySeedData.SeedCountries);
             });
         }
     }

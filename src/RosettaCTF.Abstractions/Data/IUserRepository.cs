@@ -60,6 +60,15 @@ namespace RosettaCTF.Data
         Task DeleteUserAsync(long id, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Updates a user's country.
+        /// </summary>
+        /// <param name="id">ID of the user to update the country for.</param>
+        /// <param name="code">Country code to set the country to, or null to unset.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
+        /// <returns>A task encapsulating the operation.</returns>
+        Task<IUser> UpdateUserCountryAsync(long id, string code, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Retrieves a team by its ID.
         /// </summary>
         /// <param name="id">ID of the team to retrieve.</param>
@@ -208,5 +217,12 @@ namespace RosettaCTF.Data
         /// <param name="cancellationToken">Token to cancel any pending operation.</param>
         /// <returns>Number of teams that successfully solved the baseline challenge, and are therefore considered active.</returns>
         Task<int> GetBaselineSolveCount(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets all defined countries.
+        /// </summary>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
+        /// <returns>An enumerable of all defined countries.</returns>
+        Task<IEnumerable<ICountry>> GetAllCountriesAsync(CancellationToken cancellationToken = default);
     }
 }

@@ -43,6 +43,7 @@ namespace RosettaCTF
                 .Include(x => x.TeamInternal)
                 .ThenInclude(x => x.MembersInternal)
                 .Include(x => x.ConnectedAccountsInternal)
+                .Include(x => x.CountryInternal)
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         public async Task<IUser> GetUserAsync(string username, CancellationToken cancellationToken = default)
@@ -50,6 +51,7 @@ namespace RosettaCTF
                 .Include(x => x.TeamInternal)
                 .ThenInclude(x => x.MembersInternal)
                 .Include(x => x.ConnectedAccountsInternal)
+                .Include(x => x.CountryInternal)
                 .FirstOrDefaultAsync(x => x.Username == username, cancellationToken);
 
         public async Task<IUser> CreateUserAsync(string username, bool isAuthorized, CancellationToken cancellationToken = default)
@@ -81,6 +83,31 @@ namespace RosettaCTF
 
             this.Database.Users.Remove(user);
             await this.Database.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<IUser> UpdateUserCountryAsync(long id, string code, CancellationToken cancellationToken = default)
+        {
+            var user = await this.Database.Users.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            if (user == null)
+                return null;
+
+            if (code == null)
+            {
+                user.CountryCode = null;
+            }
+            else
+            {
+                var country = await this.Database.Countries.FirstOrDefaultAsync(x => x.Code == code, cancellationToken);
+                if (country == null)
+                    return null;
+
+                user.CountryCode = country.Code;
+            }
+
+            this.Database.Users.Update(user);
+            await this.Database.SaveChangesAsync(cancellationToken);
+
+            return user;
         }
 
         public async Task<ITeam> GetTeamAsync(long id, CancellationToken cancellationToken = default)
@@ -296,5 +323,10 @@ namespace RosettaCTF
 
             return baseline.SolvesInternal.Count(x => x.IsValid);
         }
+
+        public async Task<IEnumerable<ICountry>> GetAllCountriesAsync(CancellationToken cancellationToken = default)
+            => await this.Database.Countries
+                .OrderBy(x => x.Code)
+                .ToListAsync(cancellationToken);
     }
 }

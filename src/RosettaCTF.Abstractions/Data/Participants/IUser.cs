@@ -35,6 +35,11 @@ namespace RosettaCTF.Data
         string Username { get; }
 
         /// <summary>
+        /// Gets the country of the user.
+        /// </summary>
+        ICountry Country { get; }
+
+        /// <summary>
         /// Gets the URL of the user's avatar.
         /// </summary>
         Uri AvatarUrl { get; }
