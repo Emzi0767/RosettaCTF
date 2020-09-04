@@ -17,7 +17,9 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Subject, merge } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { Moment, parseZone, duration } from "moment";
+import { Moment, parseZone } from "moment";
+import { Router } from "@angular/router";
+import { HumanizeDuration, HumanizeDurationLanguage } from "humanize-duration-ts";
 
 import { ConfigurationProviderService } from "../services/configuration-provider.service";
 import { TimerService } from "../services/timer.service";
@@ -32,11 +34,14 @@ export class NotYetComponent implements OnInit, OnDestroy {
     private ngUnsubscribe = new Subject();
     private timerStop = new Subject();
 
+    private humanizer = new HumanizeDuration(new HumanizeDurationLanguage());
+
     startCountdown: string | boolean | null = null;
     eventStart: Moment = null;
 
     constructor(private configurationProvider: ConfigurationProviderService,
-                private timer: TimerService) { }
+                private timer: TimerService,
+                private router: Router) { }
 
     ngOnInit(): void {
         this.configurationProvider.configurationChange
@@ -71,8 +76,19 @@ export class NotYetComponent implements OnInit, OnDestroy {
         if (x.isAfter(this.eventStart)) {
             this.stopTimer();
             this.startCountdown = true;
+            this.router.navigate(["/challenges"]);
         } else {
-            this.startCountdown = duration(x.diff(this.eventStart)).humanize({ h: 48, m: 60, s: 60, ss: 0 });
+            this.startCountdown = this.humanizer.humanize(x.diff(this.eventStart) * -1, {
+                units: ["d", "h", "m", "s"],
+                round: true,
+                largest: 3,
+                unitMeasures: {
+                    d: 172_800_000,
+                    h:   3_600_000,
+                    m:      60_000,
+                    s:       1_000
+                }
+            });
         }
     }
 }

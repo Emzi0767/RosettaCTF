@@ -40,6 +40,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Options;
 using System.Net;
 using RosettaCTF.Authentication;
+using System.Linq;
 
 namespace RosettaCTF.API
 {
@@ -171,6 +172,10 @@ namespace RosettaCTF.API
             implSelector.ConfigureCtfConfigurationLoaderProvider("yaml", services);
             implSelector.ConfigureDatabaseProvider(this.Configuration["Database:Type"], services);
             implSelector.ConfigureCacheProvider(this.Configuration["Cache:Type"], services);
+            implSelector.ConfigureOAuthProviders(this.Configuration
+                .GetSection("Authentication:OAuth:Providers")
+                .Get<ConfigurationOAuthProvider[]>()
+                .Select(x => x.Type), services);
 
             services.AddTransient<UserPreviewRepository>()
                 .AddTransient<ChallengePreviewRepository>()

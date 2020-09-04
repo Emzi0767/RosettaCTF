@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                 private currentRoute: ActivatedRoute) { }
 
     ngOnInit(): void {
-        const args = this.currentRoute.snapshot.queryParamMap;
+        const args = this.currentRoute.snapshot.paramMap;
         const provider = args.has("provider")
             ? args.get("provider")
             : null;

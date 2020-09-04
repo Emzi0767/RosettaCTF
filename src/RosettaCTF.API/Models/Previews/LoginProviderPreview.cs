@@ -31,10 +31,16 @@ namespace RosettaCTF.Models.Previews
         /// </summary>
         public string Name { get; }
 
-        internal LoginProviderPreview(string id, string name)
+        /// <summary>
+        /// Gets the colour of the provider login button.
+        /// </summary>
+        public string Colour { get; }
+
+        internal LoginProviderPreview(string id, string name, string colour)
         {
             this.Id = id;
             this.Name = name;
+            this.Colour = colour;
         }
     }
 }

@@ -18,7 +18,8 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable, Subject, merge } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { parseZone, utc, Moment, duration } from "moment";
+import { Moment, parseZone, utc } from "moment";
+import { HumanizeDuration, HumanizeDurationLanguage } from "humanize-duration-ts";
 
 import { RosettaApiService } from "../services/rosetta-api.service";
 import { EventDispatcherService } from "../services/event-dispatcher.service";
@@ -37,6 +38,8 @@ export class ChallengesComponent implements OnInit, OnDestroy {
 
     private ngUnsubscribe = new Subject();
     private timerStop = new Subject();
+
+    private humanizer = new HumanizeDuration(new HumanizeDurationLanguage());
 
     configuration$: Observable<IApiEventConfiguration>;
     configuration: IApiEventConfiguration = null;
@@ -164,7 +167,17 @@ export class ChallengesComponent implements OnInit, OnDestroy {
             this.stopTimer();
             this.endCountdown = true;
         } else {
-            this.endCountdown = duration(this.eventEnd.diff(x)).humanize({ h: 48, m: 60, s: 60, ss: 0 });
+            this.endCountdown = this.humanizer.humanize(this.eventEnd.diff(x) * -1, {
+                units: ["d", "h", "m", "s"],
+                round: true,
+                largest: 3,
+                unitMeasures: {
+                    d: 172_800_000,
+                    h:   3_600_000,
+                    m:      60_000,
+                    s:       1_000
+                }
+            });
         }
     }
 }

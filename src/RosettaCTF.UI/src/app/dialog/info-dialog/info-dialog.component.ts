@@ -16,22 +16,22 @@
 
 import { Component, EventEmitter } from "@angular/core";
 
-import { IDialogComponent, IErrorDialogDefaults } from "src/app/data/dialog";
+import { IInfoDialogDefaults } from "src/app/data/dialog";
 
 @Component({
-    selector: "app-error-dialog",
-    templateUrl: "./error-dialog.component.html",
-    styleUrls: ["./error-dialog.component.less"]
+    selector: "app-info-dialog",
+    templateUrl: "./info-dialog.component.html",
+    styleUrls: ["./info-dialog.component.less"]
 })
-export class ErrorDialogComponent implements IDialogComponent {
+export class InfoDialogComponent {
 
     message: string = null;
 
     dialogDismiss = new EventEmitter<null>();
 
-    provideDefaults(defaults: IErrorDialogDefaults): void {
+    provideDefaults(defaults: IInfoDialogDefaults): void {
         if (!defaults || !defaults.message) {
-            this.message = "An unknown error occured.";
+            this.message = "This should say something.";
             return;
         }
 

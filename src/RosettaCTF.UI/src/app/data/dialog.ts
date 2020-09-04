@@ -32,6 +32,10 @@ export interface IErrorDialogDefaults {
     message: string;
 }
 
+export interface IInfoDialogDefaults {
+    message: string;
+}
+
 export interface ISubmitFlagDialogDefaults {
     challenge: IChallenge;
     provideFlag: (flag: IApiFlag) => void;

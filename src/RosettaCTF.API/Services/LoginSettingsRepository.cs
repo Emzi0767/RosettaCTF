@@ -43,10 +43,17 @@ namespace RosettaCTF.Services
         {
             var config = cfg.Value;
             var providers = config.OAuth.Enable
-                ? config.OAuth.Providers.Select(x => new LoginProviderPreview(x.Id, oAuthProviderSelector.GetById(x.Id).GetName(x.Id)))
+                ? config.OAuth.Providers.Select(x => ProviderToPreview(x, oAuthProviderSelector))
                 : null;
 
             this.LoginSettings = new LoginSettingsPreview(config.LocalLogin, config.OAuth.Enable, providers);
+        }
+
+        private static LoginProviderPreview ProviderToPreview(ConfigurationOAuthProvider provider, OAuthProviderSelector selector)
+        {
+            var id = provider.Id ?? provider.Type;
+            var prv = selector.GetById(id);
+            return new LoginProviderPreview(id, prv.GetName(id), prv.GetColour(id));
         }
     }
 }

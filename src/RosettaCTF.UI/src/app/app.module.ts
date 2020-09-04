@@ -58,6 +58,10 @@ import { SubmitFlagDialogComponent } from "./dialog/submit-flag-dialog/submit-fl
 import { ChallengeDetailComponent } from "./challenges/challenge-detail/challenge-detail.component";
 import { TeamDetailComponent } from "./team/team-detail/team-detail.component";
 import { NotYetComponent } from "./not-yet/not-yet.component";
+import { LoginScreenComponent } from "./session/login-screen/login-screen.component";
+import { RegisterComponent } from "./session/register/register.component";
+import { FieldValueMatchValidatorDirective } from "./services/field-value-match-validator.directive";
+import { InfoDialogComponent } from "./dialog/info-dialog/info-dialog.component";
 
 @NgModule({
     declarations: [
@@ -83,7 +87,11 @@ import { NotYetComponent } from "./not-yet/not-yet.component";
         SubmitFlagDialogComponent,
         ChallengeDetailComponent,
         TeamDetailComponent,
-        NotYetComponent
+        NotYetComponent,
+        LoginScreenComponent,
+        RegisterComponent,
+        FieldValueMatchValidatorDirective,
+        InfoDialogComponent
     ],
     imports: [
         BrowserModule,

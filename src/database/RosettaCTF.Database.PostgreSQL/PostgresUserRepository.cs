@@ -91,13 +91,9 @@ namespace RosettaCTF
 
         public async Task<ITeam> CreateTeamAsync(string name, CancellationToken cancellationToken = default)
         {
-            var nid = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() << 22;
-            var rng = new Random();
-            nid |= rng.Next(1, int.MaxValue) % (1L << 22);
-
             var team = new PostgresTeam
             {
-                Id = nid,
+                Id = this.IdGenerator.Generate(),
                 Name = name,
                 AvatarUrl = null
             };

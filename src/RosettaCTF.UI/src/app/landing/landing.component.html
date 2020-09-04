@@ -18,7 +18,7 @@
  
 -->
 
-<ng-container *ngIf="configuration$ | async; let configuration">
+<ng-container *ngIf="configuration">
     <h1>Welcome to {{ configuration.name }}!</h1>
     <p>
         This event is organized by {{ joinOrganizers(configuration.organizers) }}, and features Jeopardy-style
@@ -43,6 +43,7 @@
         you have to solve as many challenges as you can, as quickly as you can.
     </p>
 
+    <h2 *ngIf="startCountdown !== null && startCountdown !== true && startCountdown !== false">Event starts in {{ startCountdown }}</h2>
 
     <h2>Rules</h2>
     <ul>

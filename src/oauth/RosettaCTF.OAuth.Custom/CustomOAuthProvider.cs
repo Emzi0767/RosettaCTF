@@ -62,6 +62,11 @@ namespace RosettaCTF
                 ? provider.Name
                 : null;
 
+        public string GetColour(string id)
+            => this.Configuration.TryGetValue(id, out var provider)
+                ? provider.Colour
+                : null;
+
         public bool SupportsReferrer(Uri referrer, out string id)
         {
             id = this.Configuration.SingleOrDefault(x => x.Value.Hostnames.Contains(referrer.Host, StringComparer.OrdinalIgnoreCase)).Key;

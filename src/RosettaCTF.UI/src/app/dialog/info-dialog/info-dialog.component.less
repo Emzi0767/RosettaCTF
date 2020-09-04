@@ -1,0 +1,75 @@
+/* 
+ * This file is part of RosettaCTF project.
+ * 
+ * Copyright 2020 Emzi0767
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+    color: #eee;
+}
+
+.title {
+    width: 100%;
+    margin: 0 0 12px 0;
+    padding: 12px 16px 12px 16px;
+
+    background: #444;
+}
+
+p.content {
+    white-space: pre-wrap;
+
+    padding: 0 16px;
+}
+
+p, .buttons {
+    display: block;
+    width: 100%;
+    margin: 12px 0; padding: 0;
+}
+
+.buttons {
+    &:extend(.buttons);
+
+    text-align: right;
+
+    padding: 12px 16px 12px 16px;
+
+    &:last-child {
+        margin-top: 12px;
+        margin-bottom: 0;    
+    }
+    
+    & > button {
+        background: #111;
+        color: #eee;
+        border: none;
+        border-radius: 4px;
+    
+        font: 11pt 'IBM Plex Sans';
+        font-weight: 450;
+    
+        margin: 0 0 0 12px;
+        padding: 8px 24px;
+    
+        box-shadow: 2px 2px 2px 0 #222;
+    
+        transition: background 0.2s;
+
+        &:hover {
+            background: #222;
+        }
+    }
+}

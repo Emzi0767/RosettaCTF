@@ -40,6 +40,11 @@ namespace RosettaCTF.Data
         public string Name { get; set; }
 
         /// <summary>
+        /// Gets or sets the colour of the login button of the provider.
+        /// </summary>
+        public string Colour { get; set; }
+
+        /// <summary>
         /// Gets or sets the client ID for this provider.
         /// </summary>
         [Required]

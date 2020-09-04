@@ -35,6 +35,8 @@ import { ScoreboardComponent } from "./scoreboard/scoreboard.component";
 import { ChallengesComponent } from "./challenges/challenges.component";
 import { ChallengeDetailComponent } from "./challenges/challenge-detail/challenge-detail.component";
 import { NotYetComponent } from "./not-yet/not-yet.component";
+import { LoginScreenComponent } from "./session/login-screen/login-screen.component";
+import { RegisterComponent } from "./session/register/register.component";
 
 const routes: Routes = [
     {
@@ -49,7 +51,7 @@ const routes: Routes = [
     },
     {
         path: "session/login",
-        component: LoginComponent
+        component: LoginScreenComponent
     },
     {
         path: "session/login/:provider",
@@ -66,6 +68,10 @@ const routes: Routes = [
     {
         path: "session/callback",
         component: CallbackComponent
+    },
+    {
+        path: "session/register",
+        component: RegisterComponent
     },
     {
         path: "team",

@@ -43,7 +43,6 @@ namespace RosettaCTF.Controllers
 
         [HttpGet]
         [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
-        [Authorize(Roles = JwtAuthenticationOptions.RoleTeamMember)]
         [Route("{id?}")]
         public async Task<ActionResult<ApiResult<TeamPreview>>> Get(long? id = null, CancellationToken cancellationToken = default)
         {

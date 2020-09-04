@@ -1,0 +1,64 @@
+<!-- 
+
+  This file is part of RosettaCTF project.
+  
+  Copyright 2020 Emzi0767
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ 
+-->
+
+<p *ngIf="loginSettings === null else loginNullElse">Please wait...</p>
+<ng-template #loginNullElse>
+    <h1>Log in</h1>
+    <div class="login-wrapper">
+        <div class="login-part login-ext" *ngIf="loginSettings.externalLoginEnabled">
+            <button *ngFor="let provider of loginSettings.externalAccountProviders" [routerLink]="['/session', 'login', provider.id]" [title]="'Log in with ' + provider.name" [style]="{ background: provider.colour }">
+                Log in with {{ provider.name }}
+            </button>
+        </div>
+        <div class="login-part login-divider" *ngIf="loginSettings.localLoginEnabled && loginSettings.externalLoginEnabled">
+            <div class="divider-bar">&#x200b;</div>
+            <div class="divider-or">OR</div>
+            <div class="divider-bar">&#x200b;</div>
+        </div>
+        <div class="login-part login-fp" *ngIf="loginSettings.localLoginEnabled">
+            <form (ngSubmit)="loginSubmit()" #loginForm="ngForm">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" 
+                        placeholder="Username"
+                        required minlength="2" maxlength="48" pattern="^[a-zA-Z0-9!@#$%^&*()\-_+=;:'&quot;\\|,&lt;.&gt;\/?€~` ]{2,48}$"
+                        [(ngModel)]="loginModel.username" name="username" #username="ngModel" />
+                    <div class="validation-error" [hidden]="username.valid || username.pristine">
+                        Username is required.
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" 
+                        placeholder="Password"
+                        required
+                        [(ngModel)]="loginModel.password" name="password" #password="ngModel" />
+                    <div class="validation-error" [hidden]="password.valid || password.pristine">
+                        Password is required.
+                    </div>
+                </div>
+
+                <button type="submit" [disabled]="!loginForm.form.valid || loginForm.form.pristine || lockControls">Log in</button>
+            </form>
+            <p>If you do not yet have an account, you can create one by <a [routerLink]="['/session', 'register']" title="Register">registering here</a>.</p>
+        </div>
+    </div>
+</ng-template>

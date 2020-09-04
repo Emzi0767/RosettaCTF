@@ -288,6 +288,48 @@ export interface IUserPasswordRemove {
 }
 
 /**
+ * Contains information about login settings.
+ */
+export interface ILoginSettings {
+
+    /**
+     * Gets or sets whether local login is enabled.
+     */
+    localLoginEnabled: boolean;
+
+    /**
+     * Gets or sets whether external login is enabled.
+     */
+    externalLoginEnabled: boolean;
+
+    /**
+     * Gets or sets the list of external login providers.
+     */
+    externalAccountProviders: ILoginProvider[];
+}
+
+/**
+ * Cotains information about a login provider.
+ */
+export interface ILoginProvider {
+
+    /**
+     * Gets or sets the ID of the provider.
+     */
+    id: string;
+
+    /**
+     * Gets or sets the display name of the provider.
+     */
+    name: string;
+
+    /**
+     * Gets or sets the colour of the login button for the provider.
+     */
+    colour: string | null;
+}
+
+/**
  * Contains information about a result from an API request.
  */
 export interface IApiResult<T> {

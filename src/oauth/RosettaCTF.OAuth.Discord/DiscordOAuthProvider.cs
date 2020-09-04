@@ -66,6 +66,11 @@ namespace RosettaCTF.Authentication
                 ? "Discord"
                 : null;
 
+        public string GetColour(string id)
+            => string.Equals(id, ProviderType, StringComparison.OrdinalIgnoreCase)
+                ? "#7289DA"
+                : null;
+
         public bool SupportsReferrer(Uri referrer, out string id)
         {
             if (string.Equals(referrer.Host, EndpointHostname, StringComparison.OrdinalIgnoreCase) || string.Equals(referrer.Host, EndpointHostnameOld, StringComparison.OrdinalIgnoreCase))

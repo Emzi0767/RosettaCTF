@@ -40,6 +40,13 @@ namespace RosettaCTF.Authentication
         string GetName(string id);
 
         /// <summary>
+        /// Gets the colour of the login button for specified provider ID.
+        /// </summary>
+        /// <param name="id">ID of the provider to get the button colour for.</param>
+        /// <returns>The colour of the login button for the provider.</returns>
+        string GetColour(string id);
+
+        /// <summary>
         /// Gets whether this provider handles specified referring URI. If it does, provides it via the <paramref name="id"/> parameter.
         /// </summary>
         /// <param name="referrer">Referrer URL to match against.</param>
