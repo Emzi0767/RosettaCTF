@@ -20,7 +20,6 @@ import { Router } from "@angular/router";
 import { IUserRegister } from "../../data/api";
 import { RosettaApiService } from "../../services/rosetta-api.service";
 import { EventDispatcherService } from "../../services/event-dispatcher.service";
-import { ErrorDialogComponent } from "../../dialog/error-dialog/error-dialog.component";
 import { InfoDialogComponent } from "../../dialog/info-dialog/info-dialog.component";
 
 @Component({
@@ -41,16 +40,7 @@ export class RegisterComponent {
         this.lockControls = true;
         const registerResult = await this.api.register(this.registerModel);
         if (!registerResult.isSuccess) {
-            this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: !!registerResult.error?.message
-                            ? `Could not register. Please try again.\n\nIf the problem persists, contact the organizers, with the following error message: ${registerResult.error.message} (${registerResult.error.code})`
-                            : "Could not register. Please try again.\n\nIf the problem persists, contact the organizers."
-                    }
-                });
+            this.eventDispatcher.emit("error", { message: "Could not register. Please try again.", reason: registerResult.error });
 
             this.lockControls = false;
             return;

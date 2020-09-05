@@ -330,6 +330,27 @@ export interface ILoginProvider {
 }
 
 /**
+ * Contains information about an external account.
+ */
+export interface IExternalAccount {
+
+    /**
+     * Gets or sets the ID of the account.
+     */
+    id: string;
+
+    /**
+     * Gets or sets the username of the account.
+     */
+    username: string;
+
+    /**
+     * Gets or sets the provider of the account.
+     */
+    provider: ILoginProvider;
+}
+
+/**
  * Contains information about a result from an API request.
  */
 export interface IApiResult<T> {

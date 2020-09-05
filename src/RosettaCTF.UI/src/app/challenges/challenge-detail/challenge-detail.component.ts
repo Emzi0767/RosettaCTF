@@ -17,10 +17,9 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 
-import { RosettaApiService } from "src/app/services/rosetta-api.service";
-import { IChallenge, ISolve } from "src/app/data/api";
-import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
-import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
+import { RosettaApiService } from "../../services/rosetta-api.service";
+import { IChallenge, ISolve } from "../../data/api";
+import { EventDispatcherService } from "../../services/event-dispatcher.service";
 
 @Component({
     selector: "app-challenge-detail",
@@ -45,29 +44,13 @@ export class ChallengeDetailComponent implements OnInit {
         const args = this.currentRoute.snapshot.paramMap;
         const id = args.has("id") ? args.get("id") : null;
         if (id === null) {
-            this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: "Missing challenge ID."
-                    }
-                });
+            this.eventDispatcher.emit("error", { message: "Missing challenge ID.", reason: null });
             this.router.navigate(["/challenges"]);
         }
 
         const challenge = await this.api.getChallenge(id);
         if (!challenge.isSuccess) {
-            this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: !!challenge.error?.message
-                            ? `Fetching challenge failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${challenge.error.message}`
-                            : "Fetching challenge failed.\n\nIf the problem persists, contact the organizers."
-                    }
-                });
+            this.eventDispatcher.emit("error", { message: "Fetching challenge failed.", reason: challenge.error });
             this.router.navigate(["/challenges"]);
         }
 
@@ -75,16 +58,7 @@ export class ChallengeDetailComponent implements OnInit {
 
         const solves = await this.api.getSolves(id);
         if (!solves.isSuccess) {
-            this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: !!solves.error?.message
-                            ? `Fetching solves failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${solves.error.message}`
-                            : "Fetching solves failed.\n\nIf the problem persists, contact the organizers."
-                    }
-                });
+            this.eventDispatcher.emit("error", { message: "Fetching solves failed.", reason: solves.error });
             this.solves = [];
             return;
         }

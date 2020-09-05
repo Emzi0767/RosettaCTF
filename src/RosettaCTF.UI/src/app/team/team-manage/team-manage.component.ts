@@ -24,7 +24,6 @@ import { ITeam } from "../../data/session";
 import { ICreateTeamInvite, ISolve, IApiEventConfiguration } from "../../data/api";
 import { RosettaApiService } from "../../services/rosetta-api.service";
 import { EventDispatcherService } from "../../services/event-dispatcher.service";
-import { ErrorDialogComponent } from "../../dialog/error-dialog/error-dialog.component";
 import { ConfigurationProviderService } from "../../services/configuration-provider.service";
 import { InviteDialogComponent } from "../../dialog/invite-dialog/invite-dialog.component";
 import { SessionRefreshManagerService } from "../../services/session-refresh-manager.service";
@@ -86,16 +85,7 @@ export class TeamManageComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this.eventDispatcher.emit("dialog",
-            {
-                componentType: ErrorDialogComponent,
-                defaults:
-                {
-                    message: !!response.error?.message
-                        ? `Could not invite the user to the team.\n\nIf the problem persists, contact the organizers with the following error message: ${response.error.message}`
-                        : "Could not invite the user to the team.\n\nIf the problem persists, contact the organizers."
-                }
-            });
+        this.eventDispatcher.emit("error", { message: "Could not invite the user to the team.", reason: response.error });
         this.hideForm = false;
     }
 
@@ -114,16 +104,7 @@ export class TeamManageComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this.eventDispatcher.emit("dialog",
-            {
-                componentType: ErrorDialogComponent,
-                defaults:
-                {
-                    message: !!response.error?.message
-                        ? `Could not remove the member from the team.\n\nIf the problem persists, contact the organizers with the following error message: ${response.error.message}`
-                        : "Could not remove the member from the team.\n\nIf the problem persists, contact the organizers."
-                }
-            });
+        this.eventDispatcher.emit("error", { message: "Could not remove the member from the team.", reason: response.error });
         this.kickingMember = false;
     }
 
@@ -134,16 +115,7 @@ export class TeamManageComponent implements OnInit, OnDestroy {
 
         const solves = await this.api.getTeamSolves(this.team.id);
         if (!solves.isSuccess) {
-            this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: !!solves.error?.message
-                            ? `Fetching solves failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${solves.error.message}`
-                            : "Fetching solves failed.\n\nIf the problem persists, contact the organizers."
-                    }
-                });
+            this.eventDispatcher.emit("error", { message: "Fetching solves failed.", reason: solves.error });
             this.solves = [];
             return;
         }

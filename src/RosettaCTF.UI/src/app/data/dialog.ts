@@ -16,7 +16,7 @@
 
 import { Type, EventEmitter } from "@angular/core";
 
-import { IChallenge, IApiFlag, ICreateTeamInvite } from "./api";
+import { IChallenge, IApiFlag, ICreateTeamInvite, IUserPasswordChange, IUserPasswordRemove } from "./api";
 
 export interface IDialogComponent {
     dialogDismiss: EventEmitter<null>;
@@ -48,4 +48,12 @@ export interface IInviteDialogDefaults {
 export interface ICountryDialogDefaults {
     provideCode: (code: string) => void;
     current: string | null;
+}
+
+export interface IPasswordChangeDefaults {
+    provideModel: (model: IUserPasswordChange) => void;
+}
+
+export interface IPasswordRemoveDefaults {
+    provideModel: (model: IUserPasswordRemove) => void;
 }

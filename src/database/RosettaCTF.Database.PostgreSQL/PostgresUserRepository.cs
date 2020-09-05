@@ -206,10 +206,14 @@ namespace RosettaCTF
                 UserId = userId
             };
 
-            await this.Database.ConnectedAccounts.AddAsync(extUser, cancellationToken);
-            await this.Database.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await this.Database.ConnectedAccounts.AddAsync(extUser, cancellationToken);
+                await this.Database.SaveChangesAsync(cancellationToken);
 
-            return extUser;
+                return extUser;
+            }
+            catch { return null; }
         }
 
         public async Task RemoveExternalAccountAsync(long userId, string providerId, CancellationToken cancellationToken = default)
@@ -236,13 +240,18 @@ namespace RosettaCTF
         public async Task<IExternalUser> GetExternalAccountAsync(string id, string providerId, CancellationToken cancellationToken = default)
         {
             var extUser = await this.Database.ConnectedAccounts
-                .Include(x => x.UserInternal)
+                .Include(x => x.UserInternal).ThenInclude(x => x.CountryInternal)
                 .FirstOrDefaultAsync(x => x.Id == id && x.ProviderId == providerId, cancellationToken);
             if (extUser == null)
                 return null;
 
             return await new PostgresExternalUserDecrypted(extUser).DecryptTokensAsync(this.TokenHandler);
         }
+
+        public async Task<IEnumerable<IExternalUser>> GetExternalAccountsAsync(long userId, CancellationToken cancellationToken = default)
+            => await this.Database.ConnectedAccounts
+                .Where(x => x.UserId == userId)
+                .ToListAsync(cancellationToken);
 
         public async Task UpdateTokensAsync(long userId, string providerId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, CancellationToken cancellationToken = default)
         {

@@ -14,30 +14,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, OnInit } from "@angular/core";
-
-import { RosettaApiService } from "../services/rosetta-api.service";
 import { EventDispatcherService } from "../services/event-dispatcher.service";
+import { IApiError } from "../data/api";
+import { ErrorDialogComponent } from "../dialog/error-dialog/error-dialog.component";
 
-@Component({
-    selector: "app-konami",
-    templateUrl: "./konami.component.html",
-    styleUrls: ["./konami.component.less"]
-})
-export class KonamiComponent implements OnInit {
-    enabling = true;
-
-    constructor(private api: RosettaApiService,
-                private eventDispatcher: EventDispatcherService) { }
-
-    ngOnInit(): void {
-        this.api.enableHidden().then(x => {
-            this.enabling = false;
-            if (x.isSuccess) {
-                return;
+export function showErrorDialog(eventDispatcher: EventDispatcherService, error: IApiError, message: string): void {
+    eventDispatcher.emit("dialog",
+        {
+            componentType: ErrorDialogComponent,
+            defaults:
+            {
+                message: !!error?.message
+                    ? `${message}\n\nIf the problem persists, contact the organizers, with the following error message: ${error.message} (error code: ${error.code})`
+                    : `${message}\n\nIf the problem persists, contact the organizers.`
             }
-
-            this.eventDispatcher.emit("error", { message: "Could not activate hidden challenges.", reason: x.error });
         });
-    }
 }

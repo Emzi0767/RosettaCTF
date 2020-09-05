@@ -16,7 +16,7 @@
 
 using System.Collections.Generic;
 
-namespace RosettaCTF.Models.Previews
+namespace RosettaCTF.Models
 {
     /// <summary>
     /// Represents login settings.

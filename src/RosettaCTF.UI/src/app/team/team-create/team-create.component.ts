@@ -17,12 +17,11 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
-import { RosettaApiService } from "src/app/services/rosetta-api.service";
-import { ITeamInvite } from "src/app/data/session";
-import { ICreateTeam } from "src/app/data/api";
-import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
-import { ErrorDialogComponent } from "../../dialog/error-dialog/error-dialog.component";
-import { SessionRefreshManagerService } from "src/app/services/session-refresh-manager.service";
+import { RosettaApiService } from "../../services/rosetta-api.service";
+import { ITeamInvite } from "../../data/session";
+import { ICreateTeam } from "../../data/api";
+import { EventDispatcherService } from "../../services/event-dispatcher.service";
+import { SessionRefreshManagerService } from "../../services/session-refresh-manager.service";
 
 @Component({
     selector: "app-team-create",
@@ -60,16 +59,7 @@ export class TeamCreateComponent implements OnInit {
             return;
         }
 
-        this.eventDispatcher.emit("dialog",
-            {
-                componentType: ErrorDialogComponent,
-                defaults:
-                {
-                    message: !!response.error?.message
-                        ? `Could not create the team.\n\nIf the problem persists, contact the organizers with the following error message: ${response.error.message}`
-                        : "Could not create the team.\n\nIf the problem persists, contact the organizers."
-                }
-            });
+        this.eventDispatcher.emit("error", { message: "Could not create the team.", reason: response.error });
         this.hideForm = false;
     }
 
@@ -82,16 +72,7 @@ export class TeamCreateComponent implements OnInit {
             return;
         }
 
-        this.eventDispatcher.emit("dialog",
-            {
-                componentType: ErrorDialogComponent,
-                defaults:
-                {
-                    message: !!response.error?.message
-                        ? `Could not accept invite.\n\nIf the problem persists, contact the organizers with the following error message: ${response.error.message}`
-                        : "Could not accept invite.\n\nIf the problem persists, contact the organizers."
-                }
-            });
+        this.eventDispatcher.emit("error", { message: "Could not accept invite.", reason: response.error });
         this.acceptingInvite = false;
     }
 }

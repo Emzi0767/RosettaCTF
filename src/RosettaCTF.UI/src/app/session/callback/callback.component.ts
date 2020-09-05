@@ -38,32 +38,19 @@ export class CallbackComponent implements OnInit {
     ngOnInit(): void {
         const args = this.currentRoute.snapshot.queryParamMap;
         if (args.has("error") || !args.has("code") || !args.has("state")) {
-            this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: args.get("error") === "access_denied"
-                            ? "You refused to authorize the application. You need to allow access for login to work."
-                            : "Login failed. Please try again.\n\nIf the problem persists, contact the organizers."
-                    }
-                });
+            if (args.has("error")) {
+                this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message: "You refused to authorized the application. You need to allow access for login to work.", reason: null } });
+            } else {
+                this.eventDispatcher.emit("error", { message: "Login failed. Please try again.", reason: null });
+            }
+
             this.router.navigate(["/"]);
             return;
         }
 
         this.api.completeOAuthLogin(args.get("code"), args.get("state"), document.referrer).then(x => {
             if (!x.isSuccess) {
-                this.eventDispatcher.emit("dialog",
-                    {
-                        componentType: ErrorDialogComponent,
-                        defaults:
-                        {
-                            message: !!x.error?.message
-                                ? `Login failed. Please try again.\n\nIf the problem persists, contact the organizers, with the following error message: ${x.error.message}`
-                                : "Login failed. Please try again.\n\nIf the problem persists, contact the organizers."
-                        }
-                    });
+                this.eventDispatcher.emit("error", { message: "Login failed. Please try again.", reason: x.error });
                 this.router.navigate(["/"]);
                 return;
             }

@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RosettaCTF.Authentication;
 using RosettaCTF.Data;
 using RosettaCTF.Models;
 
@@ -72,5 +73,13 @@ namespace RosettaCTF.Services
         /// <returns>An enumerable of abridged invites.</returns>
         public IEnumerable<TeamInvitePreview> GetInvites(IEnumerable<ITeamInvite> invites)
             => invites.Select(x => new TeamInvitePreview(x)).ToList();
+
+        /// <summary>
+        /// Gets redacted versions of account connections.
+        /// </summary>
+        /// <param name="externalUsers">External users to transform.</param>
+        /// <returns>An enumerable of abridged connections.</returns>
+        public IEnumerable<ExternalAccountPreview> GetConnections(IEnumerable<IExternalUser> externalUsers, OAuthProviderSelector oAuthProviderSelector)
+            => externalUsers.Select(x => new ExternalAccountPreview(x, oAuthProviderSelector.GetById(x.ProviderId))).ToList();
     }
 }

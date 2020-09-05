@@ -20,7 +20,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RosettaCTF.Data;
 using RosettaCTF.Models;
-using RosettaCTF.Models.Previews;
 
 namespace RosettaCTF.Controllers
 {

@@ -157,6 +157,14 @@ namespace RosettaCTF.Data
         Task<IExternalUser> GetExternalAccountAsync(string id, string providerId, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Gets all external accounts for a user.
+        /// </summary>
+        /// <param name="userId">ID of the user to get accounts for.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
+        /// <returns>Retrieved account connection.</returns>
+        Task<IEnumerable<IExternalUser>> GetExternalAccountsAsync(long userId, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Updates OAuth2 authentication data for a user.
         /// </summary>
         /// <param name="userId">ID of the user to update authentication data for.</param>

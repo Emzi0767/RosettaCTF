@@ -19,11 +19,10 @@ import { Router, ActivatedRoute } from "@angular/router";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
-import { RosettaApiService } from "src/app/services/rosetta-api.service";
-import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
-import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
-import { SessionProviderService } from "src/app/services/session-provider.service";
-import { ISession } from "src/app/data/session";
+import { RosettaApiService } from "../../services/rosetta-api.service";
+import { EventDispatcherService } from "../../services/event-dispatcher.service";
+import { SessionProviderService } from "../../services/session-provider.service";
+import { ISession } from "../../data/session";
 
 @Component({
     selector: "app-login",
@@ -57,23 +56,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     private async beginLogin(session: ISession, provider: string): Promise<void> {
-        if (session.isAuthenticated) {
-            this.router.navigate(["/"]);
-            return;
-        }
-
         const endpoint = await this.api.getLoginUrl(provider);
         if (!endpoint.isSuccess) {
-            this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: !!endpoint.error?.message
-                            ? `Could not retrieve login data. Please try again.\n\nIf the problem persists, contact the organizers, with the following error message: ${endpoint.error.message} (${endpoint.error.code})`
-                            : "Could not retrieve login data. Please try again.\n\nIf the problem persists, contact the organizers."
-                    }
-                });
+            this.eventDispatcher.emit("error", { message: "Could not retrieve login data.", reason: endpoint.error });
 
             this.router.navigate(["/"]);
             return;

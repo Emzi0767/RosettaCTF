@@ -15,7 +15,9 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +27,6 @@ using RosettaCTF.Authentication;
 using RosettaCTF.Data;
 using RosettaCTF.Filters;
 using RosettaCTF.Models;
-using RosettaCTF.Models.Previews;
 using RosettaCTF.Services;
 
 namespace RosettaCTF.Controllers
@@ -125,12 +126,18 @@ namespace RosettaCTF.Controllers
             var oid = ouser.Id;
             var euser = await this.UserRepository.GetExternalAccountAsync(oid, provider, cancellationToken);
             var user = euser?.User;
+
             if (euser == null)
             {
                 if (!AbstractionUtilities.NameRegex.IsMatch(ouser.Username))
                     return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidName, "Specified username contained invalid characters.")));
 
-                user = await this.UserRepository.CreateUserAsync(ouser.Username, ouser.IsAuthorized, cancellationToken);
+                var uid = this.GetUserId();
+                if (uid == null)
+                    user = await this.UserRepository.CreateUserAsync(ouser.Username, ouser.IsAuthorized, cancellationToken);
+                else
+                    user = await this.UserRepository.GetUserAsync(uid.Value, cancellationToken);
+
                 euser = await this.UserRepository.ConnectExternalAccountAsync(user.Id, ouser.Id, ouser.Username, provider, cancellationToken);
             }
 
@@ -150,6 +157,9 @@ namespace RosettaCTF.Controllers
                 return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
 
             var pwd = await this.UserRepository.GetUserPasswordAsync(user.Id, cancellationToken);
+            if (pwd == null)
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
+
             if (!await this.Password.ValidatePasswordHashAsync(data.Password, pwd))
                 return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
 
@@ -228,6 +238,29 @@ namespace RosettaCTF.Controllers
             return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(ruser, token.Token, token.ExpiresAt)));
         }
 
+        [HttpGet]
+        [Authorize]
+        [ServiceFilter(typeof(ValidRosettaUserFilter))]
+        [Route("connections")]
+        public async Task<ActionResult<ApiResult<IEnumerable<ExternalAccountPreview>>>> GetConnections(CancellationToken cancellationToken = default)
+        {
+            var user = this.RosettaUser;
+            var connections = await this.UserRepository.GetExternalAccountsAsync(user.Id, cancellationToken);
+            var rconnections = this.UserPreviewRepository.GetConnections(connections, this.OAuthSelector);
+            return this.Ok(ApiResult.FromResult(rconnections));
+        }
+
+        [HttpDelete]
+        [Authorize]
+        [ServiceFilter(typeof(ValidRosettaUserFilter))]
+        [Route("connections/{provider}")]
+        public async Task<ActionResult<ApiResult<bool>>> RemoveConnection(string provider, CancellationToken cancellationToken = default)
+        {
+            var user = this.RosettaUser;
+            await this.UserRepository.RemoveExternalAccountAsync(user.Id, provider, cancellationToken);
+            return this.Ok(ApiResult.FromResult(true));
+        }
+
         [HttpDelete]
         [Authorize]
         [ServiceFilter(typeof(ValidRosettaUserFilter))]
@@ -265,6 +298,15 @@ namespace RosettaCTF.Controllers
             var port = req.Host.Port ?? 0;
 
             return new AuthenticationContext(scheme, host, port, provider, state);
+        }
+
+        private long? GetUserId()
+        {
+            if (!this.User.Identity.IsAuthenticated)
+                return null;
+
+            var claim = this.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+            return claim.Value.ParseAsLong();
         }
     }
 }

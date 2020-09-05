@@ -18,7 +18,7 @@ using System;
 using System.Collections.Generic;
 using RosettaCTF.Data;
 
-namespace RosettaCTF.Models.Previews
+namespace RosettaCTF.Models
 {
     public class CtfConfigurationPreview
     {

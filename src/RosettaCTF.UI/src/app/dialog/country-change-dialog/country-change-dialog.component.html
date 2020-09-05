@@ -23,15 +23,18 @@
 <p class="content">Select the country you want displayed on your profile:</p>
 
 <form (ngSubmit)="doNothing()" #countryForm="ngForm">
-    <select
-        placeholder="Country"
-        [disabled]="configuration === null"
-        [(ngModel)]="model.code" name="code" #code="ngModel">
-        <option [value]="''">None</option>
-        <ng-container *ngIf="configuration !== null">
-            <option *ngFor="let country of configuration.countries" [value]="country.code">{{ country.name }}</option>
-        </ng-container>
-    </select>
+    <div class="input-container">
+        <select
+            placeholder="Country"
+            [disabled]="configuration === null"
+            [(ngModel)]="model.code" name="code" #code="ngModel">
+            <option [value]="''">None</option>
+            <ng-container *ngIf="configuration !== null">
+                <option *ngFor="let country of configuration.countries" [value]="country.code">{{ country.name }}</option>
+            </ng-container>
+        </select>
+        <div class="select-expander">&#xe313;</div>
+    </div>
     <div class="validation-error" [hidden]="code.valid || code.pristine">
         Invalid country selected.
     </div>
@@ -39,5 +42,5 @@
 
 <div class="buttons">
     <button (click)="cancel()">Cancel</button>
-    <button (click)="submit()" [disabled]="!countryForm.valid || countryForm.pristine">Submit</button>
+    <button (click)="submit()" [disabled]="!countryForm.valid || countryForm.pristine">Confirm</button>
 </div>

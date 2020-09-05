@@ -18,7 +18,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
 // tslint:disable-next-line: max-line-length
-import { IApiResult, IApiEventConfiguration, IApiFlag, IScoreboardEntry, IChallengeCategory, IChallenge, ISolve, IUserPasswordChange, IUserPasswordRemove, IUserRegister, IUserLogin, ILoginSettings } from "../data/api";
+import { IApiResult, IApiEventConfiguration, IApiFlag, IScoreboardEntry, IChallengeCategory, IChallenge, ISolve, IUserPasswordChange, IUserPasswordRemove, IUserRegister, IUserLogin, ILoginSettings, IExternalAccount } from "../data/api";
 import { ISession, ITeam, ITeamInvite } from "../data/session";
 import { SessionProviderService } from "./session-provider.service";
 
@@ -160,6 +160,29 @@ export class RosettaApiService {
         try {
             // tslint:disable-next-line: max-line-length
             const response = await this.http.patch<IApiResult<ISession>>("/api/session/country", { code }, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    async getConnections(): Promise<IApiResult<IExternalAccount[]>> {
+        try {
+            const response = await this.http.get<IApiResult<IExternalAccount[]>>("/api/session/connections", this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    async removeConnection(provider: string): Promise<IApiResult<boolean>> {
+        try {
+            // tslint:disable-next-line: max-line-length
+            const response = await this.http.delete<IApiResult<boolean>>(`/api/session/connections/${provider}`, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 

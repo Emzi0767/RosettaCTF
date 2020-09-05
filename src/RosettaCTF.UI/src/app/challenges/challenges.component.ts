@@ -69,16 +69,7 @@ export class ChallengesComponent implements OnInit, OnDestroy {
 
         this.api.getCategories().then(x => {
             if (!x.isSuccess) {
-                this.eventDispatcher.emit("dialog",
-                    {
-                        componentType: ErrorDialogComponent,
-                        defaults:
-                        {
-                            message: !!x.error?.message
-                                ? `Fetching challenges failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${x.error.message}`
-                                : "Fetching challenges failed.\n\nIf the problem persists, contact the organizers."
-                        }
-                    });
+                this.eventDispatcher.emit("error", { message: "Fetching challenges failed.", reason: x.error });
                 this.router.navigate(["/"]);
                 return;
             }
@@ -110,33 +101,16 @@ export class ChallengesComponent implements OnInit, OnDestroy {
     private async submitFlag(flag: IApiFlag): Promise<void> {
         this.disableButtons = true;
         const response = await this.api.submitSolve(flag);
-        if (!response.isSuccess || !response.result) {
-            this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: !response.isSuccess && !!response.error?.message
-                            ? `Submitting flag failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${response.error.message}`
-                            : (!response.isSuccess
-                                ? "Submitting flag failed.\n\nIf the problem persists, contact the organizers."
-                                : "Your response was incorrect.")
-                    }
-                });
+        if (!response.isSuccess) {
+            this.eventDispatcher.emit("error", { message: "Submitting flag failed.", reason: response.error });
+        } else if (!response.result) {
+            // tslint:disable-next-line: max-line-length
+            this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message: "Your response was incorrect." } });
         }
 
         const categories = await this.api.getCategories();
         if (!categories.isSuccess) {
-            this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: !!categories.error?.message
-                            ? `Fetching challenges failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${categories.error.message}`
-                            : "Fetching challenges failed.\n\nIf the problem persists, contact the organizers."
-                    }
-                });
+            this.eventDispatcher.emit("error", { message: "Fetching challenges failed.", reason: categories.error });
             this.router.navigate(["/"]);
             return;
         }

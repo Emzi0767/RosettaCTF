@@ -17,13 +17,13 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
 
-import { ErrorDialogComponent } from "./dialog/error-dialog/error-dialog.component";
 import { IErrorData } from "./data/error";
 import { EventDispatcherService, EventHandler, IEventTriple } from "./services/event-dispatcher.service";
 import { RosettaApiService } from "./services/rosetta-api.service";
 import { ConfigurationProviderService } from "./services/configuration-provider.service";
 import { SessionProviderService } from "./services/session-provider.service";
 import { SessionRefreshManagerService } from "./services/session-refresh-manager.service";
+import { showErrorDialog } from "./common/error-invocation";
 
 @Component({
     selector: "app-root",
@@ -55,7 +55,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.sessionRefresh.start();
         this.api.testApi().then(x => {
             if (!x.isSuccess) {
-                this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message: "Could not establish a connection with the API." } });
+                showErrorDialog(this.eventDispatcher, x.error, "Could not establish a connection with the API");
                 return;
             }
 
@@ -82,20 +82,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
     @EventHandler("error")
     handleError(e: IErrorData): void {
-        if (!!e.message) {
-            console.log(`Error occured: ${e.message}`);
-        }
-
-        if (!!e.reason) {
-            console.log(e.reason);
-        }
-
-        let message = e.message || "Error occured while communicating with the API.";
-        if (!!e.reason && !!e.reason.message) {
-            message += ` ${e.reason.message}`;
-        }
-
-        this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message } });
+        const message = e.message || "Error occured while communicating with the API.";
+        showErrorDialog(this.eventDispatcher, e.reason, message);
     }
 
     registerEventHandler<T>(name: string, handler: (e: T) => void): void {

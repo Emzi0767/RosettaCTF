@@ -1,5 +1,5 @@
 ﻿// This file is part of RosettaCTF project.
-//
+// 
 // Copyright 2020 Emzi0767
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,33 +14,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using RosettaCTF.Authentication;
+using RosettaCTF.Data;
+
 namespace RosettaCTF.Models
 {
     /// <summary>
-    /// Represents information about a login provider.
+    /// Contains an abridged version of an external account.
     /// </summary>
-    public sealed class LoginProviderPreview
+    public sealed class ExternalAccountPreview
     {
         /// <summary>
-        /// Gets the ID of the provider.
+        /// Gets the ID of the external account.
         /// </summary>
         public string Id { get; }
 
         /// <summary>
-        /// Gets the name of the provider.
+        /// Gets the username of the external account.
         /// </summary>
-        public string Name { get; }
+        public string Username { get; }
 
         /// <summary>
-        /// Gets the colour of the provider login button.
+        /// Gets the provider of the external account.
         /// </summary>
-        public string Colour { get; }
+        public LoginProviderPreview Provider { get; }
 
-        internal LoginProviderPreview(string id, string name, string colour)
+        internal ExternalAccountPreview(IExternalUser externalUser, IOAuthProvider provider)
         {
-            this.Id = id;
-            this.Name = name;
-            this.Colour = colour;
+            var pid = externalUser.ProviderId;
+
+            this.Id = externalUser.Id;
+            this.Username = externalUser.Username;
+            this.Provider = new LoginProviderPreview(pid, provider.GetName(pid), provider.GetColour(pid));
         }
     }
 }

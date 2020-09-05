@@ -17,11 +17,9 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
-
 import { RosettaApiService } from "../services/rosetta-api.service";
 import { EventDispatcherService } from "../services/event-dispatcher.service";
 import { IScoreboardEntry } from "../data/api";
-import { ErrorDialogComponent } from "../dialog/error-dialog/error-dialog.component";
 
 @Component({
     selector: "app-scoreboard",
@@ -39,16 +37,7 @@ export class ScoreboardComponent implements OnInit {
     ngOnInit(): void {
         this.api.getScoreboard().then(x => {
             if (!x.isSuccess) {
-                this.eventDispatcher.emit("dialog",
-                    {
-                        componentType: ErrorDialogComponent,
-                        defaults:
-                        {
-                            message: !!x.error?.message
-                                ? `Fetching scoreboard failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${x.error.message}`
-                                : "Fetching scoreboard failed.\n\nIf the problem persists, contact the organizers."
-                        }
-                    });
+                this.eventDispatcher.emit("error", { message: "Fetching scoreboard failed.", reason: x.error });
                 this.router.navigate(["/"]);
                 return;
             }

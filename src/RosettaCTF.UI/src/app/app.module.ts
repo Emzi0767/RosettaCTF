@@ -64,6 +64,8 @@ import { FieldValueMatchValidatorDirective } from "./services/field-value-match-
 import { InfoDialogComponent } from "./dialog/info-dialog/info-dialog.component";
 import { InviteDialogComponent } from "./dialog/invite-dialog/invite-dialog.component";
 import { CountryChangeDialogComponent } from "./dialog/country-change-dialog/country-change-dialog.component";
+import { PasswordRemoveDialogComponent } from './dialog/password-remove-dialog/password-remove-dialog.component';
+import { PasswordChangeDialogComponent } from './dialog/password-change-dialog/password-change-dialog.component';
 
 @NgModule({
     declarations: [
@@ -95,7 +97,9 @@ import { CountryChangeDialogComponent } from "./dialog/country-change-dialog/cou
         FieldValueMatchValidatorDirective,
         InfoDialogComponent,
         InviteDialogComponent,
-        CountryChangeDialogComponent
+        CountryChangeDialogComponent,
+        PasswordRemoveDialogComponent,
+        PasswordChangeDialogComponent
     ],
     imports: [
         BrowserModule,

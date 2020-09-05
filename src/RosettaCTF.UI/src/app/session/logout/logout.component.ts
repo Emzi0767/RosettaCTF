@@ -19,11 +19,10 @@ import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { Router } from "@angular/router";
 
-import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
-import { RosettaApiService } from "src/app/services/rosetta-api.service";
-import { SessionProviderService } from "src/app/services/session-provider.service";
-import { ISession } from "src/app/data/session";
-import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
+import { EventDispatcherService } from "../../services/event-dispatcher.service";
+import { RosettaApiService } from "../../services/rosetta-api.service";
+import { SessionProviderService } from "../../services/session-provider.service";
+import { ISession } from "../../data/session";
 
 @Component({
     selector: "app-logout",
@@ -48,16 +47,7 @@ export class LogoutComponent implements OnInit, OnDestroy {
             if (x.isSuccess) {
                 this.sessionProvider.updateSession(x.result);
             } else {
-                this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: !!x.error?.message
-                            ? `Failed to log out. Please try again.\n\nIf the problem persists, contact the organizers, with the following error message: ${x.error.message} (${x.error.code})`
-                            : "Failed to log out. Please try again.\n\nIf the problem persists, contact the organizers."
-                    }
-                });
+                this.eventDispatcher.emit("error", { message: "Failed to log out.", reason: x.error });
             }
 
             this.api.refreshXsrf().then(_ => { this.router.navigate(["/"]); });

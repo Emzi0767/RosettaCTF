@@ -17,11 +17,10 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
-import { RosettaApiService } from "src/app/services/rosetta-api.service";
-import { ILoginSettings, IUserLogin } from "src/app/data/api";
-import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
-import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
-import { SessionProviderService } from "src/app/services/session-provider.service";
+import { RosettaApiService } from "../../services/rosetta-api.service";
+import { ILoginSettings, IUserLogin } from "../../data/api";
+import { EventDispatcherService } from "../../services/event-dispatcher.service";
+import { SessionProviderService } from "../../services/session-provider.service";
 
 @Component({
     selector: "app-login-screen",
@@ -48,16 +47,7 @@ export class LoginScreenComponent implements OnInit {
         this.lockControls = true;
         const loginResult = await this.api.login(this.loginModel);
         if (!loginResult.isSuccess) {
-            this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: !!loginResult.error?.message
-                            ? `Could not log in. Please try again.\n\nIf the problem persists, contact the organizers, with the following error message: ${loginResult.error.message} (${loginResult.error.code})`
-                            : "Could not log in. Please try again.\n\nIf the problem persists, contact the organizers."
-                    }
-                });
+            this.eventDispatcher.emit("error", { message: "Could not log in. Please try again.", reason: loginResult.error });
 
             this.lockControls = false;
             return;
@@ -71,16 +61,7 @@ export class LoginScreenComponent implements OnInit {
     private async doInit(): Promise<void> {
         const data = await this.api.getLoginSettings();
         if (!data.isSuccess) {
-            this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: !!data.error?.message
-                            ? `Could not retrieve login settings. Please try again.\n\nIf the problem persists, contact the organizers, with the following error message: ${data.error.message} (${data.error.code})`
-                            : "Could not retrieve login settings. Please try again.\n\nIf the problem persists, contact the organizers."
-                    }
-                });
+            this.eventDispatcher.emit("error", { message: "Could not retrieve login settings.", reason: data.error });
 
             this.router.navigate(["/"]);
             return;

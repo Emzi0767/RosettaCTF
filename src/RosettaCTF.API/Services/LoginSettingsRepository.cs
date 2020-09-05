@@ -18,7 +18,7 @@ using System.Linq;
 using Microsoft.Extensions.Options;
 using RosettaCTF.Authentication;
 using RosettaCTF.Data;
-using RosettaCTF.Models.Previews;
+using RosettaCTF.Models;
 
 namespace RosettaCTF.Services
 {

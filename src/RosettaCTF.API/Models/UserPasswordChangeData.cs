@@ -23,7 +23,6 @@ namespace RosettaCTF.Models
         /// <summary>
         /// Gets or sets the old password used to confirm identity.
         /// </summary>
-        [MinLength(6), MaxLength(512)]
         public string OldPassword { get; set; }
 
         /// <summary>

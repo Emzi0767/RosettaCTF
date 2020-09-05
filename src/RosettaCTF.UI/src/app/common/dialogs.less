@@ -53,47 +53,80 @@ p.content, form {
 
 .dialogs-form() {
     form {
-        & > input,
-        & > select {
-            display: block;
+        & > div.input-container {
             width: 100%;
-            max-width: 360px;
-    
-            margin-top: 6px;
-    
-            &[type='text'] {
+            margin: 0; padding: 0;
+
+            white-space: nowrap;
+
+            & > input,
+            & > select {
+                display: block;
+                width: 100%;
+        
+                margin-top: 6px;
+        
                 border: 0;
                 border-bottom: 2px solid #ddd;
-    
+
                 background: transparent;
                 padding: 4px 2px;
-    
+
                 color: #ddd;
-    
+                background: #333;
+
                 font: 12pt 'IBM Plex Sans','Segoe UI','Helvetica Neue','Arial',sans-serif;
-    
+
                 transition: border-bottom-color 0.3s;
-    
+
                 &:hover {
                     border-bottom-color: #007fff;
                 }
-    
+
                 &.ng-invalid:not(.ng-pristine) {
                     border-bottom-color: red;
                 }
             }
-        }
-    
-        & > input + div.validation-error {
-            width: 100%;
-            max-width: 360px;
-    
-            font-size: 10pt;
-            font-weight: 300;
-    
-            padding-top: 6px;
-    
-            text-align: justify;
+
+            & > select {
+                display: inline-block;
+
+                appearance: none;
+
+                & + div.select-expander {
+                    display: inline-block;
+                    width: 14pt;
+                    vertical-align: middle;
+
+                    position: relative;
+                    left: -14pt;
+                
+                    font: 12pt 'Material Icons';
+                    font-weight: 400;
+
+                    text-align: right;
+
+                    pointer-events: none;
+
+                    transition: color 0.2s;
+                }
+
+                &:hover + div.select-expander {
+                    color: #007fff;
+                }
+            }
+        
+            & + div.validation-error {
+                width: 100%;
+                max-width: 360px;
+        
+                font-size: 10pt;
+                font-weight: 300;
+        
+                padding-top: 6px;
+        
+                text-align: justify;
+            }
         }
     }
 }

@@ -21,12 +21,14 @@ import { parseZone, utc } from "moment";
 
 import { SessionProviderService } from "../services/session-provider.service";
 import { ISession, IUser } from "../data/session";
-import { ISolve, IApiEventConfiguration, ICountry } from "../data/api";
+import { ISolve, IApiEventConfiguration, ICountry, IExternalAccount, ILoginSettings, IUserPasswordRemove, IUserPasswordChange } from "../data/api";
 import { RosettaApiService } from "../services/rosetta-api.service";
 import { EventDispatcherService } from "../services/event-dispatcher.service";
-import { ErrorDialogComponent } from "../dialog/error-dialog/error-dialog.component";
 import { ConfigurationProviderService } from "../services/configuration-provider.service";
 import { CountryChangeDialogComponent } from "../dialog/country-change-dialog/country-change-dialog.component";
+import { PasswordRemoveDialogComponent } from "../dialog/password-remove-dialog/password-remove-dialog.component";
+import { PasswordChangeDialogComponent } from "../dialog/password-change-dialog/password-change-dialog.component";
+import { InfoDialogComponent } from '../dialog/info-dialog/info-dialog.component';
 
 @Component({
     selector: "app-user",
@@ -48,6 +50,13 @@ export class UserComponent implements OnInit, OnDestroy {
     solves: ISolve[] | null = null;
     showSolves = false;
     changingCountry = false;
+
+    connections: IExternalAccount[] = null;
+    removingConnection = false;
+
+    loginSettings: ILoginSettings = null;
+
+    changingPassword = false;
 
     constructor(private sessionProvider: SessionProviderService,
                 private api: RosettaApiService,
@@ -83,6 +92,9 @@ export class UserComponent implements OnInit, OnDestroy {
                 this.loadSolves();
                 this.country = this.configuration.countries.find(c => c.code === this.user.country);
             });
+
+        this.getProviders();
+        this.loadConnections();
     }
 
     ngOnDestroy(): void {
@@ -102,20 +114,49 @@ export class UserComponent implements OnInit, OnDestroy {
             });
     }
 
+    openPasswordChange(): void {
+        this.eventDispatcher.emit("dialog",
+            {
+                componentType: PasswordChangeDialogComponent,
+                defaults: { provideModel: (model: IUserPasswordChange) => this.doChangePassword(model) }
+            });
+    }
+
+    openPasswordRemove(): void {
+        this.eventDispatcher.emit("dialog",
+            {
+                componentType: PasswordRemoveDialogComponent,
+                defaults: { provideModel: (model: IUserPasswordRemove) => this.doRemovePassword(model) }
+            });
+    }
+
+    async removeConnection(provider: string): Promise<void> {
+        this.removingConnection = true;
+        const result = await this.api.removeConnection(provider);
+        if (!result.result) {
+            this.eventDispatcher.emit("error", { message: "Removing connection failed.", reason: result.error });
+            this.removingConnection = false;
+            return;
+        }
+
+        await this.loadConnections();
+        this.removingConnection = false;
+    }
+
+    async getProviders(): Promise<void> {
+        const data = await this.api.getLoginSettings();
+        if (!data.isSuccess) {
+            this.eventDispatcher.emit("error", { message: "Could not retrieve login settings.", reason: data.error });
+            return;
+        }
+
+        this.loginSettings = data.result;
+    }
+
     private async doCountryChange(code: string): Promise<void> {
         const session = await this.api.updateCountry(code);
         if (!session.result) {
-            this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: !!session.error?.message
-                            ? `Updating country failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${session.error.message}`
-                            : "Updating country failed.\n\nIf the problem persists, contact the organizers."
-                    }
-                });
-
+            this.eventDispatcher.emit("error", { message: "Updating country failed.", reason: session.error });
             return;
         }
 
@@ -129,21 +170,54 @@ export class UserComponent implements OnInit, OnDestroy {
 
         const solves = await this.api.getTeamSolves(this.session.user.team.id);
         if (!solves.isSuccess) {
-            this.eventDispatcher.emit("dialog",
-                {
-                    componentType: ErrorDialogComponent,
-                    defaults:
-                    {
-                        message: !!solves.error?.message
-                            ? `Fetching solves failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${solves.error.message}`
-                            : "Fetching solves failed.\n\nIf the problem persists, contact the organizers."
-                    }
-                });
             this.solves = [];
             return;
         }
 
         this.solves = solves.result.filter(x => x.user.id === this.session.user.id);
+    }
+
+    private async loadConnections(): Promise<void> {
+        const connections = await this.api.getConnections();
+        this.connections = connections.isSuccess
+            ? connections.result
+            : [];
+    }
+
+    private async doRemovePassword(model: IUserPasswordRemove): Promise<void> {
+        this.changingPassword = true;
+
+        const result = await this.api.removePassword(model);
+        if (!result.isSuccess || !result.result) {
+            this.eventDispatcher.emit("error", { message: "Removing password failed.", reason: result.error });
+        }
+
+        if (result.result === true) {
+            this.eventDispatcher.emit("dialog", {
+                componentType: InfoDialogComponent,
+                defaults: { message: "Password removal successful." }
+            });
+        }
+
+        this.changingPassword = false;
+    }
+
+    private async doChangePassword(model: IUserPasswordChange): Promise<void> {
+        this.changingPassword = true;
+
+        const result = await this.api.changePassword(model);
+        if (!result.isSuccess || !result.result) {
+            this.eventDispatcher.emit("error", { message: "Changing password failed.", reason: result.error });
+        }
+
+        if (result.result === true) {
+            this.eventDispatcher.emit("dialog", {
+                componentType: InfoDialogComponent,
+                defaults: { message: "Password change successful." }
+            });
+        }
+
+        this.changingPassword = false;
     }
 
     private recomputeSolveVisibility(): void {
