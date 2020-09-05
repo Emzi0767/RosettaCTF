@@ -23,7 +23,7 @@
     <h1>Log in</h1>
     <div class="login-wrapper">
         <div class="login-part login-ext" *ngIf="loginSettings.externalLoginEnabled">
-            <button *ngFor="let provider of loginSettings.externalAccountProviders" [routerLink]="['/session', 'login', provider.id]" [title]="'Log in with ' + provider.name" [style]="{ background: provider.colour }" [disabled]="lockControls">
+            <button *ngFor="let provider of loginSettings.externalAccountProviders" class="full-width" [routerLink]="['/session', 'login', provider.id]" [title]="'Log in with ' + provider.name" [style]="{ background: provider.colour }" [disabled]="lockControls">
                 Log in with {{ provider.name }}
             </button>
         </div>
@@ -56,7 +56,7 @@
                     </div>
                 </div>
 
-                <button type="submit" [disabled]="!loginForm.form.valid || loginForm.form.pristine || lockControls">Log in</button>
+                <button type="submit" class="full-width" [disabled]="!loginForm.form.valid || loginForm.form.pristine || lockControls">Log in</button>
             </form>
             <p>If you do not yet have an account, you can create one by <a [routerLink]="['/session', 'register']" title="Register">registering here</a>.</p>
         </div>

@@ -41,7 +41,8 @@ namespace RosettaCTF
         public async Task<IUser> GetUserAsync(long id, CancellationToken cancellationToken = default)
             => await this.Database.Users
                 .Include(x => x.TeamInternal)
-                .ThenInclude(x => x.MembersInternal)
+                    .ThenInclude(x => x.MembersInternal)
+                    .ThenInclude(x => x.CountryInternal)
                 .Include(x => x.ConnectedAccountsInternal)
                 .Include(x => x.CountryInternal)
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
@@ -49,7 +50,8 @@ namespace RosettaCTF
         public async Task<IUser> GetUserAsync(string username, CancellationToken cancellationToken = default)
             => await this.Database.Users
                 .Include(x => x.TeamInternal)
-                .ThenInclude(x => x.MembersInternal)
+                    .ThenInclude(x => x.MembersInternal)
+                    .ThenInclude(x => x.CountryInternal)
                 .Include(x => x.ConnectedAccountsInternal)
                 .Include(x => x.CountryInternal)
                 .FirstOrDefaultAsync(x => x.Username == username, cancellationToken);
@@ -112,8 +114,8 @@ namespace RosettaCTF
 
         public async Task<ITeam> GetTeamAsync(long id, CancellationToken cancellationToken = default)
             => await this.Database.Teams
-                .Include(x => x.MembersInternal)
-                .ThenInclude(x => x.TeamInternal)
+                .Include(x => x.MembersInternal).ThenInclude(x => x.CountryInternal)
+                .Include(x => x.MembersInternal).ThenInclude(x => x.TeamInternal)
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         public async Task<ITeam> CreateTeamAsync(string name, CancellationToken cancellationToken = default)

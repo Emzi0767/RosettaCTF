@@ -28,13 +28,13 @@
     <ng-container *ngFor="let member of team.members">
         <div class="members-cell">{{ member.id }}</div>
         <div class="members-cell"><span [class]="['flag', 'flag-' + (member.country !== null ? member.country : 'none')]"></span> {{ member.username }}</div>
-        <div class="members-cell"><button (click)="kickMember(member.id)" type="button" [disabled]="kickingMember">Remove</button></div>
+        <div class="members-cell"><button (click)="kickMember(member.id)" class="small" type="button" [disabled]="kickingMember">Remove</button></div>
     </ng-container>
 </div>
-<div class="members-invite">
+<p class="members-invite">
     <button (click)="openSubmit()" [disabled]="kickingMember">Invite a user</button>
-    <p *ngIf="hideForm">Inviting...</p>
-</div>
+</p>
+<p *ngIf="hideForm">Inviting...</p>
 
 <ng-container *ngIf="showSolves">
     <h2>Solves</h2>

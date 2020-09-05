@@ -1,47 +1,21 @@
-/* 
- * This file is part of RosettaCTF project.
- * 
- * Copyright 2020 Emzi0767
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// This file is part of RosettaCTF project.
+//
+// Copyright 2020 Emzi0767
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-button {
-    display: inline-block;
-
-    background: #111;
-    color: #eee;
-    border: none;
-    border-radius: 4px;
-
-    font: 11pt 'IBM Plex Sans';
-    font-weight: 450;
-
-    margin: 0 12px 0 0;
-    padding: 8px 24px;
-
-    box-shadow: 2px 2px 2px 0 #222;
-
-    transition: background 0.2s;
-
-    &:hover {
-        background: #222;
-    }
-
-    &[disabled] {
-        color: #666;
-    }
-}
+@import "../../common/buttons.less";
+@import "../../common/grid-tables.less";
 
 small {
     display: inline-block;
@@ -51,56 +25,5 @@ small {
     font-size: 0.66em;
 }
 
-div.solves {
-    display: grid;
-    grid-template-columns: 2fr 2fr min-content 1fr;
-    grid-gap: 0;
-
-    & > div.solves-cell {
-        padding: 6px 6px;
-
-        font-size: 11pt;
-
-        &.header {
-            border-bottom: 1px solid #222;
-            font-weight: 600;
-        }
-
-        &:nth-child(8n + 1):not(:nth-child(1)),
-        &:nth-child(8n + 2):not(:nth-child(2)),
-        &:nth-child(8n + 3):not(:nth-child(3)),
-        &:nth-child(8n + 4):not(:nth-child(4)) {
-            background: #444;
-        }
-    }
-}
-
-div.members {
-    display: grid;
-    grid-template-columns: min-content 1fr min-content;
-    grid-gap: 0;
-
-    & > div.members-cell {
-        padding: 6px 6px;
-
-        font-size: 11pt;
-
-        &.header {
-            border-bottom: 1px solid #222;
-            font-weight: 600;
-        }
-
-        &:nth-child(6n + 1):not(:nth-child(1)),
-        &:nth-child(6n + 2):not(:nth-child(2)),
-        &:nth-child(6n + 3):not(:nth-child(3)) {
-            background: #444;
-        }
-
-        & > button {
-            font-size: 10pt;
-        
-            margin: 0 8px 0 0;
-            padding: 3px 8px;
-        }
-    }
-}
+.grid-table(members, 3, min-content 1fr min-content);
+.grid-table(solves, 4, 2fr 2fr min-content 1fr);

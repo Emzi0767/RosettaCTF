@@ -1,0 +1,43 @@
+<!-- 
+
+  This file is part of RosettaCTF project.
+  
+  Copyright 2020 Emzi0767
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ 
+-->
+
+<h5 class="title">Change your displayed country</h5>
+
+<p class="content">Select the country you want displayed on your profile:</p>
+
+<form (ngSubmit)="doNothing()" #countryForm="ngForm">
+    <select
+        placeholder="Country"
+        [disabled]="configuration === null"
+        [(ngModel)]="model.code" name="code" #code="ngModel">
+        <option [value]="''">None</option>
+        <ng-container *ngIf="configuration !== null">
+            <option *ngFor="let country of configuration.countries" [value]="country.code">{{ country.name }}</option>
+        </ng-container>
+    </select>
+    <div class="validation-error" [hidden]="code.valid || code.pristine">
+        Invalid country selected.
+    </div>
+</form>
+
+<div class="buttons">
+    <button (click)="cancel()">Cancel</button>
+    <button (click)="submit()" [disabled]="!countryForm.valid || countryForm.pristine">Submit</button>
+</div>

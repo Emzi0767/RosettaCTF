@@ -14,11 +14,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-h1, p {
-    text-align: center;
-    margin: 4px 0;
-}
+button {
+    display: inline-block;
 
-p:first-child > i {
-    font-size: 96pt;
+    background: #111;
+    color: #eee;
+    border: none;
+    border-radius: 4px;
+
+    font: 11pt 'IBM Plex Sans';
+    font-weight: 450;
+
+    margin: 0 12px 0 0;
+    padding: 8px 24px;
+
+    box-shadow: 2px 2px 2px 0 #222;
+
+    transition: background 0.2s;
+
+    &:hover {
+        background: #222;
+    }
+
+    &[disabled] {
+        color: #666;
+    }
+
+    &.small {
+        font-size: 10pt;
+    
+        margin: 0 8px 0 0;
+        padding: 3px 8px;
+    }
 }

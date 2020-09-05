@@ -62,7 +62,8 @@ import { LoginScreenComponent } from "./session/login-screen/login-screen.compon
 import { RegisterComponent } from "./session/register/register.component";
 import { FieldValueMatchValidatorDirective } from "./services/field-value-match-validator.directive";
 import { InfoDialogComponent } from "./dialog/info-dialog/info-dialog.component";
-import { InviteDialogComponent } from './dialog/invite-dialog/invite-dialog.component';
+import { InviteDialogComponent } from "./dialog/invite-dialog/invite-dialog.component";
+import { CountryChangeDialogComponent } from "./dialog/country-change-dialog/country-change-dialog.component";
 
 @NgModule({
     declarations: [
@@ -93,7 +94,8 @@ import { InviteDialogComponent } from './dialog/invite-dialog/invite-dialog.comp
         RegisterComponent,
         FieldValueMatchValidatorDirective,
         InfoDialogComponent,
-        InviteDialogComponent
+        InviteDialogComponent,
+        CountryChangeDialogComponent
     ],
     imports: [
         BrowserModule,

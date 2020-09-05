@@ -44,3 +44,8 @@ export interface ISubmitFlagDialogDefaults {
 export interface IInviteDialogDefaults {
     provideId: (id: ICreateTeamInvite) => void;
 }
+
+export interface ICountryDialogDefaults {
+    provideCode: (code: string) => void;
+    current: string | null;
+}

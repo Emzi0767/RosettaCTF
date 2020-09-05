@@ -20,12 +20,13 @@ import { takeUntil, take } from "rxjs/operators";
 import { parseZone, utc } from "moment";
 
 import { SessionProviderService } from "../services/session-provider.service";
-import { ISession } from "../data/session";
-import { ISolve, IApiEventConfiguration } from "../data/api";
+import { ISession, IUser } from "../data/session";
+import { ISolve, IApiEventConfiguration, ICountry } from "../data/api";
 import { RosettaApiService } from "../services/rosetta-api.service";
 import { EventDispatcherService } from "../services/event-dispatcher.service";
 import { ErrorDialogComponent } from "../dialog/error-dialog/error-dialog.component";
 import { ConfigurationProviderService } from "../services/configuration-provider.service";
+import { CountryChangeDialogComponent } from "../dialog/country-change-dialog/country-change-dialog.component";
 
 @Component({
     selector: "app-user",
@@ -37,13 +38,16 @@ export class UserComponent implements OnInit, OnDestroy {
     private ngUnsubscribe = new Subject();
 
     session$: Observable<ISession>;
-    session: ISession;
+    session: ISession = null;
+    user: IUser;
+    country: ICountry;
 
     configuration$: Observable<IApiEventConfiguration>;
-    configuration: IApiEventConfiguration;
+    configuration: IApiEventConfiguration = null;
 
     solves: ISolve[] | null = null;
     showSolves = false;
+    changingCountry = false;
 
     constructor(private sessionProvider: SessionProviderService,
                 private api: RosettaApiService,
@@ -56,7 +60,14 @@ export class UserComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.session$
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(x => { this.session = x; });
+            .subscribe(x => {
+                this.session = x;
+                this.user = x.user;
+
+                if (this.configuration !== null) {
+                    this.country = this.configuration.countries.find(c => c.code === this.user.country);
+                }
+            });
 
         this.configuration$
             .pipe(takeUntil(this.ngUnsubscribe))
@@ -67,12 +78,48 @@ export class UserComponent implements OnInit, OnDestroy {
             this.configuration$.pipe(take(1))
         )
             .pipe(take(1))
-            .subscribe(() => { this.recomputeSolveVisibility(); this.loadSolves(); });
+            .subscribe(() => {
+                this.recomputeSolveVisibility();
+                this.loadSolves();
+                this.country = this.configuration.countries.find(c => c.code === this.user.country);
+            });
     }
 
     ngOnDestroy(): void {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
+    }
+
+    openCountryChange(): void {
+        this.eventDispatcher.emit("dialog",
+            {
+                componentType: CountryChangeDialogComponent,
+                defaults:
+                {
+                    provideCode: (code: string) => this.doCountryChange(code),
+                    current: this.country?.code
+                }
+            });
+    }
+
+    private async doCountryChange(code: string): Promise<void> {
+        const session = await this.api.updateCountry(code);
+        if (!session.result) {
+            this.eventDispatcher.emit("dialog",
+                {
+                    componentType: ErrorDialogComponent,
+                    defaults:
+                    {
+                        message: !!session.error?.message
+                            ? `Updating country failed.\n\nIf the problem persists, contact the organizers, with the following error message: ${session.error.message}`
+                            : "Updating country failed.\n\nIf the problem persists, contact the organizers."
+                    }
+                });
+
+            return;
+        }
+
+        this.sessionProvider.updateSession(session.result);
     }
 
     private async loadSolves(): Promise<void> {

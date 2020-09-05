@@ -15,17 +15,19 @@
 // limitations under the License.
 
 import { Component, Input, OnInit, OnDestroy } from "@angular/core";
+import { Router } from "@angular/router";
 import { Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { parseZone, utc } from "moment";
 
-import { ITeam } from "src/app/data/session";
-import { ICreateTeamInvite, ISolve, IApiEventConfiguration } from "src/app/data/api";
-import { RosettaApiService } from "src/app/services/rosetta-api.service";
-import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
-import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
-import { ConfigurationProviderService } from "src/app/services/configuration-provider.service";
-import { InviteDialogComponent } from "src/app/dialog/invite-dialog/invite-dialog.component";
+import { ITeam } from "../../data/session";
+import { ICreateTeamInvite, ISolve, IApiEventConfiguration } from "../../data/api";
+import { RosettaApiService } from "../../services/rosetta-api.service";
+import { EventDispatcherService } from "../../services/event-dispatcher.service";
+import { ErrorDialogComponent } from "../../dialog/error-dialog/error-dialog.component";
+import { ConfigurationProviderService } from "../../services/configuration-provider.service";
+import { InviteDialogComponent } from "../../dialog/invite-dialog/invite-dialog.component";
+import { SessionRefreshManagerService } from "../../services/session-refresh-manager.service";
 
 @Component({
     selector: "app-team-manage",
@@ -51,7 +53,9 @@ export class TeamManageComponent implements OnInit, OnDestroy {
 
     constructor(private api: RosettaApiService,
                 private eventDispatcher: EventDispatcherService,
-                private configurationProvider: ConfigurationProviderService) {
+                private configurationProvider: ConfigurationProviderService,
+                private router: Router,
+                private sessionRefresh: SessionRefreshManagerService) {
         this.configuration$ = this.configurationProvider.configurationChange;
     }
 
@@ -99,11 +103,13 @@ export class TeamManageComponent implements OnInit, OnDestroy {
         this.kickingMember = true;
         const response = await this.api.kickTeamMember(id);
         if (response.isSuccess) {
-            const team = await this.api.getTeam();
-            if (team.isSuccess) {
-                this.team = team.result;
+            if (response.result === null) {
+                await this.sessionRefresh.forceUpdate();
+                this.router.navigate(["/profile"]);
+                return;
             }
 
+            this.team = response.result;
             this.kickingMember = false;
             return;
         }

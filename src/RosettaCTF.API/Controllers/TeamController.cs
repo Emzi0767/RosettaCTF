@@ -97,9 +97,16 @@ namespace RosettaCTF.Controllers
 
             await this.UserRepository.AssignTeamMembershipAsync(tuser.Id, null, cancellationToken);
 
-            var team = await this.UserRepository.GetTeamAsync(this.RosettaUser.Team.Id);
-            var rteam = this.UserPreviewRepository.GetTeam(team);
-            return this.Ok(ApiResult.FromResult(rteam));
+            if (this.RosettaUser.Id != tuser.Id)
+            {
+                var team = await this.UserRepository.GetTeamAsync(this.RosettaUser.Team.Id);
+                var rteam = this.UserPreviewRepository.GetTeam(team);
+                return this.Ok(ApiResult.FromResult(rteam));
+            }
+            else
+            {
+                return this.Ok(ApiResult.FromResult<TeamPreview>(null));
+            }
         }
 
         [HttpPost]

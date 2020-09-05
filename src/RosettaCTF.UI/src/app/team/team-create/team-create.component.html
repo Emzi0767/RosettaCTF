@@ -31,9 +31,15 @@
     <p *ngIf="!invites.length else invitesAnyBlock">You have not been invited to any team yet.</p>
     <ng-template #invitesAnyBlock>
         <p>You have been invited to the following teams:</p>
-        <ul>
-            <li *ngFor="let invite of invites"><button (click)="acceptInvite(invite.id)" type="button" [disabled]="acceptingInvite">Accept</button> <strong>{{ invite.name }}</strong></li>
-        </ul>
+        <div class="invites">
+            <div class="invites-cell header">Team name</div>
+            <div class="invites-cell header">Actions</div>
+
+            <ng-container *ngFor="let invite of invites">
+                <div class="invites-cell">{{ invite.name }}</div>
+                <div class="invites-cell"><button (click)="acceptInvite(invite.id)" class="small" type="button" [disabled]="acceptingInvite">Accept</button></div>
+            </ng-container>
+        </div>
     </ng-template>
 </ng-template>
 

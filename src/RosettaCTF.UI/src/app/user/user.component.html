@@ -18,10 +18,26 @@
  
 -->
 
-<h1>{{ session.user.username }} <small>ID: {{ session.user.id }}</small></h1>
-<p *ngIf="!!session.user.team else teamElseBlock">Part of team <strong>{{ session.user.team.name }}</strong>.</p>
+<h1>{{ user.username }} <small>ID: {{ user.id }}</small></h1>
+<p *ngIf="!!session.user.team else teamElseBlock">Part of team <strong>{{ user.team.name }}</strong>.</p>
 <ng-template #teamElseBlock>
     <p>Currently not part of any team.</p>
+</ng-template>
+
+<h2>Country</h2>
+<p>
+    <span [class]="['flag', 'flag-' + (country?.code !== null ? country.code : 'none')]"></span>
+    {{ country?.name || "Unknown" }}
+    <button class="small" (click)="openCountryChange()" [disabled]="changingCountry">Change</button>
+</p>
+
+<h2>Connected accounts</h2>
+<p>Loading...</p>
+<ng-template #connectionsElseBlock>
+
+</ng-template>
+<ng-template #connectionsEmptyBlock>
+
 </ng-template>
 
 <ng-container *ngIf="showSolves">

@@ -235,7 +235,7 @@ namespace RosettaCTF.Controllers
         {
             foreach (var xeuser in this.RosettaUser.ConnectedAccounts.Where(x => x.Token != null))
             {
-                var oauth = this.OAuthSelector.GetById(xeuser.Id);
+                var oauth = this.OAuthSelector.GetById(xeuser.ProviderId);
                 var euser = await this.UserRepository.GetExternalAccountAsync(this.RosettaUser.Id, xeuser.ProviderId, cancellationToken);
                 await oauth.LogoutAsync(this.CreateContext(euser.ProviderId), euser.Token, cancellationToken);
                 await this.UserRepository.UpdateTokensAsync(this.RosettaUser.Id, euser.ProviderId, null, null, DateTimeOffset.MinValue, cancellationToken);
