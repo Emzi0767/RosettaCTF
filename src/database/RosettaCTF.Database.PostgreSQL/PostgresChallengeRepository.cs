@@ -199,7 +199,7 @@ namespace RosettaCTF
         public async Task<IEnumerable<ICtfSolveSubmission>> GetSuccessfulSolvesAsync(long teamId, CancellationToken cancellationToken = default)
             => await this.Database.Solves
                 .Include(x => x.ChallengeInternal).ThenInclude(x => x.CategoryInternal)
-                .Include(x => x.UserInternal)
+                .Include(x => x.UserInternal).ThenInclude(x => x.CountryInternal)
                 .Where(x => x.IsValid && x.TeamId == teamId)
                 .ToListAsync(cancellationToken);
 
