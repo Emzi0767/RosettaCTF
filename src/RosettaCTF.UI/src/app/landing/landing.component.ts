@@ -36,7 +36,7 @@ export class LandingComponent implements OnInit, OnDestroy {
 
     private humanizer = new HumanizeDuration(new HumanizeDurationLanguage());
 
-    configuration: IApiEventConfiguration;
+    configuration: IApiEventConfiguration = null;
     eventStart: Moment = null;
     startCountdown: string | boolean | null = null;
 
@@ -69,7 +69,7 @@ export class LandingComponent implements OnInit, OnDestroy {
             return names[0];
         }
 
-        return names.slice(0, -1).join(", ") + ", and" + names.slice(-1);
+        return names.slice(0, -1).join(", ") + ", and " + names.slice(-1);
     }
 
     computeDuration(cfg: IApiEventConfiguration): string {

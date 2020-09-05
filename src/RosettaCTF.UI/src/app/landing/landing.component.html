@@ -18,7 +18,8 @@
  
 -->
 
-<ng-container *ngIf="configuration">
+<p *ngIf="configuration === null else nullElseBlock">Loading, please wait...</p>
+<ng-template #nullElseBlock>
     <h1>Welcome to {{ configuration.name }}!</h1>
     <p>
         This event is organized by {{ joinOrganizers(configuration.organizers) }}, and features Jeopardy-style
@@ -63,4 +64,4 @@
     <p>
         If you have any feedback, send it to /dev/null. I appreciate your input!
     </p>
-</ng-container>
+</ng-template>

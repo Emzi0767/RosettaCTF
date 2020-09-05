@@ -29,6 +29,11 @@ export interface IUser {
     username: string;
 
     /**
+     * Gets the ISO-3166-alpha-2 country code of the user.
+     */
+    country: string;
+
+    /**
      * Gets the URL of the user's avatar. Usually a Piroxy URL.
      */
     avatarUrl: string | null;

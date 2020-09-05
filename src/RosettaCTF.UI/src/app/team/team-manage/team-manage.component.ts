@@ -25,6 +25,7 @@ import { RosettaApiService } from "src/app/services/rosetta-api.service";
 import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
 import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
 import { ConfigurationProviderService } from "src/app/services/configuration-provider.service";
+import { InviteDialogComponent } from "src/app/dialog/invite-dialog/invite-dialog.component";
 
 @Component({
     selector: "app-team-manage",
@@ -44,9 +45,7 @@ export class TeamManageComponent implements OnInit, OnDestroy {
     solves: ISolve[] | null = null;
     points: number | null = null;
 
-    model: ICreateTeamInvite = { id: null };
     hideForm = false;
-
     kickingMember = false;
     showSolves = false;
 
@@ -67,11 +66,18 @@ export class TeamManageComponent implements OnInit, OnDestroy {
         this.ngUnsubscribe.complete();
     }
 
-    async createSubmit(): Promise<void> {
+    openSubmit(): void {
+        this.eventDispatcher.emit("dialog",
+            {
+                componentType: InviteDialogComponent,
+                defaults: { provideId: (x: ICreateTeamInvite) => this.createSubmit(x) }
+            });
+    }
+
+    async createSubmit(inv: ICreateTeamInvite): Promise<void> {
         this.hideForm = true;
-        const response = await this.api.inviteMember(this.model.id);
+        const response = await this.api.inviteMember(inv.id);
         if (response.isSuccess) {
-            this.clearForm();
             this.hideForm = false;
             return;
         }
@@ -113,10 +119,6 @@ export class TeamManageComponent implements OnInit, OnDestroy {
                 }
             });
         this.kickingMember = false;
-    }
-
-    private clearForm(): void {
-        this.model.id = null;
     }
 
     private async loadSolves(): Promise<void> {

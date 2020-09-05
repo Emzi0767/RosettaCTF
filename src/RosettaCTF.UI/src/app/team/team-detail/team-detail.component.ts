@@ -15,12 +15,15 @@
 // limitations under the License.
 
 import { Component, OnInit, Input } from "@angular/core";
+import { parseZone, utc } from "moment";
 
 import { ITeam } from "../../data/session";
-import { ISolve, IChallenge } from "../../data/api";
+import { ISolve } from "../../data/api";
 import { RosettaApiService } from "../../services/rosetta-api.service";
 import { EventDispatcherService } from "../../services/event-dispatcher.service";
 import { ErrorDialogComponent } from "../../dialog/error-dialog/error-dialog.component";
+import { SessionProviderService } from "../../services/session-provider.service";
+import { ConfigurationProviderService } from "../../services/configuration-provider.service";
 
 @Component({
     selector: "app-team-detail",
@@ -32,14 +35,33 @@ export class TeamDetailComponent implements OnInit {
     @Input()
     team: ITeam;
 
+    showSolves = false;
     solves: ISolve[] | null = null;
     points: number | null = null;
 
     constructor(private api: RosettaApiService,
-                private eventDispatcher: EventDispatcherService) { }
+                private eventDispatcher: EventDispatcherService,
+                private sessionProvider: SessionProviderService,
+                private configurationProvider: ConfigurationProviderService) { }
 
     ngOnInit(): void {
-        this.loadSolves();
+        this.initView();
+    }
+
+    private async initView(): Promise<void> {
+        const config = await this.configurationProvider.getCurrent();
+        const start = parseZone(config.startTime);
+
+        if (start.isAfter(utc())) {
+            return;
+        }
+
+        if (!await this.sessionProvider.isAuthenticated()) {
+            return;
+        }
+
+        this.showSolves = true;
+        await this.loadSolves();
     }
 
     private async loadSolves(): Promise<void> {

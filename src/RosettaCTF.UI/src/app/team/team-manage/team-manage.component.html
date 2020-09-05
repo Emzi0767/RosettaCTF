@@ -18,29 +18,23 @@
  
 -->
 
-<h1>{{ team.name }}</h1>
+<h1>{{ team.name }} <small>ID: {{ team.id }}</small></h1>
 <h2>Members</h2>
-<ul>
-    <li *ngFor="let member of team.members"><button (click)="kickMember(member.id)" type="button" [disabled]="kickingMember">Remove</button> {{ member.username }}</li>
-</ul>
+<div class="members">
+    <div class="members-cell header">ID</div>
+    <div class="members-cell header">User</div>
+    <div class="members-cell header">Actions</div>
 
-<h2>Invite a user</h2>
-<form (ngSubmit)="createSubmit()" #inviteForm="ngForm" [hidden]="hideForm || kickingMember">
-    <div class="form-group">
-        <label for="inviteUserId">User ID</label>
-        <input type="text" 
-            minlength="1" maxlength="20" pattern="^-?[0-9]+$"
-            placeholder="ID of the user to invite"
-            [(ngModel)]="model.id" name="id" #id="ngModel" />
-        <div class="validation-error" [hidden]="id.valid || id.pristine">
-            Invalid user ID. User ID can only consist of digits 0 through 9, and optionally a negative sign in front.
-        </div>
-    </div>
-
-    <button type="submit" [disabled]="!inviteForm.form.valid || inviteForm.form.pristine">Invite</button>
-</form>
-<p *ngIf="hideForm">Inviting...</p>
-<p *ngIf="kickingMember">Cannot invite members while removing one...</p>
+    <ng-container *ngFor="let member of team.members">
+        <div class="members-cell">{{ member.id }}</div>
+        <div class="members-cell"><span [class]="['flag', 'flag-' + (member.country !== null ? member.country : 'none')]"></span> {{ member.username }}</div>
+        <div class="members-cell"><button (click)="kickMember(member.id)" type="button" [disabled]="kickingMember">Remove</button></div>
+    </ng-container>
+</div>
+<div class="members-invite">
+    <button (click)="openSubmit()" [disabled]="kickingMember">Invite a user</button>
+    <p *ngIf="hideForm">Inviting...</p>
+</div>
 
 <ng-container *ngIf="showSolves">
     <h2>Solves</h2>

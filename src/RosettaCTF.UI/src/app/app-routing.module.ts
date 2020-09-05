@@ -80,9 +80,7 @@ const routes: Routes = [
     },
     {
         path: "team/:id",
-        component: TeamComponent,
-        data: { routeGuards: [ AuthenticationGuardService, EventStartGuardService ] },
-        canActivate: [ CompositeRouteGuardService ]
+        component: TeamComponent
     },
     {
         path: "profile",

@@ -16,133 +16,39 @@
  * limitations under the License.
  */
 
-ul {
-    padding-left: 0;
+button {
+    display: inline-block;
 
-    & > li {
-        margin-top: 6px;
-        list-style-type: none;
+    background: #111;
+    color: #eee;
+    border: none;
+    border-radius: 4px;
 
-        & > button {
-            display: inline-block;
+    font: 11pt 'IBM Plex Sans';
+    font-weight: 450;
 
-            background: #111;
-            color: #eee;
-            border: none;
-            border-radius: 4px;
-        
-            font: 10pt 'IBM Plex Sans';
-            font-weight: 450;
-        
-            margin: 0 8px 0 0;
-            padding: 3px 8px;
-        
-            box-shadow: 2px 2px 2px 0 #222;
-        
-            transition: background 0.2s;
+    margin: 0 12px 0 0;
+    padding: 8px 24px;
 
-            &:hover {
-                background: #222;
-            }
+    box-shadow: 2px 2px 2px 0 #222;
 
-            &[disabled] {
-                color: #666;
-            }
-        }
+    transition: background 0.2s;
+
+    &:hover {
+        background: #222;
+    }
+
+    &[disabled] {
+        color: #666;
     }
 }
 
-form {
-    width: 100%;
-
-    & > div.form-group {
-        margin: 8px 0;
-
-        &:first-of-type {
-            margin-top: 0;
-        }
-
-        &:last-of-type {
-            margin-bottom: 18px;
-        }
-
-        & > label {
-            display: block;
-            width: 100%;
-
-            font-size: 18pt;
-            font-weight: 500;
-        }
-
-        & > input {
-            display: block;
-            width: 100%;
-            max-width: 360px;
-
-            margin-top: 6px;
-
-            &[type='text'] {
-                border: 0;
-                border-bottom: 2px solid #ddd;
-
-                background: transparent;
-                padding: 4px 2px;
-
-                color: #ddd;
-
-                font: 12pt 'IBM Plex Sans','Segoe UI','Helvetica Neue','Arial',sans-serif;
-
-                transition: border-bottom-color 0.3s;
-
-                &:hover {
-                    border-bottom-color: #007fff;
-                }
-
-                &.ng-invalid {
-                    border-bottom-color: red;
-                }
-            }
-        }
-
-        & > input + div.validation-error {
-            width: 100%;
-            max-width: 360px;
-
-            font-size: 10pt;
-            font-weight: 300;
-
-            padding-top: 6px;
-
-            text-align: justify;
-        }
-    }
-
-    & > button {
-        display: inline-block;
-
-        background: #111;
-        color: #eee;
-        border: none;
-        border-radius: 4px;
+small {
+    display: inline-block;
+    margin-left: 18px;
     
-        font: 11pt 'IBM Plex Sans';
-        font-weight: 450;
-    
-        margin: 0 12px 0 0;
-        padding: 8px 24px;
-    
-        box-shadow: 2px 2px 2px 0 #222;
-    
-        transition: background 0.2s;
-
-        &:hover {
-            background: #222;
-        }
-
-        &[disabled] {
-            color: #666;
-        }
-    }
+    color: #bbb;
+    font-size: 0.66em;
 }
 
 div.solves {
@@ -165,6 +71,36 @@ div.solves {
         &:nth-child(8n + 3):not(:nth-child(3)),
         &:nth-child(8n + 4):not(:nth-child(4)) {
             background: #444;
+        }
+    }
+}
+
+div.members {
+    display: grid;
+    grid-template-columns: min-content 1fr min-content;
+    grid-gap: 0;
+
+    & > div.members-cell {
+        padding: 6px 6px;
+
+        font-size: 11pt;
+
+        &.header {
+            border-bottom: 1px solid #222;
+            font-weight: 600;
+        }
+
+        &:nth-child(6n + 1):not(:nth-child(1)),
+        &:nth-child(6n + 2):not(:nth-child(2)),
+        &:nth-child(6n + 3):not(:nth-child(3)) {
+            background: #444;
+        }
+
+        & > button {
+            font-size: 10pt;
+        
+            margin: 0 8px 0 0;
+            padding: 3px 8px;
         }
     }
 }
