@@ -28,7 +28,7 @@ import { ConfigurationProviderService } from "../services/configuration-provider
 import { CountryChangeDialogComponent } from "../dialog/country-change-dialog/country-change-dialog.component";
 import { PasswordRemoveDialogComponent } from "../dialog/password-remove-dialog/password-remove-dialog.component";
 import { PasswordChangeDialogComponent } from "../dialog/password-change-dialog/password-change-dialog.component";
-import { InfoDialogComponent } from '../dialog/info-dialog/info-dialog.component';
+import { InfoDialogComponent } from "../dialog/info-dialog/info-dialog.component";
 
 @Component({
     selector: "app-user",

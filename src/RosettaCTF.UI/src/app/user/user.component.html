@@ -28,7 +28,9 @@
 <p>
     <span [class]="['flag', 'flag-' + (country?.code !== null ? country.code : 'none')]"></span>
     {{ country?.name || "Unknown" }}
-    <button class="small" (click)="openCountryChange()" [disabled]="changingCountry">Change</button>
+</p>
+<p>
+    <button (click)="openCountryChange()" [disabled]="changingCountry">Change</button>
 </p>
 
 <h2>Password settings</h2>
