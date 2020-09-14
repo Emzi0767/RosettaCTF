@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RosettaCTF.Authentication;
+using RosettaCTF.Data;
 using RosettaCTF.Models;
 
 namespace RosettaCTF
