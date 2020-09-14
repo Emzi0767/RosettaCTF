@@ -1,5 +1,5 @@
 ﻿// This file is part of RosettaCTF project.
-//
+// 
 // Copyright 2020 Emzi0767
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,8 +33,8 @@ namespace RosettaCTF.Migrations
             modelBuilder
                 .HasAnnotation("Npgsql:Enum:ctf_challenge_difficulty", "none,very_easy,easy,medium,hard,very_hard,ultra_nightmare")
                 .HasAnnotation("Npgsql:Enum:ctf_challenge_endpoint_type", "unknown,netcat,http,ssh,ssl,https")
-                .HasAnnotation("Npgsql:Enum:multi_factor_hmac", "unknown,md5,sha1,sha256,sha384,sha512")
-                .HasAnnotation("Npgsql:Enum:multi_factor_type", "unknown,google")
+                .HasAnnotation("Npgsql:Enum:mfa_hmac", "unknown,md5,sha1,sha256,sha384,sha512")
+                .HasAnnotation("Npgsql:Enum:mfa_type", "unknown,google")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
                 .HasAnnotation("ProductVersion", "3.1.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);

@@ -25,6 +25,11 @@ namespace RosettaCTF
 {
     internal sealed class PostgresDbContext : DbContext
     {
+        private const string TypeNameCtfChallengeDifficulty = "ctf_challenge_difficulty";
+        private const string TypeNameCtfChallengeEndpointType = "ctf_challenge_endpoint_type";
+        private const string TypeNameMultiFactorHmac = "mfa_hmac";
+        private const string TypeNameMultiFactorType = "mfa_type";
+
         public DbSet<PostgresUser> Users { get; set; }
         public DbSet<PostgresUserPassword> UserPasswords { get; set; }
         public DbSet<PostgresExternalUser> ConnectedAccounts { get; set; }
@@ -41,10 +46,10 @@ namespace RosettaCTF
 
         static PostgresDbContext()
         {
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<CtfChallengeDifficulty>("ctf_challenge_difficulty");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<CtfChallengeEndpointType>("ctf_challenge_endpoint_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<MultiFactorHmac>("mfa_hmac");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<MultiFactorType>("mfa_type");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<CtfChallengeDifficulty>(TypeNameCtfChallengeDifficulty);
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<CtfChallengeEndpointType>(TypeNameCtfChallengeEndpointType);
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<MultiFactorHmac>(TypeNameMultiFactorHmac);
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<MultiFactorType>(TypeNameMultiFactorType);
         }
 
         public PostgresDbContext(DbContextOptions<PostgresDbContext> opts)
@@ -54,10 +59,10 @@ namespace RosettaCTF
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Map enums
-            modelBuilder.HasPostgresEnum<CtfChallengeDifficulty>();
-            modelBuilder.HasPostgresEnum<CtfChallengeEndpointType>();
-            modelBuilder.HasPostgresEnum<MultiFactorHmac>();
-            modelBuilder.HasPostgresEnum<MultiFactorType>();
+            modelBuilder.HasPostgresEnum<CtfChallengeDifficulty>(name: TypeNameCtfChallengeDifficulty);
+            modelBuilder.HasPostgresEnum<CtfChallengeEndpointType>(name: TypeNameCtfChallengeEndpointType);
+            modelBuilder.HasPostgresEnum<MultiFactorHmac>(name: TypeNameMultiFactorHmac);
+            modelBuilder.HasPostgresEnum<MultiFactorType>(name: TypeNameMultiFactorType);
 
             // User
             modelBuilder.Entity<PostgresUser>(e =>
