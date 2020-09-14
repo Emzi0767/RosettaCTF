@@ -35,8 +35,13 @@ namespace RosettaCTF.Controllers
     [ValidateAntiForgeryToken]
     public class SessionController : RosettaControllerBase
     {
+        private const string TokenActionOAuth = "oauth2";
+        private const string TokenActionMFA = "multi-factor";
+        private const char TokenSeparator = ':';
+
         private OAuthProviderSelector OAuthSelector { get; }
         private JwtHandler Jwt { get; }
+        private ActionTokenPairHandler ActionTokenPairHandler { get; }
         private PasswordHandler Password { get; }
         private IOAuthStateRepository OAuthStateRepository { get; }
         private LoginSettingsRepository LoginSettingsRepository { get; }
@@ -48,6 +53,7 @@ namespace RosettaCTF.Controllers
             UserPreviewRepository userPreviewRepository,
             OAuthProviderSelector oAuthSelector,
             JwtHandler jwt,
+            ActionTokenPairHandler actionTokenPairHandler,
             PasswordHandler pwdHandler,
             IOAuthStateRepository oAuthStateRepository,
             LoginSettingsRepository loginSettingsRepository)
@@ -55,6 +61,7 @@ namespace RosettaCTF.Controllers
         {
             this.OAuthSelector = oAuthSelector;
             this.Jwt = jwt;
+            this.ActionTokenPairHandler = actionTokenPairHandler;
             this.Password = pwdHandler;
             this.OAuthStateRepository = oAuthStateRepository;
             this.LoginSettingsRepository = loginSettingsRepository;
@@ -75,7 +82,12 @@ namespace RosettaCTF.Controllers
             if (oauth == null)
                 return this.NotFound(ApiResult.FromError<string>(new ApiError(ApiErrorCode.InvalidProvider, "Specified provider does not exist.")));
 
-            var state = await this.OAuthStateRepository.GenerateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), cancellationToken);
+            var tkpair = this.ActionTokenPairHandler.IssueTokenPair(TokenActionOAuth);
+
+            var stateId = await this.OAuthStateRepository.GenerateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), tkpair.Server, cancellationToken);
+            var clientToken = tkpair.Client;
+            var state = this.PackState(stateId, clientToken);
+
             return this.Ok(ApiResult.FromResult(oauth.GetAuthenticationUrl(this.CreateContext(provider, state))));
         }
 
@@ -105,7 +117,14 @@ namespace RosettaCTF.Controllers
         [Route("oauth")]
         public async Task<ActionResult<ApiResult<SessionPreview>>> Login([FromBody] OAuthAuthenticationModel data, CancellationToken cancellationToken = default)
         {
-            if (data.State == null || !await this.OAuthStateRepository.ValidateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), data.State, cancellationToken))
+            if (data.State == null)
+                return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.Unauthorized, "OAuth state validation failed.")));
+
+            var (stateId, clientTk) = this.UnpackState(data.State);
+            var serverTk = await this.OAuthStateRepository.ValidateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), stateId, cancellationToken);
+
+            var tokenPair = new ActionTokenPair(clientTk, serverTk);
+            if (!this.ActionTokenPairHandler.ValidateTokenPair(tokenPair, TokenActionOAuth))
                 return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.Unauthorized, "OAuth state validation failed.")));
 
             var provider = this.OAuthSelector.IdFromReferrer(new Uri(data.Referrer));
@@ -307,6 +326,33 @@ namespace RosettaCTF.Controllers
 
             var claim = this.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
             return claim.Value.ParseAsLong();
+        }
+
+        private (string stateId, ActionToken clientToken) UnpackState(string state)
+        {
+            var startAt = state.LastIndexOf(TokenSeparator);
+
+            var stateId = new string(state.AsSpan(0, startAt));
+            var clientTokenRaw = state.AsSpan(startAt + 1);
+            if (!ActionToken.TryParse(clientTokenRaw, out var clientToken))
+                return default;
+
+            return (stateId, clientToken);
+        }
+
+        private string PackState(string stateId, ActionToken clientToken)
+        {
+            var clientTokenString = clientToken.ExportString();
+            return string.Create(stateId.Length + clientTokenString.Length + 1, (stateId, clientTokenString), FormatState);
+
+            static void FormatState(Span<char> buff, (string sid, string ctkn) state)
+            {
+                var (sid, ctkn) = state;
+
+                sid.AsSpan().CopyTo(buff);
+                ctkn.AsSpan().CopyTo(buff.Slice(sid.Length + 1));
+                buff[sid.Length] = TokenSeparator;
+            }
         }
     }
 }

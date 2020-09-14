@@ -22,6 +22,10 @@
 
   <Import Project="../RosettaCTF.Common.targets" />
 
+  <PropertyGroup>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Emzi0767.Common" Version="2.2.0" />
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.2.1" />

@@ -24,6 +24,8 @@ namespace RosettaCTF
     internal sealed class RedisOAuthStateRepository : IOAuthStateRepository
     {
         private const string OAuthKey = "oauth";
+        private const string OAuthTokenKey = "token";
+        private const string OAuthPrefix = "oauth/";
 
         private RedisClient Redis { get; }
 
@@ -32,19 +34,33 @@ namespace RosettaCTF
             this.Redis = redis;
         }
 
-        public async Task<string> GenerateStateAsync(string remoteAddress, CancellationToken cancellationToken = default)
+        public async Task<string> GenerateStateAsync(string remoteAddress, ActionToken actionToken, CancellationToken cancellationToken = default)
         {
             var state = Guid.NewGuid().ToString();
+            var tkstring = actionToken.ExportString();
 
             await this.Redis.CreateTemporaryValueAsync(remoteAddress, TimeSpan.FromMinutes(2), OAuthKey, state);
-            return state;
+            await this.Redis.CreateTemporaryValueAsync(tkstring, TimeSpan.FromMinutes(2), OAuthKey, state, OAuthTokenKey);
+            return OAuthPrefix + state;
         }
 
-        public async Task<bool> ValidateStateAsync(string remoteAddress, string state, CancellationToken cancellationToken = default)
+        public async Task<ActionToken> ValidateStateAsync(string remoteAddress, string state, CancellationToken cancellationToken = default)
         {
-            var refAddr = await this.Redis.GetValueAsync<string>(OAuthKey, state);
-            await this.Redis.DeleteValueAsync(OAuthKey, state);
-            return refAddr == remoteAddress;
+            if (!state.AsSpan().StartsWith(OAuthPrefix))
+                return null;
+
+            var statestr = new string(state.AsSpan(OAuthPrefix.Length));
+
+            var refAddr = await this.Redis.GetValueAsync<string>(OAuthKey, statestr);
+            var srcTokn = await this.Redis.GetValueAsync<string>(OAuthKey, statestr, OAuthTokenKey);
+
+            await this.Redis.DeleteValueAsync(OAuthKey, statestr);
+            await this.Redis.DeleteValueAsync(OAuthKey, statestr, OAuthTokenKey);
+
+            if (refAddr != remoteAddress || !ActionToken.TryParse(srcTokn, out var actionToken))
+                return null;
+
+            return actionToken;
         }
     }
 }

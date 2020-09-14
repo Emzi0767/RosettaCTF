@@ -28,9 +28,10 @@ namespace RosettaCTF.Data
         /// Generates a new state string which will be validated once the authentication completes.
         /// </summary>
         /// <param name="remoteAddress">Address of the remote party.</param>
+        /// <param name="serverToken">Token for action continuation, server part.</param>
         /// <param name="cancellationToken">Token to cancel any pending operation.</param>
         /// <returns>Generated state string.</returns>
-        Task<string> GenerateStateAsync(string remoteAddress, CancellationToken cancellationToken = default);
+        Task<string> GenerateStateAsync(string remoteAddress, ActionToken serverToken, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Validates a previously-issued state string.
@@ -38,7 +39,7 @@ namespace RosettaCTF.Data
         /// <param name="remoteAddress">Address of the remote party.</param>
         /// <param name="state">State to validate.</param>
         /// <param name="cancellationToken">Token to cancel any pending operation.</param>
-        /// <returns>Generated state string.</returns>
-        Task<bool> ValidateStateAsync(string remoteAddress, string state, CancellationToken cancellationToken = default);
+        /// <returns>If state is valid, returns server's action continuation token. Returns null otherwise.</returns>
+        Task<ActionToken> ValidateStateAsync(string remoteAddress, string state, CancellationToken cancellationToken = default);
     }
 }

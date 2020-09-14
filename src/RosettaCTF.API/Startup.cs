@@ -180,6 +180,7 @@ namespace RosettaCTF.API
             services.AddTransient<UserPreviewRepository>()
                 .AddTransient<ChallengePreviewRepository>()
                 .AddSingleton<OAuthTokenHandler>()
+                .AddSingleton<ActionTokenPairHandler>()
                 .AddSingleton<HttpClient>()
                 .AddSingleton<JwtHandler>()
                 .AddTransient<PasswordHandler>()

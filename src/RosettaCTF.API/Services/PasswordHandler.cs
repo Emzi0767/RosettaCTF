@@ -56,7 +56,7 @@ namespace RosettaCTF.Services
             var output = await this.KeyDeriver.DeriveHashAsync(utfinput, salt, PasswordSize);
 
             salt.AsSpan().CopyTo(buff);
-            output.AsSpan().CopyTo(buff.AsSpan().Slice(SaltSize));
+            output.AsSpan().CopyTo(buff.AsSpan(SaltSize));
 
             return buff;
         }
@@ -74,7 +74,7 @@ namespace RosettaCTF.Services
             var utfinput = AbstractionUtilities.UTF8.GetBytes(input);
             var output = await this.KeyDeriver.DeriveHashAsync(utfinput, salt, PasswordSize);
 
-            return AbstractionUtilities.ConstantTimeEquals(output, reference.AsSpan().Slice(SaltSize), PasswordSize);
+            return AbstractionUtilities.ConstantTimeEquals(output, reference.AsSpan(SaltSize), PasswordSize);
         }
     }
 }

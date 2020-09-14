@@ -116,7 +116,7 @@ namespace RosettaCTF
                 using (var cs = new CryptoStream(ms, dec, CryptoStreamMode.Read))
                     olen = cs.Read(output);
 
-                return AbstractionUtilities.UTF8.GetString(output.AsSpan().Slice(0, olen));
+                return AbstractionUtilities.UTF8.GetString(output.AsSpan(0, olen));
             }
         }
 

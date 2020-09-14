@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -202,6 +203,42 @@ namespace RosettaCTF
             return input.Length == known.Length & input.Length == expectedLength & diffBits == 0;
         }
 
+        /// <summary>
+        /// Performs a vectorized comparison of 2 byte sequences.
+        /// </summary>
+        /// <param name="left">First value.</param>
+        /// <param name="right">Second value.</param>
+        /// <returns>Whether the values are equal.</returns>
+        public static bool CompareVectorized(ReadOnlySpan<byte> left, ReadOnlySpan<byte> right)
+        {
+            if (left.Length != right.Length)
+                return false;
+
+            if (Avx.IsSupported && left.Length >= 32)
+            {
+                var leftover = left.Length % 32;
+                var lenlimit = left.Length - leftover;
+                if (leftover == 0)
+                    return CompareAvx(left, right);
+                else
+                    return CompareAvx(left.Slice(0, lenlimit), right.Slice(0, lenlimit))
+                        && CompareRegular(left.Slice(lenlimit), right.Slice(lenlimit));
+            }
+
+            if (Sse2.IsSupported && Sse41.IsSupported && left.Length >= 16)
+            {
+                var leftover = left.Length % 16;
+                var lenlimit = left.Length - leftover;
+                if (leftover == 0)
+                    return CompareSse(left, right);
+                else
+                    return CompareSse(left.Slice(0, lenlimit), right.Slice(0, lenlimit))
+                        && CompareRegular(left.Slice(lenlimit), right.Slice(lenlimit));
+            }
+
+            return CompareRegular(left, right);
+        }
+
         private static void ForceLoadAssemblies()
         {
             var asns = new HashSet<string>(AppDomain.CurrentDomain
@@ -245,6 +282,47 @@ namespace RosettaCTF
                 buffer[^4] = '.';
                 state.AsSpan().CopyTo(buffer);
             }
+        }
+
+        private static bool CompareRegular(ReadOnlySpan<byte> left, ReadOnlySpan<byte> right)
+            => left.SequenceEqual(right);
+
+        private static unsafe bool CompareSse(ReadOnlySpan<byte> left, ReadOnlySpan<byte> right)
+        {
+            var len = left.Length;
+
+            fixed (byte* lptr = &left.GetPinnableReference())
+            fixed (byte* rptr = &right.GetPinnableReference())
+            {
+                for (var i = 0; i < len; i += 16)
+                {
+                    var v128_0 = Sse2.LoadVector128(lptr + i);
+                    var v128_1 = Sse2.LoadVector128(rptr + i);
+                    if (!Sse41.TestC(v128_0, v128_1))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static unsafe bool CompareAvx(ReadOnlySpan<byte> left, ReadOnlySpan<byte> right)
+        {
+            var len = left.Length;
+
+            fixed (byte* lptr = &left.GetPinnableReference())
+            fixed (byte* rptr = &right.GetPinnableReference())
+            {
+                for (var i = 0; i < len; i += 32)
+                {
+                    var v256_0 = Avx.LoadVector256(lptr + i);
+                    var v256_1 = Avx.LoadVector256(rptr + i);
+                    if (!Avx.TestC(v256_0, v256_1))
+                        return false;
+                }
+            }
+
+            return true;
         }
     }
 }
