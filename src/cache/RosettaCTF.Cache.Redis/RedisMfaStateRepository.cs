@@ -21,15 +21,15 @@ using RosettaCTF.Data;
 
 namespace RosettaCTF
 {
-    internal sealed class RedisOAuthStateRepository : IOAuthStateRepository
+    internal sealed class RedisMfaStateRepository : IMfaStateRepository
     {
-        private const string OAuthKey = "oauth";
-        private const string OAuthTokenKey = "token";
-        private const string OAuthPrefix = "oauth/";
+        private const string MfaKey = "oauth";
+        private const string MfaTokenKey = "token";
+        private const string MfaPrefix = "mfa/";
 
         private RedisClient Redis { get; }
 
-        public RedisOAuthStateRepository(RedisClient redis)
+        public RedisMfaStateRepository(RedisClient redis)
         {
             this.Redis = redis;
         }
@@ -39,23 +39,23 @@ namespace RosettaCTF
             var state = Guid.NewGuid().ToString();
             var tkstring = serverToken.ExportString();
 
-            await this.Redis.CreateTemporaryValueAsync(remoteAddress, TimeSpan.FromMinutes(2), OAuthKey, state);
-            await this.Redis.CreateTemporaryValueAsync(tkstring, TimeSpan.FromMinutes(2), OAuthKey, state, OAuthTokenKey);
-            return OAuthPrefix + state;
+            await this.Redis.CreateTemporaryValueAsync(remoteAddress, TimeSpan.FromMinutes(2), MfaKey, state);
+            await this.Redis.CreateTemporaryValueAsync(tkstring, TimeSpan.FromMinutes(2), MfaKey, state, MfaTokenKey);
+            return MfaPrefix + state;
         }
 
         public async Task<ActionToken> ValidateStateAsync(string remoteAddress, string state, CancellationToken cancellationToken = default)
         {
-            if (!state.AsSpan().StartsWith(OAuthPrefix))
+            if (!state.AsSpan().StartsWith(MfaPrefix))
                 return null;
 
-            var statestr = new string(state.AsSpan(OAuthPrefix.Length));
+            var statestr = new string(state.AsSpan(MfaPrefix.Length));
 
-            var refAddr = await this.Redis.GetValueAsync<string>(OAuthKey, statestr);
-            var srcTokn = await this.Redis.GetValueAsync<string>(OAuthKey, statestr, OAuthTokenKey);
+            var refAddr = await this.Redis.GetValueAsync<string>(MfaKey, statestr);
+            var srcTokn = await this.Redis.GetValueAsync<string>(MfaKey, statestr, MfaTokenKey);
 
-            await this.Redis.DeleteValueAsync(OAuthKey, statestr);
-            await this.Redis.DeleteValueAsync(OAuthKey, statestr, OAuthTokenKey);
+            await this.Redis.DeleteValueAsync(MfaKey, statestr);
+            await this.Redis.DeleteValueAsync(MfaKey, statestr, MfaTokenKey);
 
             if (refAddr != remoteAddress || !ActionToken.TryParse(srcTokn, out var actionToken))
                 return null;

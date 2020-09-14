@@ -16,6 +16,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using RosettaCTF.Authentication;
 using RosettaCTF.Data;
 using RosettaCTF.Models;
 using RosettaCTF.SeedData;
@@ -36,11 +37,14 @@ namespace RosettaCTF
         public DbSet<PostgresSolveSubmission> Solves { get; set; }
         public DbSet<PostgresTeamInvite> TeamInvites { get; set; }
         public DbSet<PostgresCountry> Countries { get; set; }
+        public DbSet<PostgresMfaSettings> MfaSettings { get; set; }
 
         static PostgresDbContext()
         {
             NpgsqlConnection.GlobalTypeMapper.MapEnum<CtfChallengeDifficulty>("ctf_challenge_difficulty");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<CtfChallengeEndpointType>("ctf_challenge_endpoint_type");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<MultiFactorHmac>("mfa_hmac");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<MultiFactorType>("mfa_type");
         }
 
         public PostgresDbContext(DbContextOptions<PostgresDbContext> opts)
@@ -52,6 +56,8 @@ namespace RosettaCTF
             // Map enums
             modelBuilder.HasPostgresEnum<CtfChallengeDifficulty>();
             modelBuilder.HasPostgresEnum<CtfChallengeEndpointType>();
+            modelBuilder.HasPostgresEnum<MultiFactorHmac>();
+            modelBuilder.HasPostgresEnum<MultiFactorType>();
 
             // User
             modelBuilder.Entity<PostgresUser>(e =>
@@ -530,12 +536,66 @@ namespace RosettaCTF
                     .HasColumnName("name");
 
                 e.HasKey(m => m.Code)
-                    .HasName("fkey_country");
+                    .HasName("fkey_country"); // oh shit, that's a mistake; has to remain now, I guess
 
                 e.HasAlternateKey(m => m.Name)
                     .HasName("ukey_country");
 
                 e.HasData(CountrySeedData.SeedCountries);
+            });
+
+            // MFA settings
+            modelBuilder.Entity<PostgresMfaSettings>(e =>
+            {
+                e.ToTable("mfa_settings");
+
+                e.Property(m => m.UserId)
+                    .IsRequired()
+                    .ValueGeneratedNever()
+                    .HasColumnName("user_id");
+
+                e.Property(m => m.Secret)
+                    .IsRequired()
+                    .HasColumnName("secret")
+                    .HasColumnType("bytea");
+
+                e.Property(m => m.Digits)
+                    .IsRequired()
+                    .HasColumnName("digits");
+
+                e.Property(m => m.HmacAlgorithm)
+                    .IsRequired()
+                    .HasColumnName("hmac");
+
+                e.Property(m => m.Period)
+                    .IsRequired()
+                    .HasColumnName("period");
+
+                e.Property(m => m.Additional)
+                    .HasColumnName("additional")
+                    .HasColumnType("bytea")
+                    .HasDefaultValue(null);
+
+                e.Property(m => m.Type)
+                    .IsRequired()
+                    .HasColumnName("type");
+
+                e.Property(m => m.RecoveryCounterBase)
+                    .IsRequired()
+                    .HasColumnName("recovery_base");
+
+                e.Property(m => m.RecoveryTripCount)
+                    .IsRequired()
+                    .HasColumnName("recovery_trips");
+
+                e.HasKey(m => m.UserId)
+                    .HasName("pkey_mfa_user");
+
+                e.HasOne(m => m.UserInternal)
+                    .WithOne(m => m.MfaInternal)
+                    .HasForeignKey<PostgresMfaSettings>(m => m.UserId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("fkey_mfa_user");
             });
         }
     }

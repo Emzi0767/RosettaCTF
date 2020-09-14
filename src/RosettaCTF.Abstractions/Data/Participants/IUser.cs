@@ -68,5 +68,10 @@ namespace RosettaCTF.Data
         /// Gets the external accounts associated with this user.
         /// </summary>
         IEnumerable<IExternalUser> ConnectedAccounts { get; }
+
+        /// <summary>
+        /// Gets whether this user requires multi-factor authentication when logging in with a password.
+        /// </summary>
+        bool RequiresMfa { get; }
     }
 }

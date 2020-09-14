@@ -61,5 +61,9 @@ namespace RosettaCTF.Models
         public IEnumerable<PostgresSolveSubmission> SolvesInternal { get; set; }
 
         public IEnumerable<PostgresTeamInvite> InvitesInternal { get; set; }
+
+        public bool RequiresMfa => this.MfaInternal != null;
+
+        public PostgresMfaSettings MfaInternal { get; set; }
     }
 }

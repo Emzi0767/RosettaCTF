@@ -32,7 +32,8 @@ namespace RosettaCTF
         {
             services.AddSingleton<RedisClient>()
                 .AddScoped<ICtfChallengeCacheRepository, RedisChallengeCacheRepository>()
-                .AddScoped<IOAuthStateRepository, RedisOAuthStateRepository>();
+                .AddScoped<IOAuthStateRepository, RedisOAuthStateRepository>()
+                .AddScoped<IMfaStateRepository, RedisMfaStateRepository>();
         }
 
         public async Task InitializeServicesAsync(IServiceProvider services, CancellationToken cancellationToken = default)

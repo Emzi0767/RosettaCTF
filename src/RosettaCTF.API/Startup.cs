@@ -15,10 +15,9 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
-#if DEBUG
-using System.Reflection;
-#endif
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery;
@@ -26,21 +25,21 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-#if DEBUG
-using Microsoft.AspNetCore.SpaServices.AngularCli;
-#endif
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using RosettaCTF.Authentication;
 using RosettaCTF.Data;
-using RosettaCTF.Services;
 using RosettaCTF.Filters;
 using RosettaCTF.Models;
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.Options;
-using System.Net;
-using RosettaCTF.Authentication;
-using System.Linq;
+using RosettaCTF.Services;
+
+#if DEBUG
+using System.Reflection;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
+#endif
 
 namespace RosettaCTF.API
 {

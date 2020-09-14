@@ -43,6 +43,7 @@ namespace RosettaCTF
             }, contextLifetime: ServiceLifetime.Scoped, optionsLifetime: ServiceLifetime.Singleton);
             services.AddScoped<IUserRepository, PostgresUserRepository>();
             services.AddScoped<ICtfChallengeRepository, PostgresChallengeRepository>();
+            services.AddScoped<IMfaRepository, PostgresMfaRepository>();
         }
 
         public async Task InitializeServicesAsync(IServiceProvider services, CancellationToken cancellationToken = default)

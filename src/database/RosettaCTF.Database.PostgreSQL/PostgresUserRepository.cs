@@ -45,6 +45,7 @@ namespace RosettaCTF
                     .ThenInclude(x => x.CountryInternal)
                 .Include(x => x.ConnectedAccountsInternal)
                 .Include(x => x.CountryInternal)
+                .Include(x => x.MfaInternal)
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         public async Task<IUser> GetUserAsync(string username, CancellationToken cancellationToken = default)
@@ -54,6 +55,7 @@ namespace RosettaCTF
                     .ThenInclude(x => x.CountryInternal)
                 .Include(x => x.ConnectedAccountsInternal)
                 .Include(x => x.CountryInternal)
+                .Include(x => x.MfaInternal)
                 .FirstOrDefaultAsync(x => x.Username == username, cancellationToken);
 
         public async Task<IUser> CreateUserAsync(string username, bool isAuthorized, CancellationToken cancellationToken = default)
