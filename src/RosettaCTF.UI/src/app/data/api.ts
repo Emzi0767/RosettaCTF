@@ -449,7 +449,7 @@ export enum ApiEventScoringMode {
      * Defines dynamic jeopardy-style scoring mode, where the number of points for each challenge will decay, much
      * like Jeopardy, however, once a team completes a challenge, their points will no longer decay.
      */
-    FirstComeFirstServe = 2
+    Freezer = 2
 }
 
 /**
