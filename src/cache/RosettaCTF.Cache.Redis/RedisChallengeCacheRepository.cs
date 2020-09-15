@@ -39,7 +39,7 @@ namespace RosettaCTF
             => await this.Redis.GetValueAsync<int>(BaselineKey, SolvesKey);
 
         public async Task<int> IncrementBaselineSolveCountAsync(CancellationToken cancellationToken = default)
-            => (int)await this.Redis.IncrementValueAsync(BaselineKey, SolvesKey);
+            => (int)await this.Redis.IncrementValueAsync(BaselineKey, SolvesKey) - 1;
 
         public async Task<int> GetScoreAsync(string challengeId, CancellationToken cancellationToken = default)
             => await this.Redis.GetValueAsync<int>(ChallengesKey, challengeId, ScoreKey);
@@ -60,7 +60,7 @@ namespace RosettaCTF
             => await this.Redis.GetValueAsync<int>(ChallengesKey, challengeId, SolvesKey);
 
         public async Task<int> IncrementSolveCountAsync(string challengeId, CancellationToken cancellationToken = default)
-            => (int)await this.Redis.IncrementValueAsync(ChallengesKey, challengeId, SolvesKey);
+            => (int)await this.Redis.IncrementValueAsync(ChallengesKey, challengeId, SolvesKey) - 1;
 
         public async Task InstallAsync(IDictionary<string, int> baseScores, CancellationToken cancellationToken = default)
         {

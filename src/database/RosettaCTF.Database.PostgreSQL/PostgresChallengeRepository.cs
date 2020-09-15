@@ -205,6 +205,7 @@ namespace RosettaCTF
 
         public async Task<IEnumerable<ICtfSolveSubmission>> GetSuccessfulSolvesAsync(string challengeId, CancellationToken cancellationToken = default)
             => await this.Database.Solves
+                .Include(x => x.TeamInternal)
                 .Include(x => x.ChallengeInternal).ThenInclude(x => x.CategoryInternal)
                 .Where(x => x.IsValid && x.ChallengeId == challengeId)
                 .ToListAsync(cancellationToken);

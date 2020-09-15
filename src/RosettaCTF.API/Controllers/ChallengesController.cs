@@ -136,23 +136,28 @@ namespace RosettaCTF.Controllers
 
             var flag = challengeFlag.Flag;
             var valid = flag == challenge.Flag;
-
-            if (valid)
+            int? score = null;
+            
+            if (valid && this.EventConfiguration.Scoring != CtfScoringMode.Static)
             {
                 var solves = await this.ChallengeCacheRepository.IncrementSolveCountAsync(challenge.Id, cancellationToken);
                 var baseline = await this.ChallengeCacheRepository.GetBaselineSolveCountAsync(cancellationToken);
                 var rate = solves / (double)baseline;
-                var score = this.ScoringModel.ComputeScore(challenge.BaseScore, rate);
+                var postRate = (solves + 1.0) / baseline;
+                var cscore = this.ScoringModel.ComputeScore(challenge.BaseScore, rate);
+                var pscore = this.ScoringModel.ComputeScore(challenge.BaseScore, postRate);
 
-                await this.ChallengeCacheRepository.UpdateScoreAsync(challenge.Id, score, cancellationToken);
-
-                if (challenge.BaseScore == 1)
-                    await this.ChallengeCacheRepository.IncrementBaselineSolveCountAsync(cancellationToken);
+                await this.ChallengeCacheRepository.UpdateScoreAsync(challenge.Id, pscore, cancellationToken);
+                if (this.EventConfiguration.Scoring == CtfScoringMode.Freezer)
+                    score = cscore;
             }
 
-            var solve = await this.ChallengeRepository.SubmitSolveAsync(flag, valid, challenge.Id, this.RosettaUser.Id, this.RosettaUser.Team.Id, null, cancellationToken);
+            var solve = await this.ChallengeRepository.SubmitSolveAsync(flag, valid, challenge.Id, this.RosettaUser.Id, this.RosettaUser.Team.Id, score, cancellationToken);
             if (solve == null)
                 return this.Conflict(ApiResult.FromError<bool>(new ApiError(ApiErrorCode.AlreadySolved, "Your team already solved this challenge.")));
+
+            if (valid && challenge.BaseScore == 1)
+                await this.ChallengeCacheRepository.IncrementBaselineSolveCountAsync(cancellationToken);
 
             return this.Ok(ApiResult.FromResult(valid));
         }

@@ -84,7 +84,7 @@ namespace RosettaCTF.API
         // 5. Environment variables
         // 6. Command line
 
-        // For explanation on L94 and L95, see
+        // For explanation on L92 and L93, see
         https://github.com/dotnet/runtime/issues/40911
             // Load envvars and cmdline switches
             var cfg = new ConfigurationBuilder()
@@ -197,6 +197,7 @@ namespace RosettaCTF.API
 
             // filters
             services.AddScoped<ValidRosettaUserFilter>()
+                .AddScoped<OptionalRosettaUserFilter>()
                 .AddScoped<EventNotStartedFilter>()
                 .AddScoped<EventStartedFilter>()
                 .AddScoped<EventNotOverFilter>();

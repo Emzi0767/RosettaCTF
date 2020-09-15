@@ -29,7 +29,7 @@ using RosettaCTF.Services;
 namespace RosettaCTF.Controllers
 {
     [Route("api/[controller]")]
-    [ServiceFilter(typeof(ValidRosettaUserFilter))]
+    [ServiceFilter(typeof(OptionalRosettaUserFilter))]
     [ValidateAntiForgeryToken]
     public class TeamController : RosettaControllerBase
     {
@@ -42,13 +42,13 @@ namespace RosettaCTF.Controllers
         { }
 
         [HttpGet]
-        [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
+        [AllowAnonymous]
         [Route("{id?}")]
         public async Task<ActionResult<ApiResult<TeamPreview>>> Get(long? id = null, CancellationToken cancellationToken = default)
         {
             ITeam team;
             if (id == null)
-                team = this.RosettaUser.Team;
+                team = this.RosettaUser?.Team;
             else
                 team = await this.UserRepository.GetTeamAsync(id.Value);
 

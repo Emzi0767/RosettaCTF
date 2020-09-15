@@ -45,6 +45,6 @@ namespace RosettaCTF.Data
         /// prevent smaller, slower teams, from scoring all the possible points.
         /// </summary>
         [EnumDisplayName("Jeopardy (non-persistent decay)")]
-        FirstComeFirstServe = 2
+        Freezer = 2
     }
 }

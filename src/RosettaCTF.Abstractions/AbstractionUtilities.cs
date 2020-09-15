@@ -168,7 +168,7 @@ namespace RosettaCTF
         /// <param name="min">Minimum value.</param>
         /// <returns>Clamped value.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double Clamp(this double d, double max, double min)
+        public static double Clamp(this double d, double min, double max)
             => double.IsNaN(d)
                 ? Math.Max(0, min)
                 : Math.Max(Math.Min(d, max), min);
