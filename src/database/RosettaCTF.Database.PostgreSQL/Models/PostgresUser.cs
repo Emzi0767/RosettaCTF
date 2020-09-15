@@ -62,7 +62,7 @@ namespace RosettaCTF.Models
 
         public IEnumerable<PostgresTeamInvite> InvitesInternal { get; set; }
 
-        public bool RequiresMfa => this.MfaInternal != null;
+        public bool RequiresMfa => this.MfaInternal != null && this.MfaInternal.IsConfirmed;
 
         public PostgresMfaSettings MfaInternal { get; set; }
     }

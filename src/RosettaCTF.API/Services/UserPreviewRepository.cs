@@ -67,6 +67,14 @@ namespace RosettaCTF.Services
             => new SessionPreview(user, token, expiresAt);
 
         /// <summary>
+        /// Gets a session indicating authentication needs to be continued with MFA.
+        /// </summary>
+        /// <param name="continuation">Continuation token for the authentication process.</param>
+        /// <returns>Encapsulated session.</returns>
+        public SessionPreview GetSession(string continuation)
+            => new SessionPreview(continuation);
+
+        /// <summary>
         /// Gets redacted versions of team invites.
         /// </summary>
         /// <param name="invites">Team invites to transform.</param>

@@ -21,7 +21,7 @@ namespace RosettaCTF.Models
     /// <summary>
     /// Contains data for user registration.
     /// </summary>
-    public sealed class UserRegistrationData
+    public sealed class UserRegistrationModel
     {
         /// <summary>
         /// Gets or sets the username of the registered user.

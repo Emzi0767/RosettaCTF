@@ -14,19 +14,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace RosettaCTF.Models
+namespace RosettaCTF.Migrations
 {
-    /// <summary>
-    /// Contains information required to finish authentication via MFA.
-    /// </summary>
-    public class UserMfaModel
+    public partial class M07_MFA_Settings : Migration
     {
-        /// <summary>
-        /// Gets or sets the MFA code sent by the user.
-        /// </summary>
-        [Required]
-        public int MfaCode { get; set; }
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn<bool>(
+                name: "confirmed",
+                table: "mfa_settings",
+                nullable: false,
+                defaultValue: false);
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: "confirmed",
+                table: "mfa_settings");
+        }
     }
 }

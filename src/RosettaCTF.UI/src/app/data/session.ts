@@ -112,4 +112,9 @@ export interface ISession {
      * Gets the datetime string at which the token expires.
      */
     expiresAt?: string;
+
+    /**
+     * Gets the MFA continuation token.
+     */
+    mfaContinuation?: string | null;
 }

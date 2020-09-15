@@ -190,7 +190,8 @@ namespace RosettaCTF.API
                 .AddTransient<IScoringModel, SlowLogisticDecayScoringModel>()
                 .AddSingleton<OAuthConfigurationProvider>()
                 .AddScoped<OAuthProviderSelector>()
-                .AddScoped<LoginSettingsRepository>();
+                .AddScoped<LoginSettingsRepository>()
+                .AddTransient<MfaValidatorService>();
 
             services.AddHostedService<ChallengeBootstrapperService>();
 

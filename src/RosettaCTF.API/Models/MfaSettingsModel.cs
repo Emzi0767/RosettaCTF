@@ -14,25 +14,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.ComponentModel.DataAnnotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace RosettaCTF.Models
 {
-    /// <summary>
-    /// Represents data for a login attempt.
-    /// </summary>
-    public sealed class UserAuthenticationModel
+    public class MfaSettingsModel
     {
-        /// <summary>
-        /// Gets or sets the username.
-        /// </summary>
-        [Required, MinLength(2), MaxLength(48), RegularExpression(AbstractionUtilities.NameRegexPattern)]
-        public string Username { get; set; }
+        public string AuthenticatorUri { get; set; }
 
-        /// <summary>
-        /// Gets or sets the password.
-        /// </summary>
-        [Required]
-        public string Password { get; set; }
+        public string[] RecoveryCodes { get; set; }
     }
 }

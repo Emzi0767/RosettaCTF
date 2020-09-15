@@ -1,5 +1,5 @@
 ﻿// This file is part of RosettaCTF project.
-// 
+//
 // Copyright 2020 Emzi0767
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,32 +14,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using RosettaCTF.Authentication;
+using System.ComponentModel.DataAnnotations;
 
 namespace RosettaCTF.Models
 {
-    internal sealed class PostgresMfaSettings : IMultiFactorSettings
+    /// <summary>
+    /// Contains data for MFA validation during login process.
+    /// </summary>
+    public sealed class MfaLoginModel
     {
-        public long UserId { get; set; }
+        /// <summary>
+        /// Gets or sets the MFA code.
+        /// </summary>
+        [Required, MinLength(6), MaxLength(8)]
+        public string MfaCode { get; set; }
 
-        public PostgresUser UserInternal { get; set; }
-
-        public byte[] Secret { get; set; }
-
-        public int Digits { get; set; }
-
-        public MultiFactorHmac HmacAlgorithm { get; set; }
-
-        public int Period { get; set; }
-
-        public byte[] Additional { get; set; }
-
-        public MultiFactorType Type { get; set; }
-
-        public long RecoveryCounterBase { get; set; }
-
-        public int RecoveryTripCount { get; set; }
-
-        public bool IsConfirmed { get; set; }
+        /// <summary>
+        /// Gets or sets the continuation token.
+        /// </summary>
+        [Required]
+        public string ActionToken { get; set; }
     }
 }

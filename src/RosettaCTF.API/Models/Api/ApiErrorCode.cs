@@ -132,6 +132,11 @@ namespace RosettaCTF.Models
         /// </summary>
         InvalidName = 3007,
 
+        /// <summary>
+        /// Specified feature is already configured.
+        /// </summary>
+        AlreadyConfigured = 3008,
+
         // 4xxx - generic errors
 
         /// <summary>

@@ -18,7 +18,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RosettaCTF.Models
 {
-    public sealed class UserPasswordChangeData
+    public sealed class UserPasswordChangeModel
     {
         /// <summary>
         /// Gets or sets the old password used to confirm identity.
@@ -40,6 +40,6 @@ namespace RosettaCTF.Models
         /// <summary>
         /// Gets or sets the MFA code for the request.
         /// </summary>
-        public int? MfaCode { get; set; }
+        public string MfaCode { get; set; }
     }
 }

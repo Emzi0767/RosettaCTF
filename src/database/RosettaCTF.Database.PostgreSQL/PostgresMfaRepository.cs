@@ -55,7 +55,8 @@ namespace RosettaCTF
                 Additional = additional,
                 Type = type,
                 RecoveryCounterBase = recoveryBase,
-                RecoveryTripCount = 0
+                RecoveryTripCount = 0,
+                IsConfirmed = false
             };
 
             try
@@ -79,6 +80,18 @@ namespace RosettaCTF
             }
         }
 
+        public async Task ConfirmMfaAsync(long userId, CancellationToken cancellationToken = default)
+        {
+            var mfa = await this.Database.MfaSettings.FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+
+            if (mfa != null)
+            {
+                mfa.IsConfirmed = true;
+                this.Database.MfaSettings.Update(mfa);
+                await this.Database.SaveChangesAsync();
+            }
+        }
+
         public async Task TripRecoveryCodeAsync(long userId, CancellationToken cancellationToken = default)
         {
             var mfa = await this.Database.MfaSettings.FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
@@ -86,6 +99,7 @@ namespace RosettaCTF
             if (mfa != null)
             {
                 mfa.RecoveryTripCount++;
+                this.Database.MfaSettings.Update(mfa);
                 await this.Database.SaveChangesAsync();
             }
         }

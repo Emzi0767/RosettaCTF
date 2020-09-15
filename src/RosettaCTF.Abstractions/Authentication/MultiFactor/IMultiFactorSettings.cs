@@ -60,5 +60,10 @@ namespace RosettaCTF.Authentication
         /// Gets how many times the recovery counter has been tripped.
         /// </summary>
         int RecoveryTripCount { get; }
+
+        /// <summary>
+        /// Gets whether this configuration is confirmed.
+        /// </summary>
+        bool IsConfirmed { get; }
     }
 }

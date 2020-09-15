@@ -593,6 +593,10 @@ namespace RosettaCTF
                     .IsRequired()
                     .HasColumnName("recovery_trips");
 
+                e.Property(m => m.IsConfirmed)
+                    .IsRequired()
+                    .HasColumnName("confirmed");
+
                 e.HasKey(m => m.UserId)
                     .HasName("pkey_mfa_user");
 

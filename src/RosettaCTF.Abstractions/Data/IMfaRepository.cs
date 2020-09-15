@@ -66,6 +66,14 @@ namespace RosettaCTF.Data
         Task RemoveMfaAsync(long userId, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Confirms MFA configuration.
+        /// </summary>
+        /// <param name="userId">ID of the user for which to remove MFA.</param>
+        /// <param name="cancellationToken">A token to cancel pending operations, if any.</param>
+        /// <returns>A task encapsulating the operation.</returns>
+        Task ConfirmMfaAsync(long userId, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Trips a recovery code, incrementing the recovery code counter.
         /// </summary>
         /// <param name="userId">ID of the user for which to trip MFA recovery counter.</param>

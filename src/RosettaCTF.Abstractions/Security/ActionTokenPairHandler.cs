@@ -69,6 +69,17 @@ namespace RosettaCTF
         {
             var state = Guid.NewGuid().ToByteArray();
 
+            return this.IssueTokenPair(actionId, state);
+        }
+
+        /// <summary>
+        /// Issue a new token pair with specified state.
+        /// </summary>
+        /// <param name="actionId">Action for which the token pair is issued.</param>
+        /// <param name="state">State for the token.</param>
+        /// <returns>Issued token pair or null if issuing fails.</returns>
+        public ActionTokenPair IssueTokenPair(string actionId, byte[] state)
+        {
             byte[] kclient, kserver, sigclient = new byte[SignatureSize], sigserver = new byte[SignatureSize];
             using (var rsa = RSA.Create(RsaSize))
             {

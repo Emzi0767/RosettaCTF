@@ -134,6 +134,11 @@ export enum ApiErrorCode {
      */
     InvalidName = 3007,
 
+    /**
+     * Specified feature is already configured.
+     */
+    AlreadyConfigured = 3008,
+
     // --------------------------------------------------------------------------------------------
     // 4xxx - generic errors
 
@@ -235,6 +240,17 @@ export interface IUserLogin {
 }
 
 /**
+ * Contains information necessary to login a user.
+ */
+export interface IUserSudo {
+
+    /**
+     * Gets or sets the password to authenticate with.
+     */
+    password: string;
+}
+
+/**
  * Contains information necessary to complete a login with MFA.
  */
 export interface IMfa {
@@ -242,7 +258,25 @@ export interface IMfa {
     /**
      * Gets or sets the MFA code to authenticate with.
      */
-    mfaCode: number;
+    mfaCode: string;
+
+    /**
+     * Gets or sets the login continuation token to send alongside the request.
+     */
+    actionToken: string;
+}
+
+export interface IMfaEnable {
+
+    /**
+     * Gets or sets the MFA code to authenticate with.
+     */
+    mfaCode: string;
+
+    /**
+     * Gets or sets the user's password to confirm the operation.
+     */
+    password: string;
 }
 
 /**
@@ -268,7 +302,7 @@ export interface IUserPasswordChange {
     /**
      * Gets or sets the MFA code if one is required.
      */
-    mfaCode?: number;
+    mfaCode: string | null;
 }
 
 /**
@@ -284,7 +318,7 @@ export interface IUserPasswordRemove {
     /**
      * Gets or sets the MFA code if one is required.
      */
-    mfaCode?: number;
+    mfaCode: string | null;
 }
 
 /**

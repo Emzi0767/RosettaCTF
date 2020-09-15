@@ -15,6 +15,7 @@
 // limitations under the License.
 
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -44,7 +45,10 @@ namespace RosettaCTF.Controllers
         private ActionTokenPairHandler ActionTokenPairHandler { get; }
         private PasswordHandler Password { get; }
         private IOAuthStateRepository OAuthStateRepository { get; }
+        private IMfaStateRepository MfaStateRepository { get; }
         private LoginSettingsRepository LoginSettingsRepository { get; }
+        private MfaValidatorService MfaValidator { get; }
+        private IMfaRepository MfaRepository { get; }
 
         public SessionController(
             ILoggerFactory loggerFactory,
@@ -56,7 +60,10 @@ namespace RosettaCTF.Controllers
             ActionTokenPairHandler actionTokenPairHandler,
             PasswordHandler pwdHandler,
             IOAuthStateRepository oAuthStateRepository,
-            LoginSettingsRepository loginSettingsRepository)
+            IMfaStateRepository mfaStateRepository,
+            LoginSettingsRepository loginSettingsRepository,
+            MfaValidatorService mfaValidator,
+            IMfaRepository mfaRepository)
             : base(loggerFactory, userRepository, userPreviewRepository, ctfConfigurationLoader)
         {
             this.OAuthSelector = oAuthSelector;
@@ -64,7 +71,10 @@ namespace RosettaCTF.Controllers
             this.ActionTokenPairHandler = actionTokenPairHandler;
             this.Password = pwdHandler;
             this.OAuthStateRepository = oAuthStateRepository;
+            this.MfaStateRepository = mfaStateRepository;
             this.LoginSettingsRepository = loginSettingsRepository;
+            this.MfaValidator = mfaValidator;
+            this.MfaRepository = MfaRepository;
         }
 
         [HttpGet]
@@ -169,7 +179,7 @@ namespace RosettaCTF.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<ApiResult<SessionPreview>>> Login([FromBody] UserAuthenticationModel data, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResult<SessionPreview>>> Login([FromBody] UserLoginModel data, CancellationToken cancellationToken = default)
         {
             var user = await this.UserRepository.GetUserAsync(data.Username, cancellationToken);
             if (user == null)
@@ -182,6 +192,59 @@ namespace RosettaCTF.Controllers
             if (!await this.Password.ValidatePasswordHashAsync(data.Password, pwd))
                 return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
 
+            if (user.RequiresMfa)
+            {
+                var mfaState = new byte[8];
+                BinaryPrimitives.WriteInt64BigEndian(mfaState, user.Id);
+                var tokenPair = this.ActionTokenPairHandler.IssueTokenPair(TokenActionMFA, mfaState);
+
+                var stateId = await this.MfaStateRepository.GenerateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), tokenPair.Server, cancellationToken);
+                var continuation = this.PackState(stateId, tokenPair.Client);
+
+                return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(continuation)));
+            }
+
+            var ruser = this.UserPreviewRepository.GetUser(user);
+            var token = this.Jwt.IssueToken(ruser);
+            return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(ruser, token.Token, token.ExpiresAt)));
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("mfa")]
+        public async Task<ActionResult<ApiResult<SessionPreview>>> LoginMfa([FromBody] MfaLoginModel data, CancellationToken cancellationToken = default)
+        {
+            if (data.ActionToken == null || data.MfaCode == null)
+                return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.Unauthorized, "MFA state validation failed.")));
+
+            var (stateId, clientTk) = this.UnpackState(data.ActionToken);
+            var serverTk = await this.OAuthStateRepository.ValidateStateAsync(this.HttpContext.Connection.RemoteIpAddress.ToString(), stateId, cancellationToken);
+
+            var tokenPair = new ActionTokenPair(clientTk, serverTk);
+            if (!this.ActionTokenPairHandler.ValidateTokenPair(tokenPair, TokenActionOAuth))
+                return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.Unauthorized, "MFA state validation failed.")));
+
+            var userId = BinaryPrimitives.ReadInt64BigEndian(clientTk.State);
+            var mfa = await this.MfaRepository.GetMfaSettingsAsync(userId, cancellationToken);
+            if (mfa == null || !mfa.IsConfirmed)
+                return this.StatusCode(400, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "MFA not configured.")));
+
+            if (data.MfaCode.Length == 6)
+            {
+                if (!this.MfaValidator.ValidateCode(data.MfaCode, mfa))
+                    return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Invalid MFA code provided.")));
+            }
+            else if (data.MfaCode.Length == 8)
+            {
+                if (!this.MfaValidator.ValidateRecoveryCode(data.MfaCode, mfa))
+                    return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Invalid MFA code provided.")));
+
+                await this.MfaRepository.TripRecoveryCodeAsync(userId, cancellationToken);
+            }
+            else
+                return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Invalid MFA code provided.")));
+            
+            var user = await this.UserRepository.GetUserAsync(userId, cancellationToken);
             var ruser = this.UserPreviewRepository.GetUser(user);
             var token = this.Jwt.IssueToken(ruser);
             return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(ruser, token.Token, token.ExpiresAt)));
@@ -190,7 +253,7 @@ namespace RosettaCTF.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("register")]
-        public async Task<ActionResult<ApiResult<bool>>> Register([FromBody] UserRegistrationData data, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResult<bool>>> Register([FromBody] UserRegistrationModel data, CancellationToken cancellationToken = default)
         {
             var pwd = await this.Password.CreatePasswordHashAsync(data.Password);
 
@@ -206,7 +269,7 @@ namespace RosettaCTF.Controllers
         [Authorize]
         [ServiceFilter(typeof(ValidRosettaUserFilter))]
         [Route("password")]
-        public async Task<ActionResult<ApiResult<bool>>> ChangePassword([FromBody] UserPasswordChangeData data, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResult<bool>>> ChangePassword([FromBody] UserPasswordChangeModel data, CancellationToken cancellationToken = default)
         {
             var user = this.RosettaUser;
             var pwd = await this.UserRepository.GetUserPasswordAsync(user.Id, cancellationToken);
@@ -226,7 +289,7 @@ namespace RosettaCTF.Controllers
         [Authorize]
         [ServiceFilter(typeof(ValidRosettaUserFilter))]
         [Route("password/remove")]
-        public async Task<ActionResult<ApiResult<bool>>> RemovePassword([FromBody] UserPasswordRemoveData data, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ApiResult<bool>>> RemovePassword([FromBody] UserPasswordRemoveModel data, CancellationToken cancellationToken = default)
         {
             var user = this.RosettaUser;
             if (!user.ConnectedAccounts.Any())
@@ -237,6 +300,79 @@ namespace RosettaCTF.Controllers
                 return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
 
             await this.UserRepository.UpdateUserPasswordAsync(user.Id, null, cancellationToken);
+            return this.Ok(ApiResult.FromResult(true));
+        }
+
+        [HttpPut]
+        [Authorize]
+        [ServiceFilter(typeof(ValidRosettaUserFilter))]
+        [Route("mfa")]
+        public async Task<ActionResult<ApiResult<MfaSettingsModel>>> StartMfaEnable([FromBody] UserSudoModel data, CancellationToken cancellationToken = default)
+        {
+            var user = this.RosettaUser;
+            var pwd = await this.UserRepository.GetUserPasswordAsync(user.Id, cancellationToken);
+            if (pwd == null || !await this.Password.ValidatePasswordHashAsync(data.Password, pwd))
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
+
+            var mfa = await this.MfaRepository.GetMfaSettingsAsync(user.Id, cancellationToken);
+            if (mfa != null)
+                return this.StatusCode(400, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.AlreadyConfigured, "MFA is already configured.")));
+
+            mfa = await this.MfaValidator.GenerateMfaAsync(this.MfaRepository, user.Id, false, cancellationToken);
+            var rmfa = this.MfaValidator.GenerateClientData(mfa, user.Username, this.EventConfiguration.Name);
+            return this.Ok(ApiResult.FromResult(rmfa));
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ServiceFilter(typeof(ValidRosettaUserFilter))]
+        [Route("mfa/enable")]
+        public async Task<ActionResult<ApiResult<bool>>> MfaEnable([FromBody] MfaEnableModel data, CancellationToken cancellationToken = default)
+        {
+            var user = this.RosettaUser;
+            var pwd = await this.UserRepository.GetUserPasswordAsync(user.Id, cancellationToken);
+            if (pwd == null || !await this.Password.ValidatePasswordHashAsync(data.Password, pwd))
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
+
+            var mfa = await this.MfaRepository.GetMfaSettingsAsync(user.Id, cancellationToken);
+            if (mfa == null)
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "MFA not configured.")));
+
+            if (mfa.IsConfirmed)
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.AlreadyConfigured, "MFA is already configured.")));
+
+            if (!this.MfaValidator.ValidateCode(data.MfaCode, mfa))
+            {
+                await this.MfaRepository.RemoveMfaAsync(user.Id, cancellationToken);
+                return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Invalid MFA code provided.")));
+            }
+
+            await this.MfaRepository.ConfirmMfaAsync(user.Id, cancellationToken);
+            return this.Ok(ApiResult.FromResult(true));
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ServiceFilter(typeof(ValidRosettaUserFilter))]
+        [Route("mfa/disable")]
+        public async Task<ActionResult<ApiResult<bool>>> MfaDisable([FromBody] MfaEnableModel data, CancellationToken cancellationToken = default)
+        {
+            var user = this.RosettaUser;
+            var pwd = await this.UserRepository.GetUserPasswordAsync(user.Id, cancellationToken);
+            if (pwd == null || !await this.Password.ValidatePasswordHashAsync(data.Password, pwd))
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
+
+            var mfa = await this.MfaRepository.GetMfaSettingsAsync(user.Id, cancellationToken);
+            if (mfa == null || !mfa.IsConfirmed)
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "MFA is not configured.")));
+
+            if (data.MfaCode.Length == 6 && !this.MfaValidator.ValidateCode(data.MfaCode, mfa) ||
+                data.MfaCode.Length == 8 && !this.MfaValidator.ValidateRecoveryCode(data.MfaCode, mfa))
+                return this.StatusCode(403, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Invalid MFA code provided.")));
+
+            await this.MfaRepository.RemoveMfaAsync(user.Id, cancellationToken);
+
+            await this.MfaRepository.ConfirmMfaAsync(user.Id, cancellationToken);
             return this.Ok(ApiResult.FromResult(true));
         }
 
@@ -293,7 +429,7 @@ namespace RosettaCTF.Controllers
                 await this.UserRepository.UpdateTokensAsync(this.RosettaUser.Id, euser.ProviderId, null, null, DateTimeOffset.MinValue, cancellationToken);
             }
 
-            return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(null)));
+            return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(user: null)));
         }
 
         [HttpPost]

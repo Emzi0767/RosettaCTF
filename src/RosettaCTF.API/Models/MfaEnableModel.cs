@@ -18,17 +18,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RosettaCTF.Models
 {
-    public sealed class UserPasswordRemoveData
+    public sealed class MfaEnableModel
     {
-        /// <summary>
-        /// Gets or sets the password.
-        /// </summary>
         [Required]
         public string Password { get; set; }
 
-        /// <summary>
-        /// Gets or sets the MFA code for the request.
-        /// </summary>
-        public int? MfaCode { get; set; }
+        [Required]
+        public string MfaCode { get; set; }
     }
 }

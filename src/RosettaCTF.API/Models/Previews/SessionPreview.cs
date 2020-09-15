@@ -43,6 +43,11 @@ namespace RosettaCTF.Models
         /// </summary>
         public string ExpiresAt { get; }
 
+        /// <summary>
+        /// Gets the MFA continuation token.
+        /// </summary>
+        public string MfaContinuation { get; }
+
         internal SessionPreview(UserPreview user)
             : this(user, null, null)
         { }
@@ -53,6 +58,12 @@ namespace RosettaCTF.Models
             this.User = user;
             this.Token = token;
             this.ExpiresAt = expiresAt?.ToString("yyyy-MM-ddTHH:mm:sszzz");
+        }
+
+        internal SessionPreview(string continuation)
+            : this(null, null, null)
+        {
+            this.MfaContinuation = continuation;
         }
     }
 }
