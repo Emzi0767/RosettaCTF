@@ -16,7 +16,7 @@
 
 import { Type, EventEmitter } from "@angular/core";
 
-import { IChallenge, IApiFlag, ICreateTeamInvite, IUserPasswordChange, IUserPasswordRemove } from "./api";
+import { IChallenge, IApiFlag, ICreateTeamInvite, IUserPasswordChange, IUserPasswordRemove, IUserSudo, IMfa, IMfaDisable } from "./api";
 
 export interface IDialogComponent {
     dialogDismiss: EventEmitter<null>;
@@ -56,4 +56,24 @@ export interface IPasswordChangeDefaults {
 
 export interface IPasswordRemoveDefaults {
     provideModel: (model: IUserPasswordRemove) => void;
+}
+
+export interface ISudoDefaults {
+    provideModel: (model: IUserSudo) => void;
+}
+
+export interface IMfaEnableDefaults {
+    provideModel: (model: IMfa, backups: string[]) => void;
+    continuation: string;
+    authenticatorUri: string;
+    backups: string[];
+}
+
+export interface IMfaDisableDefaults {
+    provideModel: (model: IMfaDisable) => void;
+}
+
+export interface IMfaDefaults {
+    provideModel: (model: IMfa) => void;
+    continuation: string;
 }

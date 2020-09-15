@@ -33,35 +33,45 @@
     <button (click)="openCountryChange()" [disabled]="changingCountry">Change</button>
 </p>
 
-<h2>Password settings</h2>
-<p>
-    <button (click)="openPasswordChange()" [disabled]="changingPassword">Change password</button>
-    <button (click)="openPasswordRemove()" [disabled]="changingPassword || connections === null || connections.length === 0">Remove password</button>
-</p>
+<ng-container *ngIf="loginSettings !== null && loginSettings.localLoginEnabled">
+    <h2>Password settings</h2>
+    <p>
+        <button (click)="openPasswordChange()" [disabled]="changingPassword">Change password</button>
+        <button (click)="openPasswordRemove()" [disabled]="changingPassword || connections === null || connections.length === 0">Disable password</button>
+    </p>
 
-<h2>Connected accounts</h2>
-<p *ngIf="connections === null else connectionsElseBlock">Loading...</p>
-<ng-template #connectionsElseBlock>
-    <p *ngIf="connections.length === 0 else connectionsEmptyBlock">No accounts are connected.</p>
-</ng-template>
-<ng-template #connectionsEmptyBlock>
-    <div class="connections">
-        <div class="connections-cell header">Account name</div>
-        <div class="connections-cell header">Provider</div>
-        <div class="connections-cell header">Actions</div>
+    <h2>2-factor authentication</h2>
+    <p>
+        <button (click)="open2faEnable()" [disabled]="changingPassword" *ngIf="!session.requiresMfa">Enable 2FA</button>
+        <button (click)="open2faDisable()" [disabled]="changingPassword" *ngIf="session.requiresMfa">Disable 2FA</button>
+    </p>
+</ng-container>
 
-        <ng-container *ngFor="let connection of connections">
-            <div class="connections-cell">{{ connection.username }}</div>
-            <div class="connections-cell">{{ connection.provider.name }}</div>
-            <div class="connections-cell"><button (click)="removeConnection(connection.provider.id)" class="small" type="button" [disabled]="removingConnection">Remove</button></div>
-        </ng-container>
-    </div>
-</ng-template>
-<p *ngIf="loginSettings && loginSettings.externalAccountProviders.length > 0">
-    <button *ngFor="let provider of loginSettings.externalAccountProviders" [routerLink]="['/session', 'login', provider.id]" [title]="'Connect a ' + provider.name + ' account'" [style]="{ background: provider.colour }" [disabled]="removingConnection">
-        Connect a {{ provider.name }} account
-    </button>
-</p>
+<ng-container *ngIf="loginSettings !== null && loginSettings.externalLoginEnabled">
+    <h2>Connected accounts</h2>
+    <p *ngIf="connections === null else connectionsElseBlock">Loading...</p>
+    <ng-template #connectionsElseBlock>
+        <p *ngIf="connections.length === 0 else connectionsEmptyBlock">No accounts are connected.</p>
+    </ng-template>
+    <ng-template #connectionsEmptyBlock>
+        <div class="connections">
+            <div class="connections-cell header">Account name</div>
+            <div class="connections-cell header">Provider</div>
+            <div class="connections-cell header">Actions</div>
+
+            <ng-container *ngFor="let connection of connections">
+                <div class="connections-cell">{{ connection.username }}</div>
+                <div class="connections-cell">{{ connection.provider.name }}</div>
+                <div class="connections-cell"><button (click)="removeConnection(connection.provider.id)" class="small" type="button" [disabled]="removingConnection">Remove</button></div>
+            </ng-container>
+        </div>
+    </ng-template>
+    <p *ngIf="loginSettings && loginSettings.externalAccountProviders.length > 0">
+        <button *ngFor="let provider of loginSettings.externalAccountProviders" [routerLink]="['/session', 'login', provider.id]" [title]="'Connect a ' + provider.name + ' account'" [style]="{ background: provider.colour }" [disabled]="removingConnection">
+            Connect a {{ provider.name }} account
+        </button>
+    </p>
+</ng-container>
 
 <ng-container *ngIf="showSolves">
     <h2>Successful solve submissions</h2>

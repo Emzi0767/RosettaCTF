@@ -32,7 +32,8 @@ namespace RosettaCTF.Services
         {
             var otps = this.ToTotp(mfa);
             var otp = new OtpGenerator(otps);
-            return otp.Generate() == code;
+
+            return otp.GenerateWindow().Contains(code);
         }
 
         public bool ValidateRecoveryCode(string code, IMultiFactorSettings mfa)
@@ -52,7 +53,7 @@ namespace RosettaCTF.Services
             return await mfaRepository.ConfigureMfaAsync(userId, totp.Secret.ToArray(), totp.Digits, (MultiFactorHmac)totp.Algorithm, totp.Period, MultiFactorType.Google, null, recbase, cancellationToken);
         }
 
-        public MfaSettingsModel GenerateClientData(IMultiFactorSettings mfa, string label, string issuer)
+        public MfaSettingsModel GenerateClientData(IMultiFactorSettings mfa, string label, string issuer, string continuation)
         {
             var otps = new TotpGeneratorSettings(label, issuer, mfa.Secret, ByteEncoding.Base32, (HmacAlgorithm)mfa.HmacAlgorithm, mfa.Digits, mfa.Additional, mfa.Period);
             var uri = otps.ToUri().ToString();
@@ -64,7 +65,8 @@ namespace RosettaCTF.Services
             return new MfaSettingsModel
             {
                 AuthenticatorUri = uri,
-                RecoveryCodes = reccodes
+                RecoveryCodes = reccodes,
+                Continuation = continuation
             };
         }
 

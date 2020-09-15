@@ -16,32 +16,28 @@
 
 import { Component, EventEmitter } from "@angular/core";
 
-import { IDialogComponent, IPasswordChangeDefaults } from "../../data/dialog";
-import { IUserPasswordChange } from "../../data/api";
+import { ISudoDefaults, IDialogComponent } from "../../data/dialog";
+import { IUserSudo } from "../../data/api";
 
 @Component({
-    selector: "app-password-change-dialog",
-    templateUrl: "./password-change-dialog.component.html",
-    styleUrls: ["./password-change-dialog.component.less"]
+    selector: "app-sudo-dialog",
+    templateUrl: "./sudo-dialog.component.html",
+    styleUrls: ["./sudo-dialog.component.less"]
 })
-export class PasswordChangeDialogComponent implements IDialogComponent {
+export class SudoDialogComponent implements IDialogComponent {
 
-    provideModel: (id: IUserPasswordChange) => void;
-    model: IUserPasswordChange = { oldPassword: null, newPassword: null, confirmPassword: null, mfaCode: null };
+    provideModel: (id: IUserSudo) => void;
+    model: IUserSudo = { password: null };
 
     dialogDismiss = new EventEmitter<null>();
 
     constructor() { }
 
-    provideDefaults(defaults: IPasswordChangeDefaults): void {
+    provideDefaults(defaults: ISudoDefaults): void {
         this.provideModel = defaults.provideModel;
     }
 
     submit(): void {
-        if (this.model.oldPassword === "") {
-            this.model.oldPassword = null;
-        }
-
         this.cancel();
         this.provideModel(this.model);
     }

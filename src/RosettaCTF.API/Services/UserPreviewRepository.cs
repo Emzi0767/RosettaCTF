@@ -62,9 +62,10 @@ namespace RosettaCTF.Services
         /// <param name="user">User to encapsulate session for.</param>
         /// <param name="token">Token to send along.</param>
         /// <param name="expiresAt">The timestamp at which the token expires.</param>
+        /// <param name="requireMfa">A value indicating whether the current user requires MFA.</param>
         /// <returns>Encapsulated session.</returns>
-        public SessionPreview GetSession(UserPreview user, string token, DateTimeOffset expiresAt)
-            => new SessionPreview(user, token, expiresAt);
+        public SessionPreview GetSession(UserPreview user, string token, DateTimeOffset expiresAt, bool requireMfa)
+            => new SessionPreview(user, token, expiresAt, requireMfa);
 
         /// <summary>
         /// Gets a session indicating authentication needs to be continued with MFA.

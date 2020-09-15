@@ -33,6 +33,7 @@ export class SessionProviderService implements OnDestroy {
         this.init$ = new Promise<void>((resolve, reject) => { this.initResolve = resolve; });
         this.currentSession = {
             isAuthenticated: false,
+            requiresMfa: null,
             token: this.getStoredToken(),
             user: null
         };

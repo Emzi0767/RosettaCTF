@@ -266,7 +266,10 @@ export interface IMfa {
     actionToken: string;
 }
 
-export interface IMfaEnable {
+/**
+ * Contains information encessary to finish enabling MFA.
+ */
+export interface IMfaDisable {
 
     /**
      * Gets or sets the MFA code to authenticate with.
@@ -277,6 +280,27 @@ export interface IMfaEnable {
      * Gets or sets the user's password to confirm the operation.
      */
     password: string;
+}
+
+/**
+ * Contains information necessary to present the user with MFA enabling confirmation dialog.
+ */
+export interface IMfaSettings {
+
+    /**
+     * Gets or sets the URI containing authentication data.
+     */
+    authenticatorUri: string;
+
+    /**
+     * Gets or sets the recovery codes issued to the user.
+     */
+    recoveryCodes: string[];
+
+    /**
+     * Gets or sets the continuation token for the operation.
+     */
+    continuation: string;
 }
 
 /**

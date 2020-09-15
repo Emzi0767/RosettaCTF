@@ -18,9 +18,10 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
 import { RosettaApiService } from "../../services/rosetta-api.service";
-import { ILoginSettings, IUserLogin } from "../../data/api";
+import { ILoginSettings, IUserLogin, IMfa } from "../../data/api";
 import { EventDispatcherService } from "../../services/event-dispatcher.service";
 import { SessionProviderService } from "../../services/session-provider.service";
+import { MfaDialogComponent } from "../../dialog/mfa-dialog/mfa-dialog.component";
 
 @Component({
     selector: "app-login-screen",
@@ -53,9 +54,19 @@ export class LoginScreenComponent implements OnInit {
             return;
         }
 
-        this.sessionProvider.updateSession(loginResult.result);
-        await this.api.refreshXsrf();
-        this.router.navigate(["/"]);
+        if (loginResult.result.mfaContinuation !== undefined && loginResult.result.mfaContinuation !== null) {
+            this.eventDispatcher.emit("dialog", {
+                    componentType: MfaDialogComponent,
+                    defaults: {
+                        provideModel: (model: IMfa) => this.do2fa(model),
+                        continuation: loginResult.result.mfaContinuation
+                    }
+                });
+        } else {
+            this.sessionProvider.updateSession(loginResult.result);
+            await this.api.refreshXsrf();
+            this.router.navigate(["/"]);
+        }
     }
 
     private async doInit(): Promise<void> {
@@ -68,5 +79,19 @@ export class LoginScreenComponent implements OnInit {
         }
 
         this.loginSettings = data.result;
+    }
+
+    private async do2fa(model: IMfa): Promise<void> {
+        const result = await this.api.completeMfaLogin(model);
+        if (!result.isSuccess) {
+            this.eventDispatcher.emit("error", { message: "Could not log in. Please try again.", reason: result.error });
+
+            this.lockControls = false;
+            return;
+        }
+
+        this.sessionProvider.updateSession(result.result);
+        await this.api.refreshXsrf();
+        this.router.navigate(["/"]);
     }
 }

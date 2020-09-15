@@ -18,6 +18,7 @@
  * Represents a user.
  */
 export interface IUser {
+
     /**
      * Gets the ID of the user.
      */
@@ -48,6 +49,7 @@ export interface IUser {
  * Represents a team, which is a collection of users.
  */
 export interface ITeam {
+
     /**
      * Gets the ID of the team.
      */
@@ -73,6 +75,7 @@ export interface ITeam {
  * Represents an invite to a team.
  */
 export interface ITeamInvite {
+
     /**
      * Gets the ID of the team.
      */
@@ -93,10 +96,16 @@ export interface ITeamInvite {
  * Represents current user's session.
  */
 export interface ISession {
+
     /**
      * Gets whether the current user has successfully authenticated.
      */
     isAuthenticated: boolean;
+
+    /**
+     * Gets whether the current user requires MFA for password authentication.
+     */
+    requiresMfa: boolean | null;
 
     /**
      * Gets the currently-authenticated user.

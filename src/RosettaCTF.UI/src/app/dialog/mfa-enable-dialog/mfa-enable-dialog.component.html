@@ -1,0 +1,42 @@
+<!-- 
+
+  This file is part of RosettaCTF project.
+  
+  Copyright 2020 Emzi0767
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ 
+-->
+
+<h5 class="title">Scan the QR code and enter a 2FA code from your application</h5>
+
+<form (ngSubmit)="doNothing()" #mfaForm="ngForm">
+    <p class="mfa-display">
+        <qrcode [qrdata]="authenticatorUri" [width]="256" [errorCorrectionLevel]="'M'" elementType="'canvas'"></qrcode>
+    </p>
+
+    <div class="input-container">
+        <input type="number" 
+            placeholder="Multi-factor code"
+            required minlength="6" maxlength="6"
+            [(ngModel)]="model.mfaCode" name="mfaCode" #mfaCode="ngModel" />
+    </div>
+    <div class="validation-error" [hidden]="mfaCode.valid || mfaCode.pristine">
+        Invalid multi-factor code.
+    </div>
+</form>
+
+<div class="buttons">
+    <button (click)="cancel()">Cancel</button>
+    <button (click)="submit()" [disabled]="!mfaForm.valid || mfaForm.pristine">Confirm</button>
+</div>

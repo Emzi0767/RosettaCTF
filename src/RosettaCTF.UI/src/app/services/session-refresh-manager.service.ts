@@ -71,6 +71,8 @@ export class SessionRefreshManagerService implements OnDestroy {
 
     private async doRefresh(): Promise<void> {
         const session = await this.api.refreshToken();
-        this.sessionProvider.updateSession(session.isSuccess ? session.result : { isAuthenticated: false, token: null, user: null });
+        this.sessionProvider.updateSession(session.isSuccess
+            ? session.result
+            : { isAuthenticated: false, requiresMfa: null, token: null, user: null });
     }
 }

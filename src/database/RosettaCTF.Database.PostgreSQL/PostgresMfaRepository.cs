@@ -45,7 +45,11 @@ namespace RosettaCTF
             long recoveryBase, 
             CancellationToken cancellationToken = default)
         {
-            var mfa = new PostgresMfaSettings
+            var mfa = await this.Database.MfaSettings.FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+            if (mfa != null)
+                this.Database.MfaSettings.Remove(mfa);
+
+            mfa = new PostgresMfaSettings
             {
                 UserId = userId,
                 Secret = secret,

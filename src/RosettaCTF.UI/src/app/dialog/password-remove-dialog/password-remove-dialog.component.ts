@@ -27,7 +27,7 @@ import { IUserPasswordRemove } from "../../data/api";
 export class PasswordRemoveDialogComponent implements IDialogComponent {
 
     provideModel: (id: IUserPasswordRemove) => void;
-    model: IUserPasswordRemove = { password: null };
+    model: IUserPasswordRemove = { password: null, mfaCode: null };
 
     dialogDismiss = new EventEmitter<null>();
 

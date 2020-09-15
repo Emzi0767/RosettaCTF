@@ -29,6 +29,11 @@ namespace RosettaCTF.Models
         public bool IsAuthenticated { get; }
 
         /// <summary>
+        /// Gets whether the current user requires MFA.
+        /// </summary>
+        public bool? RequiresMfa { get; }
+
+        /// <summary>
         /// Gets the currently authenticated user.
         /// </summary>
         public UserPreview User { get; }
@@ -49,19 +54,20 @@ namespace RosettaCTF.Models
         public string MfaContinuation { get; }
 
         internal SessionPreview(UserPreview user)
-            : this(user, null, null)
+            : this(user, null, null, null)
         { }
 
-        internal SessionPreview(UserPreview user, string token, DateTimeOffset? expiresAt)
+        internal SessionPreview(UserPreview user, string token, DateTimeOffset? expiresAt, bool? requireMfa)
         {
             this.IsAuthenticated = user != null;
             this.User = user;
             this.Token = token;
             this.ExpiresAt = expiresAt?.ToString("yyyy-MM-ddTHH:mm:sszzz");
+            this.RequiresMfa = requireMfa;
         }
 
         internal SessionPreview(string continuation)
-            : this(null, null, null)
+            : this(null, null, null, null)
         {
             this.MfaContinuation = continuation;
         }

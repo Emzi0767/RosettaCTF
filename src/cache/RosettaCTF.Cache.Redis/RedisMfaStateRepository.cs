@@ -23,7 +23,7 @@ namespace RosettaCTF
 {
     internal sealed class RedisMfaStateRepository : IMfaStateRepository
     {
-        private const string MfaKey = "oauth";
+        private const string MfaKey = "mfa";
         private const string MfaTokenKey = "token";
         private const string MfaPrefix = "mfa/";
 

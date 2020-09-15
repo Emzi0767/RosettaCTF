@@ -16,32 +16,29 @@
 
 import { Component, EventEmitter } from "@angular/core";
 
-import { IDialogComponent, IPasswordChangeDefaults } from "../../data/dialog";
-import { IUserPasswordChange } from "../../data/api";
+import { IMfaDisable } from "../../data/api";
+import { IMfaDisableDefaults, IDialogComponent } from "../../data/dialog";
 
 @Component({
-    selector: "app-password-change-dialog",
-    templateUrl: "./password-change-dialog.component.html",
-    styleUrls: ["./password-change-dialog.component.less"]
+  selector: "app-mfa-disable-dialog",
+  templateUrl: "./mfa-disable-dialog.component.html",
+  styleUrls: ["./mfa-disable-dialog.component.less"]
 })
-export class PasswordChangeDialogComponent implements IDialogComponent {
+export class MfaDisableDialogComponent implements IDialogComponent {
 
-    provideModel: (id: IUserPasswordChange) => void;
-    model: IUserPasswordChange = { oldPassword: null, newPassword: null, confirmPassword: null, mfaCode: null };
+    provideModel: (id: IMfaDisable) => void;
+    model: IMfaDisable = { mfaCode: null, password: null };
 
     dialogDismiss = new EventEmitter<null>();
 
     constructor() { }
 
-    provideDefaults(defaults: IPasswordChangeDefaults): void {
+    provideDefaults(defaults: IMfaDisableDefaults): void {
         this.provideModel = defaults.provideModel;
     }
 
     submit(): void {
-        if (this.model.oldPassword === "") {
-            this.model.oldPassword = null;
-        }
-
+        this.model.mfaCode = this.model.mfaCode.toString().padStart(6, "0");
         this.cancel();
         this.provideModel(this.model);
     }
@@ -51,4 +48,5 @@ export class PasswordChangeDialogComponent implements IDialogComponent {
     }
 
     doNothing(): void { }
+
 }

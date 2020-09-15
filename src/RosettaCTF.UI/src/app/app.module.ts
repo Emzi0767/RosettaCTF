@@ -22,6 +22,7 @@ import { HttpClientModule, HttpClientXsrfModule, HTTP_INTERCEPTORS } from "@angu
 import { MarkdownModule } from "ngx-markdown";
 
 import { KonamiModule } from "ngx-konami";
+import { QRCodeModule } from "angularx-qrcode";
 
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
@@ -64,8 +65,12 @@ import { FieldValueMatchValidatorDirective } from "./services/field-value-match-
 import { InfoDialogComponent } from "./dialog/info-dialog/info-dialog.component";
 import { InviteDialogComponent } from "./dialog/invite-dialog/invite-dialog.component";
 import { CountryChangeDialogComponent } from "./dialog/country-change-dialog/country-change-dialog.component";
-import { PasswordRemoveDialogComponent } from './dialog/password-remove-dialog/password-remove-dialog.component';
-import { PasswordChangeDialogComponent } from './dialog/password-change-dialog/password-change-dialog.component';
+import { PasswordRemoveDialogComponent } from "./dialog/password-remove-dialog/password-remove-dialog.component";
+import { PasswordChangeDialogComponent } from "./dialog/password-change-dialog/password-change-dialog.component";
+import { SudoDialogComponent } from "./dialog/sudo-dialog/sudo-dialog.component";
+import { MfaEnableDialogComponent } from "./dialog/mfa-enable-dialog/mfa-enable-dialog.component";
+import { MfaDisableDialogComponent } from "./dialog/mfa-disable-dialog/mfa-disable-dialog.component";
+import { MfaDialogComponent } from "./dialog/mfa-dialog/mfa-dialog.component";
 
 @NgModule({
     declarations: [
@@ -99,7 +104,11 @@ import { PasswordChangeDialogComponent } from './dialog/password-change-dialog/p
         InviteDialogComponent,
         CountryChangeDialogComponent,
         PasswordRemoveDialogComponent,
-        PasswordChangeDialogComponent
+        PasswordChangeDialogComponent,
+        SudoDialogComponent,
+        MfaEnableDialogComponent,
+        MfaDisableDialogComponent,
+        MfaDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -112,7 +121,8 @@ import { PasswordChangeDialogComponent } from './dialog/password-change-dialog/p
             cookieName: "Rosetta-XSRF",
             headerName: "X-Rosetta-XSRF"
         }),
-        MarkdownModule.forRoot()
+        MarkdownModule.forRoot(),
+        QRCodeModule
     ],
     providers: [
         ConfigurationProviderService,

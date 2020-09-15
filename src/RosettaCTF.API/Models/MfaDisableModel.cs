@@ -14,26 +14,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.ComponentModel.DataAnnotations;
+
 namespace RosettaCTF.Models
 {
-    /// <summary>
-    /// Represents settings for MFA setup.
-    /// </summary>
-    public sealed class MfaSettingsModel
+    public sealed class MfaDisableModel
     {
-        /// <summary>
-        /// Gets or sets the URL containing data for authentication.
-        /// </summary>
-        public string AuthenticatorUri { get; set; }
+        [Required]
+        public string Password { get; set; }
 
-        /// <summary>
-        /// Gets or sets the collection of recovery codes.
-        /// </summary>
-        public string[] RecoveryCodes { get; set; }
-
-        /// <summary>
-        /// Gets or sets the continuation token for the operation.
-        /// </summary>
-        public string Continuation { get; set; }
+        [Required]
+        public string MfaCode { get; set; }
     }
 }

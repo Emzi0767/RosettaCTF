@@ -18,7 +18,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 
 // tslint:disable-next-line: max-line-length
-import { IApiResult, IApiEventConfiguration, IApiFlag, IScoreboardEntry, IChallengeCategory, IChallenge, ISolve, IUserPasswordChange, IUserPasswordRemove, IUserRegister, IUserLogin, ILoginSettings, IExternalAccount } from "../data/api";
+import { IApiResult, IApiEventConfiguration, IApiFlag, IScoreboardEntry, IChallengeCategory, IChallenge, ISolve, IUserPasswordChange, IUserPasswordRemove, IUserRegister, IUserLogin, ILoginSettings, IExternalAccount, IUserSudo, IMfaSettings, IMfaDisable, IMfa } from "../data/api";
 import { ISession, ITeam, ITeamInvite } from "../data/session";
 import { SessionProviderService } from "./session-provider.service";
 
@@ -123,9 +123,9 @@ export class RosettaApiService {
         };
     }
 
-    async changePassword(pwd: IUserPasswordChange): Promise<IApiResult<boolean>> {
+    async changePassword(pwd: IUserPasswordChange): Promise<IApiResult<ISession>> {
         try {
-            const response = await this.http.patch<IApiResult<boolean>>("/api/session/password", pwd, this.getOptions()).toPromise();
+            const response = await this.http.patch<IApiResult<ISession>>("/api/session/password", pwd, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 
@@ -134,9 +134,10 @@ export class RosettaApiService {
         };
     }
 
-    async removePassword(pwd: IUserPasswordRemove): Promise<IApiResult<boolean>> {
+    async removePassword(pwd: IUserPasswordRemove): Promise<IApiResult<ISession>> {
         try {
-            const response = await this.http.patch<IApiResult<boolean>>("/api/session/password/remove", pwd, this.getOptions()).toPromise();
+            // tslint:disable-next-line: max-line-length
+            const response = await this.http.patch<IApiResult<ISession>>("/api/session/password/remove", pwd, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 
@@ -183,6 +184,51 @@ export class RosettaApiService {
         try {
             // tslint:disable-next-line: max-line-length
             const response = await this.http.delete<IApiResult<boolean>>(`/api/session/connections/${provider}`, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    // MFA -----------------------------------------------------------
+    async completeMfaLogin(data: IMfa): Promise<IApiResult<ISession>> {
+        try {
+            const response = await this.http.post<IApiResult<ISession>>("/api/session/mfa", data, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    async startMfaEnable(data: IUserSudo): Promise<IApiResult<IMfaSettings>> {
+        try {
+            const response = await this.http.put<IApiResult<IMfaSettings>>("/api/session/mfa", data, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    async completeMfaEnable(data: IMfa): Promise<IApiResult<ISession>> {
+        try {
+            const response = await this.http.post<IApiResult<ISession>>("/api/session/mfa/enable", data, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
+    async disableMfa(data: IMfaDisable): Promise<IApiResult<ISession>> {
+        try {
+            const response = await this.http.post<IApiResult<ISession>>("/api/session/mfa/disable", data, this.getOptions()).toPromise();
             return response.body;
         } catch (ex) { }
 

@@ -1,4 +1,4 @@
-﻿// This file is part of RosettaCTF project.
+// This file is part of RosettaCTF project.
 //
 // Copyright 2020 Emzi0767
 //
@@ -14,16 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.ComponentModel.DataAnnotations;
+@import "../../common/dialogs.less";
+@import "../../common/buttons.less";
 
-namespace RosettaCTF.Models
-{
-    public sealed class MfaEnableModel
-    {
-        [Required]
-        public string Password { get; set; }
-
-        [Required]
-        public string MfaCode { get; set; }
-    }
-}
+.dialogs-form();
