@@ -23,6 +23,8 @@ namespace RosettaCTF.Models
     {
         public long Id { get; set; }
 
+        public long Ordinal => this.Id;
+
         public string Contents { get; set; }
 
         public bool IsValid { get; set; }

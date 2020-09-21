@@ -52,40 +52,40 @@ namespace RosettaCTF.API
 
         public Startup(IConfiguration configuration)
         {
-        // Configuration loading
-        // Given an object structure like
-        // CONFIG:
-        // prop: bool
-        // listen: endpoint[]
-        // 
-        // ENDPOINT:
-        // address: string
-        // port: int
-        //
-        // Array indexes are treated as keys
-        // To set /prop via:
-        // - envvars: ROSETTACTF__PROP=true (note double underscore)
-        // - cmdline: --prop=false
-        //
-        // To set /listen/0/* via:
-        // - envvars (note double underscores):
-        //   ROSETTACTF__LISTEN__0__ADDRESS=0.0.0.0
-        //   ROSETTACTF__LISTEN__0__PORT=5000
-        // - cmdline:
-        //   --listen:0:address=127.0.0.1
-        //   --listen:0:port=4200
-        //
-        // Supported configuration sources, in order of precedence (first is lowest priority - meaning higher 
-        // priority will override its values):
-        // 1. appsettings.json
-        // 2. appsettings.*.json (* is env, i.e. development, production, or staging)
-        // 3. *.json (specified via ROSETTACTF__JSONCONFIGURATION; defaults to config.json)
-        // 4. *.yml (specified via ROSETTACTF__YAMLCONFIGURATION; defaults to config.yml)
-        // 5. Environment variables
-        // 6. Command line
+            // Configuration loading
+            // Given an object structure like
+            // CONFIG:
+            // prop: bool
+            // listen: endpoint[]
+            // 
+            // ENDPOINT:
+            // address: string
+            // port: int
+            //
+            // Array indexes are treated as keys
+            // To set /prop via:
+            // - envvars: ROSETTACTF__PROP=true (note double underscore)
+            // - cmdline: --prop=false
+            //
+            // To set /listen/0/* via:
+            // - envvars (note double underscores):
+            //   ROSETTACTF__LISTEN__0__ADDRESS=0.0.0.0
+            //   ROSETTACTF__LISTEN__0__PORT=5000
+            // - cmdline:
+            //   --listen:0:address=127.0.0.1
+            //   --listen:0:port=4200
+            //
+            // Supported configuration sources, in order of precedence (first is lowest priority - meaning higher 
+            // priority will override its values):
+            // 1. appsettings.json
+            // 2. appsettings.*.json (* is env, i.e. development, production, or staging)
+            // 3. *.json (specified via ROSETTACTF__JSONCONFIGURATION; defaults to config.json)
+            // 4. *.yml (specified via ROSETTACTF__YAMLCONFIGURATION; defaults to config.yml)
+            // 5. Environment variables
+            // 6. Command line
 
-        // For explanation on L92 and L93, see
-        https://github.com/dotnet/runtime/issues/40911
+            // For explanation on L92 and L93, see
+            https://github.com/dotnet/runtime/issues/40911
             // Load envvars and cmdline switches
             var cfg = new ConfigurationBuilder()
                 .AddConfiguration(configuration)

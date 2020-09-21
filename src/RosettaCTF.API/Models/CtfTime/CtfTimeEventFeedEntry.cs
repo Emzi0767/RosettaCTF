@@ -14,53 +14,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
-namespace RosettaCTF.Data
+namespace RosettaCTF.Models
 {
     /// <summary>
-    /// Represents a solve submission.
+    /// Represents a single entry in the capture log feed.
     /// </summary>
-    public interface ICtfSolveSubmission
+    public sealed class CtfTimeEventFeedEntry
     {
         /// <summary>
-        /// Gets the ordinality of this solve.
+        /// Reresents a correct submission.
         /// </summary>
-        public long Ordinal { get; }
+        public const string FlagCorrect = "taskCorrect";
 
         /// <summary>
-        /// Gets the contents of the submission.
+        /// Represents an incorrect submission.
         /// </summary>
-        string Contents { get; }
+        public const string FlagWrong = "taskWrong";
 
         /// <summary>
-        /// Gets whether the submission is valid.
+        /// Gets or sets the ID of the entry.
         /// </summary>
-        bool IsValid { get; }
+        public long Id { get; set; }
 
         /// <summary>
-        /// Gets the challenge the submission is for.
+        /// Gets or sets the timestamp of the event, as a UNIX timestamp.
         /// </summary>
-        ICtfChallenge Challenge { get; }
+        public long Time { get; set; }
 
         /// <summary>
-        /// Gets the user who submitted the challenge.
+        /// Gets or sets the type of the entry.
         /// </summary>
-        IUser User { get; }
+        public string Type { get; set; }
 
         /// <summary>
-        /// Gets the team which submitted the challenge.
+        /// Gets or sets the name of the team.
         /// </summary>
-        ITeam Team { get; }
+        public string Team { get; set; }
 
         /// <summary>
-        /// Gets the timestamp at which the submission was created.
+        /// Gets or sets the name of the task.
         /// </summary>
-        DateTimeOffset Timestamp { get; }
-
-        /// <summary>
-        /// Gets the frozen score, if the scoring freezes them.
-        /// </summary>
-        int? Score { get; }
+        public string Task { get; set; }
     }
 }

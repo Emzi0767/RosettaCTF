@@ -209,5 +209,13 @@ namespace RosettaCTF
                 .Include(x => x.ChallengeInternal).ThenInclude(x => x.CategoryInternal)
                 .Where(x => x.IsValid && x.ChallengeId == challengeId)
                 .ToListAsync(cancellationToken);
+
+        public async Task<IEnumerable<ICtfSolveSubmission>> GetAllSolvesAsync(long lastId = -1, CancellationToken cancellationToken = default)
+            => await this.Database.Solves
+                .Where(x => x.Id > lastId)
+                .OrderBy(x => x.Id)
+                .Include(x => x.TeamInternal)
+                .Include(x => x.ChallengeInternal).ThenInclude(x => x.CategoryInternal)
+                .ToListAsync(cancellationToken);
     }
 }

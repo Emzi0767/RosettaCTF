@@ -464,7 +464,8 @@ namespace RosettaCTF
                 e.ToTable("solves")
                     .Ignore(m => m.Challenge)
                     .Ignore(m => m.Team)
-                    .Ignore(m => m.User);
+                    .Ignore(m => m.User)
+                    .Ignore(m => m.Ordinal);
 
                 e.Property(m => m.Id)
                     .IsRequired()
