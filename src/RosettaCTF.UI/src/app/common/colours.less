@@ -14,38 +14,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@import "colours.less";
+@theme-main:                  hsl(210, 100%, 42%);
+@theme-main-darker:           darken(@theme-main, 10%);
+@theme-main-darkest:          darken(@theme-main, 25%);
+@theme-main-lighter:          lighten(@theme-main, 20%);
 
-button {
-    display: inline-block;
-
-    background: @theme-main-darker;
-    color: #eee;
-    border: none;
-    border-radius: 4px;
-
-    font: 11pt 'IBM Plex Sans';
-    font-weight: 450;
-
-    margin: 0 12px 0 0;
-    padding: 8px 24px;
-
-    box-shadow: 2px 2px 2px 0 #222;
-
-    transition: background 0.2s;
-
-    &:hover {
-        background: @theme-main;
-    }
-
-    &[disabled] {
-        color: #aaa;
-    }
-
-    &.small {
-        font-size: 10pt;
-    
-        margin: 0 8px 0 0;
-        padding: 3px 8px;
-    }
-}
+@theme-background:            hsl(210, 10%, 22%);
+@theme-background-lighter:    lighten(@theme-background, 25%);
+@theme-background-semidarker: darken(@theme-background, 3%);
+@theme-background-darker:     darken(@theme-background, 8%);

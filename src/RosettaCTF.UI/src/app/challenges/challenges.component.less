@@ -15,6 +15,7 @@
 // limitations under the License.
 
 @import "../common/buttons.less";
+@import "../common/colours.less";
 
 div.category {
     width: 100%;
@@ -29,7 +30,7 @@ div.category {
             width: 100%;
             margin: 0; padding: 0;
 
-            background: #444;
+            background: @theme-background-semidarker;
 
             border-radius: 8px;
             box-shadow: 4px 4px 3px -1px #111;
@@ -40,7 +41,7 @@ div.category {
                 padding: 6px 12px;
                 margin: 0;
 
-                background: #555;
+                background: @theme-main-darkest;
                 color: #fff;
 
                 position: relative;
@@ -56,7 +57,7 @@ div.category {
                 }
 
                 &.solved {
-                    background: #006cd1;
+                    background: @theme-main;
                 }
 
                 & > small.score {

@@ -14,6 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@import "colours.less";
+
 form {
     width: 100%;
 
@@ -59,7 +61,7 @@ form {
                 transition: border-bottom-color 0.3s;
 
                 &:hover {
-                    border-bottom-color: #007fff;
+                    border-bottom-color: @theme-main;
                 }
 
                 &.ng-invalid:not(.ng-pristine) {

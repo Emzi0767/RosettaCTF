@@ -24,6 +24,7 @@
 
 // Import flags
 @import "assets/flags/flags.less";
+@import "app/common/colours.less";
 
 // Basic medium settings
 html, body {
@@ -35,17 +36,17 @@ html, body {
     font: 12pt 'IBM Plex Sans','Segoe UI','Helvetica Neue','Arial',sans-serif;
     font-weight: 450;
 
-    background: #333;
+    background: @theme-background;
     color: #ddd;
 
     // Firefox
-    scrollbar-color: #666 transparent;
+    scrollbar-color: @theme-background-lighter transparent;
     scrollbar-width: 24px;
 
     // IE
-    scrollbar-track-color: #333;
-    scrollbar-face-color: #444;
-    scrollbar-shadow-color: #444;
+    scrollbar-track-color: @theme-background;
+    scrollbar-face-color: @theme-background-lighter;
+    scrollbar-shadow-color: @theme-background-lighter;
 }
 
 // WebKit/Blink (Chrome/Chromium)
@@ -58,7 +59,7 @@ html, body {
 
         & > html::-webkit-scrollbar-thumb,
         & > body::-webkit-scrollbar-thumb {
-            background: #444;
+            background: @theme-background-lighter;
         }
 
         & > html::-webkit-scrollbar-button,
