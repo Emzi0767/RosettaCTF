@@ -244,6 +244,18 @@ building SPA, you can specify `/p:BuildSpa=False` flag.
 To build the SPA separately from the API project, run `npm run prod`. This will build a deployment-ready production 
 version of the SPA. Do not forget to restore packages by doing `npm install` before building.
 
+## Credits and Acknowledgements
+I'd like to thank the following people, for helping make this project possible:
+- **Still Hsu** - for bearing with me while, at the same time, providing feedback and testing the application. They 
+  provided me with a lot of invaluable input on both inner and outer workings of Rosetta. Make sure to check out their 
+  GitHub and socials.
+   - [GitHub](https://github.com/Still34)
+   - [Twitter](https://twitter.com/StillAzureH)
+   - [Blog/Website](https://stillu.cc/)
+- **Quahu** - for .NET rubberducking, which helped me get through some mental blockage moments, as well as some 
+  general programming input, which helped me squeeze out a bit more out of .NET, be it functionality or performance.
+   - [GitHub](https://github.com/Quahu)
+
 ## Support me
 Lots of effort went into making this software.
 
