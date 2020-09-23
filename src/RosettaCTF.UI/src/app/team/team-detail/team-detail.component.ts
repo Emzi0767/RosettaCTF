@@ -72,7 +72,7 @@ export class TeamDetailComponent implements OnInit {
         }
 
         this.points = solves.result.map(x => x.score)
-            .reduce((acc: number, current: number) => acc + current);
+            .reduce((acc: number, current: number) => acc + current, 0);
 
         this.solves = solves.result;
     }

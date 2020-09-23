@@ -121,7 +121,7 @@ export class TeamManageComponent implements OnInit, OnDestroy {
         }
 
         this.points = solves.result.map(x => x.score)
-            .reduce((acc: number, current: number) => acc + current);
+            .reduce((acc: number, current: number) => acc + current, 0);
 
         this.solves = solves.result;
     }

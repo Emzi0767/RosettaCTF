@@ -22,7 +22,7 @@
 
 <form (ngSubmit)="doNothing()" #mfaForm="ngForm">
     <p class="mfa-display">
-        <qrcode [qrdata]="authenticatorUri" [width]="256" [errorCorrectionLevel]="'M'" elementType="'canvas'"></qrcode>
+        <qr-code [value]="authenticatorUri" [size]="256" [level]="'L'" [canvas]="true"></qr-code>
     </p>
 
     <div class="input-container">

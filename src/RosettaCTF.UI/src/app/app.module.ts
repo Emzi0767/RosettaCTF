@@ -22,7 +22,7 @@ import { HttpClientModule, HttpClientXsrfModule, HTTP_INTERCEPTORS } from "@angu
 import { MarkdownModule } from "ngx-markdown";
 
 import { KonamiModule } from "ngx-konami";
-import { QRCodeModule } from "angularx-qrcode";
+import { QRCodeModule } from "angular2-qrcode";
 
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
