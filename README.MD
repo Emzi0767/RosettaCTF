@@ -8,23 +8,30 @@ relatively easy to implement other providers; all you have to do is implement pr
 assemblies with appropriate attributes.
 
 ## Setup
-For starters, Rosetta uses Discord as login provider, so you need to create an application on [Discord developers 
-website](https://discord.com/developers/applications), and paste the client ID and secret into appropriate places in 
-the config (or supply them via other means, such as environment variables or commandline args). In the OAuth2 tab, you 
-should add a redirect URL to the application. It should have a path of `/session/callback` (so the URL should look 
-like `https://myrosettactfinstance.xyz/session/callback`). You should also set `hostname` and `port` in the config for 
-OAuth redirects, they should match your redirect URL. If your redirect URL does not explicitly specify a port, set 
-port to `-1`. The `tokenKey` should be set to a strong random string, as it will be used for token storage. You should 
-also set `guildId` to your event server's ID. Rosetta will only authorize users who are in your specified server to 
-take part in the event.
+Rosetta provides 2 different ways of authenticating users - via OAuth2, and/or via username/password authentication, 
+with optional TOTP 2FA support. By default only Discord has a fully-featured built-in OAuth2 provider, however, the 
+instance operator can configure any number of custom providers via config.json.
 
-Next step is configuring Rosetta's JWT provider. You should provide values for the issuer and key fields. Your key 
-should be sufficiently strong to be considered secure, as it will be used to sign tokens. A weak key might lead to 
-users impersonating other users.
+To enable OAuth, set `authentication / oauth / enable` to `true`. If OAuth is enabled, the `tokenKey` under 
+`authentication / oauth` should be set to a strong random string, as it will be used for token storage. 
+
+To enable local username/password authentication, set `authentication / localLogin` to `true`.
+
+To use Discord as an authentication provider, create an application on [Discord developers website](https://discord.com/developers/applications), 
+and paste the client ID and secret into appropriate places in the config (or supply them via other means, such as 
+environment variables or commandline args). In the OAuth2 tab, you should add a redirect URL to the application. It 
+should have a path of `/session/callback` (so the URL should look like `https://myrosettactfinstance.xyz/session/callback`). 
+You should also set `guildId` to your event server's ID. Rosetta will only authorize users who are in your specified 
+server to take part in the event.
+
+Next step is configuring Rosetta's JWT provider. You should provide values for the `tokenIssuer` and `tokenKey` fields 
+under `authentication`. Your key should be sufficiently strong to be considered secure, as it will be used to sign 
+tokens. A weak key might lead to users impersonating other users.
 
 Next up is HTTP configuration. You can specify multiple HTTP listen endpoints, each as a separate item in the listen 
 array. If you want an endpoint to use TLS, you should set `useSsl` to `true`, and supply the path to the certificate 
-file in PKCS#12 format, and a file containing the password to it.
+file in PKCS#12 format, and a file containing the password to it. It is also configure proxy settings in here, if the 
+API server is deployed behind one, such as nginx reverse proxy or Cloudflare.
 
 For cache and database, options are provider-dependent. You should configure them appropriately for your providers.
 
@@ -191,6 +198,45 @@ have to either clear the relevant tables in your database (for default postgres 
 next startup, or manually reflect the changes in the database. Keep in mind that in case of relational databases, 
 there will be foreign key constraints between tables (which will also involve solve table, `solves` in the default 
 provider), so be careful with this.
+
+## Extending RosettaCTF
+It is possible to implement your own cache, database, and OAuth providers. You can check the existing providers for 
+reference on how to do so.
+
+Your project should reference `RosettaCTF.Abstractions`, which provides all the necessary abstractions, common types, 
+and utilities which are needed to implement a Rosetta component.
+
+The assembly should be tagged with `CacheProviderAttribute`, `DatabaseProviderAttribute`, or `OAuthProviderAttribute` 
+respectively for cache, database, and OAuth providers. Furthermore, the assembly should provide a class which 
+implements `ICacheServiceInitializer`, `IDatabaseServiceInitializer`, or `IOAuthProviderServiceInitializer` interface, 
+respective for the type of component, which is default-constructible. The class has methods for registering and 
+initializing the provider, to allow for performing any startup tasks.
+
+It is typically expected that a cache provider will provide implementations for `ICtfChallengeCacheRepository`, 
+`IOAuthStateRepository`, and `IMfaStateRepository`. A database provider should typically provide `IUserRepository`, 
+`ICtfChallengeRepository`, and `IMfaRepository`. This, however, is not strongly-defined, and these types can be 
+provided by any of these components. The general idea is that cache should provide short-lived data, such as states 
+and current point counts, whereas a database should be a persistent storage.
+
+An OAuth provider should provide an implementation of `IOAuthProvider`.
+
+The built assemblies can be dropped into RosettaCTF's API server working directory, along with any dependencies. They 
+should be detected and loaded automatically. However, that might not always work, due to how .NET Core handles 
+dependencies. In such event, a project can be created in respective directory, and then RosettaCTF.API project can be 
+built. The API project is set up such that it automatically references any projects in `src/cache`, `src/database`, 
+and `src/oauth`. This adds those projects to the dependency tree, which causes them to be automatically deployed with 
+all their dependencies.
+
+## Building RosettaCTF
+RosettaCTF consists of 2 parts: the API server (RosettaCTF.API project), and the SPA webapp (RosettaCTF.UI project). 
+To build the former, .NET Core SDK 3.1 (version 3.1.401 or better) is required. To build the latter, node.js 10.0.0 or 
+better is required.
+
+By default, building the API project will build the SPA as well. This can take quite a while, so in order to omit 
+building SPA, you can specify `/p:BuildSpa=False` flag.
+
+To build the SPA separately from the API project, run `npm run prod`. This will build a deployment-ready production 
+version of the SPA. Do not forget to restore packages by doing `npm install` before building.
 
 ## Support me
 Lots of effort went into making this software.
