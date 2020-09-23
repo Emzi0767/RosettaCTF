@@ -5,12 +5,13 @@ Docker-compatible.
 
 Rosetta uses PostgreSQL as its main storage engine, and Redis as its cache storage provider, however it's possible and 
 relatively easy to implement other providers; all you have to do is implement provided interfaces and flag your 
-assemblies with appropriate attributes.
+assemblies with appropriate attributes. You can read more in [Extending RosettaCTF section](#extending-rosettactf).
 
 ## Setup
 Rosetta provides 2 different ways of authenticating users - via OAuth2, and/or via username/password authentication, 
 with optional TOTP 2FA support. By default only Discord has a fully-featured built-in OAuth2 provider, however, the 
-instance operator can configure any number of custom providers via config.json.
+instance operator can configure any number of custom providers via config.json. You can also implement proper support 
+for external providers, as outlined in [Extending RosettaCTF section](#extending-rosettactf).
 
 To enable OAuth, set `authentication / oauth / enable` to `true`. If OAuth is enabled, the `tokenKey` under 
 `authentication / oauth` should be set to a strong random string, as it will be used for token storage. 
@@ -189,6 +190,11 @@ server {
 
 ### Example IIS 10.0 configuration for Windows 10 and Windows Server 2016/2019
 [Instructions on separate page](SETUP-IIS.MD)
+
+## CTFtime integration
+RosettaCTF exposes 2 CTFtime info endpoints: `/api/ctftime/scoreboard`, which can be used to provide scoreboard 
+information to CTFtime, and `/api/ctftime/feed`, which provides information about task solving events. You can learn 
+more about these endpoints at [CTFtime](https://ctftime.org/json-scoreboard-feed).
 
 ## Other considerations
 On startup, Rosetta transfers all challenges from your event configuration file (default: `event.yml`) to the 
