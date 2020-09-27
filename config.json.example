@@ -34,16 +34,47 @@
       }
     ]
   },
-  "discord": {
-    "clientId": 123456789123456789,
-    "secret": "Client secret from Discord Developers page",
-    "hostname": "myrosettactfinstance.xyz",
-    "port": -1,
+  "authentication": {
     "tokenKey": "hunter2",
-    "guildId": "ID of the server to serve as authorization server. Only members from this server will be allowed to take part."
+    "tokenIssuer": "https://myrosettactfinstance.xyz/",
+    "localLogin": true,
+    "oauth": {
+      "enable": true,
+      "tokenKey": "hunter2",
+      "providers": [
+        {
+          "type": "discord",
+          "clientId": "123456789123456789",
+          "clientSecret": "Client secret from Discord Developers page",
+          "authorizedGuilds": [
+            123456789123456789
+          ]
+        },
+		{
+		  "type": "custom",
+		  "id": "ctftime",
+		  "name": "CTFtime",
+		  "colour": "#FF0000",
+		  "clientId": "Your event ID",
+		  "clientSecret": "Your client secret from event management interface",
+		  "authorizeUrl": "https://oauth.ctftime.org/authorize",
+		  "tokenUrl": "https://oauth.ctftime.org/token",
+		  "refreshUrl": "Optional, if the provider supports refreshing.",
+		  "revokeUrl": "Optional, if the provider supports revocations.",
+		  "userUrl": "https://oauth.ctftime.org/user",
+		  "scopes": [ "profile:read" ],
+		  "hostnames": [ "oauth.ctftime.org", "ctftime.org" ],
+		  "mappings": {
+			"userId": "id",
+			"username": "username"
+		  }
+		}
+      ]
+    }
   },
-  "tokens": {
-    "key": "hunter2",
-    "issuer": "https://myrosettactfinstance.xyz/"
+  "keyDerivation": {
+    "parallelism": -1,
+    "memory": -1,
+    "iterations": -1
   }
 }
