@@ -468,7 +468,7 @@ namespace RosettaCTF.Controllers
 
             var scheme = req.Scheme;
             var host = req.Host.Host;
-            var port = req.Host.Port ?? 0;
+            var port = req.Host.Port ?? -1;
 
             return new AuthenticationContext(scheme, host, port, provider, state);
         }
