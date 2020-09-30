@@ -20,6 +20,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { RosettaApiService } from "../../services/rosetta-api.service";
 import { IChallenge, ISolve } from "../../data/api";
 import { EventDispatcherService } from "../../services/event-dispatcher.service";
+import { waitOpen, waitClose } from "../../common/waits";
 
 @Component({
     selector: "app-challenge-detail",
@@ -37,6 +38,7 @@ export class ChallengeDetailComponent implements OnInit {
                 private eventDispatcher: EventDispatcherService) { }
 
     ngOnInit(): void {
+        waitOpen(this.eventDispatcher);
         this.loadChallenge();
     }
 
@@ -64,5 +66,6 @@ export class ChallengeDetailComponent implements OnInit {
         }
 
         this.solves = solves.result;
+        waitClose(this.eventDispatcher);
     }
 }

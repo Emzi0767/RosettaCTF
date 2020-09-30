@@ -26,6 +26,7 @@ export interface IDialogComponent {
 export interface IDialogData {
     componentType: Type<IDialogComponent>;
     defaults?: object;
+    inescapeable?: boolean;
 }
 
 export interface IErrorDialogDefaults {

@@ -1,5 +1,5 @@
 // This file is part of RosettaCTF project.
-// 
+//
 // Copyright 2020 Emzi0767
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +21,7 @@ import { takeUntil } from "rxjs/operators";
 
 import { IDialogComponent, IDialogData } from "../data/dialog";
 import { EventDispatcherService, EventHandler, IEventTriple } from "../services/event-dispatcher.service";
+import { IEmptyData } from "../data/events";
 
 @Component({
     selector: "dialog",
@@ -52,6 +53,7 @@ export class DialogComponent implements OnDestroy {
     @ViewChild("componentAnchor", { read: ViewContainerRef, static: true })
     container: ViewContainerRef;
     private component: ComponentRef<IDialogComponent>;
+    private inescapeable: boolean;
 
     private displayState: "collapsed" | "showing" | "visible" | "hiding" = "collapsed";
 
@@ -90,9 +92,7 @@ export class DialogComponent implements OnDestroy {
             this.component.instance.dialogDismiss
                 .pipe(takeUntil(this.ngUnsubscribe))
                 .subscribe({
-                    next: (e: null) => {
-                        this.displayState = "hiding";
-                    }
+                    next: (e: null) => this.displayState = "hiding"
                 });
 
             if (!!data.defaults) {
@@ -100,7 +100,22 @@ export class DialogComponent implements OnDestroy {
             }
         }
 
+        this.inescapeable = data.inescapeable === true;
         this.displayState = "showing";
+    }
+
+    @EventHandler("dialogDismiss")
+    handleDialogDismiss(data: IEmptyData): void {
+        if (!this.component) {
+            return;
+        }
+
+        if (!!this.component.instance) {
+            this.component.instance.dialogDismiss.emit(null);
+        }
+
+        this.component.destroy();
+        this.component = null;
     }
 
     @HostListener("@toggleVisibility.done")
@@ -124,6 +139,10 @@ export class DialogComponent implements OnDestroy {
 
     @HostListener("document:keydown", ["$event"])
     handleKeyboardEvent(e: KeyboardEvent): void {
+        if (this.inescapeable) {
+            return;
+        }
+
         // tslint:disable-next-line: deprecation
         const key = (e.keyCode || e.which);
         if (key === 27) {

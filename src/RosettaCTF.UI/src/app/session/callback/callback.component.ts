@@ -21,6 +21,7 @@ import { EventDispatcherService } from "src/app/services/event-dispatcher.servic
 import { RosettaApiService } from "src/app/services/rosetta-api.service";
 import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
 import { SessionProviderService } from "src/app/services/session-provider.service";
+import { waitOpen, waitClose } from "../../common/waits";
 
 @Component({
     selector: "app-callback",
@@ -36,6 +37,7 @@ export class CallbackComponent implements OnInit {
                 private sessionProvider: SessionProviderService) { }
 
     ngOnInit(): void {
+        waitOpen(this.eventDispatcher);
         const args = this.currentRoute.snapshot.queryParamMap;
         if (args.has("error") || !args.has("code") || !args.has("state")) {
             if (args.has("error")) {
@@ -56,7 +58,10 @@ export class CallbackComponent implements OnInit {
             }
 
             this.sessionProvider.updateSession(x.result);
-            this.api.refreshXsrf().then(_ => { this.router.navigate(["/"]); });
+            this.api.refreshXsrf().then(_ => {
+                waitClose(this.eventDispatcher);
+                this.router.navigate(["/"]);
+            });
         });
     }
 }

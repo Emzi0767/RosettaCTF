@@ -23,6 +23,7 @@ import { RosettaApiService } from "../../services/rosetta-api.service";
 import { EventDispatcherService } from "../../services/event-dispatcher.service";
 import { SessionProviderService } from "../../services/session-provider.service";
 import { ISession } from "../../data/session";
+import { waitOpen, waitClose } from "../../common/waits";
 
 @Component({
     selector: "app-login",
@@ -56,6 +57,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     private async beginLogin(session: ISession, provider: string): Promise<void> {
+        waitOpen(this.eventDispatcher);
         const endpoint = await this.api.getLoginUrl(provider);
         if (!endpoint.isSuccess) {
             this.eventDispatcher.emit("error", { message: "Could not retrieve login data.", reason: endpoint.error });

@@ -22,6 +22,7 @@ import { ILoginSettings, IUserLogin, IMfa } from "../../data/api";
 import { EventDispatcherService } from "../../services/event-dispatcher.service";
 import { SessionProviderService } from "../../services/session-provider.service";
 import { MfaDialogComponent } from "../../dialog/mfa-dialog/mfa-dialog.component";
+import { waitOpen, waitClose } from "../../common/waits";
 
 @Component({
     selector: "app-login-screen",
@@ -45,6 +46,7 @@ export class LoginScreenComponent implements OnInit {
     }
 
     async loginSubmit(): Promise<void> {
+        waitOpen(this.eventDispatcher);
         this.lockControls = true;
         const loginResult = await this.api.login(this.loginModel);
         if (!loginResult.isSuccess) {
@@ -65,11 +67,13 @@ export class LoginScreenComponent implements OnInit {
         } else {
             this.sessionProvider.updateSession(loginResult.result);
             await this.api.refreshXsrf();
+            waitClose(this.eventDispatcher);
             this.router.navigate(["/"]);
         }
     }
 
     private async doInit(): Promise<void> {
+        waitOpen(this.eventDispatcher);
         const data = await this.api.getLoginSettings();
         if (!data.isSuccess) {
             this.eventDispatcher.emit("error", { message: "Could not retrieve login settings.", reason: data.error });
@@ -79,9 +83,11 @@ export class LoginScreenComponent implements OnInit {
         }
 
         this.loginSettings = data.result;
+        waitClose(this.eventDispatcher);
     }
 
     private async do2fa(model: IMfa): Promise<void> {
+        waitOpen(this.eventDispatcher);
         const result = await this.api.completeMfaLogin(model);
         if (!result.isSuccess) {
             this.eventDispatcher.emit("error", { message: "Could not log in. Please try again.", reason: result.error });
@@ -92,6 +98,7 @@ export class LoginScreenComponent implements OnInit {
 
         this.sessionProvider.updateSession(result.result);
         await this.api.refreshXsrf();
+        waitClose(this.eventDispatcher);
         this.router.navigate(["/"]);
     }
 }

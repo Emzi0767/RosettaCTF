@@ -71,6 +71,7 @@ import { SudoDialogComponent } from "./dialog/sudo-dialog/sudo-dialog.component"
 import { MfaEnableDialogComponent } from "./dialog/mfa-enable-dialog/mfa-enable-dialog.component";
 import { MfaDisableDialogComponent } from "./dialog/mfa-disable-dialog/mfa-disable-dialog.component";
 import { MfaDialogComponent } from "./dialog/mfa-dialog/mfa-dialog.component";
+import { WaitDialogComponent } from "./dialog/wait-dialog/wait-dialog.component";
 
 @NgModule({
     declarations: [
@@ -108,7 +109,8 @@ import { MfaDialogComponent } from "./dialog/mfa-dialog/mfa-dialog.component";
         SudoDialogComponent,
         MfaEnableDialogComponent,
         MfaDisableDialogComponent,
-        MfaDialogComponent
+        MfaDialogComponent,
+        WaitDialogComponent
     ],
     imports: [
         BrowserModule,

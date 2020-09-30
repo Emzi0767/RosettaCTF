@@ -27,6 +27,8 @@ import { EventDispatcherService } from "../../services/event-dispatcher.service"
 import { ConfigurationProviderService } from "../../services/configuration-provider.service";
 import { InviteDialogComponent } from "../../dialog/invite-dialog/invite-dialog.component";
 import { SessionRefreshManagerService } from "../../services/session-refresh-manager.service";
+import { waitOpen, waitClose } from "../../common/waits";
+import { InfoDialogComponent } from "../../dialog/info-dialog/info-dialog.component";
 
 @Component({
     selector: "app-team-manage",
@@ -70,18 +72,22 @@ export class TeamManageComponent implements OnInit, OnDestroy {
     }
 
     openSubmit(): void {
-        this.eventDispatcher.emit("dialog",
-            {
-                componentType: InviteDialogComponent,
-                defaults: { provideId: (x: ICreateTeamInvite) => this.createSubmit(x) }
-            });
+        this.eventDispatcher.emit("dialog", {
+            componentType: InviteDialogComponent,
+            defaults: { provideId: (x: ICreateTeamInvite) => this.createSubmit(x) }
+        });
     }
 
     async createSubmit(inv: ICreateTeamInvite): Promise<void> {
+        waitOpen(this.eventDispatcher);
         this.hideForm = true;
         const response = await this.api.inviteMember(inv.id);
         if (response.isSuccess) {
             this.hideForm = false;
+            this.eventDispatcher.emit("dialog", {
+                componentType: InfoDialogComponent,
+                defaults: { message: "User invited." }
+            });
             return;
         }
 
@@ -90,17 +96,20 @@ export class TeamManageComponent implements OnInit, OnDestroy {
     }
 
     async kickMember(id: string): Promise<void> {
+        waitOpen(this.eventDispatcher);
         this.kickingMember = true;
         const response = await this.api.kickTeamMember(id);
         if (response.isSuccess) {
             if (response.result === null) {
                 await this.sessionRefresh.forceUpdate();
+                waitClose(this.eventDispatcher);
                 this.router.navigate(["/profile"]);
                 return;
             }
 
             this.team = response.result;
             this.kickingMember = false;
+            waitClose(this.eventDispatcher);
             return;
         }
 
@@ -110,6 +119,7 @@ export class TeamManageComponent implements OnInit, OnDestroy {
 
     private async loadSolves(): Promise<void> {
         if (!this.showSolves) {
+            waitClose(this.eventDispatcher);
             return;
         }
 
@@ -124,6 +134,7 @@ export class TeamManageComponent implements OnInit, OnDestroy {
             .reduce((acc: number, current: number) => acc + current, 0);
 
         this.solves = solves.result;
+        waitClose(this.eventDispatcher);
     }
 
     private recomputeSolveVisibility(): void {

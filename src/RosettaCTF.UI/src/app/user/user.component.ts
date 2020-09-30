@@ -21,6 +21,7 @@ import { parseZone, utc } from "moment";
 
 import { SessionProviderService } from "../services/session-provider.service";
 import { ISession, IUser } from "../data/session";
+// tslint:disable-next-line: max-line-length
 import { ISolve, IApiEventConfiguration, ICountry, IExternalAccount, ILoginSettings, IUserPasswordRemove, IUserPasswordChange, IUserSudo, IMfa, IMfaDisable } from "../data/api";
 import { RosettaApiService } from "../services/rosetta-api.service";
 import { EventDispatcherService } from "../services/event-dispatcher.service";
@@ -29,9 +30,10 @@ import { CountryChangeDialogComponent } from "../dialog/country-change-dialog/co
 import { PasswordRemoveDialogComponent } from "../dialog/password-remove-dialog/password-remove-dialog.component";
 import { PasswordChangeDialogComponent } from "../dialog/password-change-dialog/password-change-dialog.component";
 import { InfoDialogComponent } from "../dialog/info-dialog/info-dialog.component";
-import { SudoDialogComponent } from '../dialog/sudo-dialog/sudo-dialog.component';
-import { MfaEnableDialogComponent } from '../dialog/mfa-enable-dialog/mfa-enable-dialog.component';
-import { MfaDisableDialogComponent } from '../dialog/mfa-disable-dialog/mfa-disable-dialog.component';
+import { SudoDialogComponent } from "../dialog/sudo-dialog/sudo-dialog.component";
+import { MfaEnableDialogComponent } from "../dialog/mfa-enable-dialog/mfa-enable-dialog.component";
+import { MfaDisableDialogComponent } from "../dialog/mfa-disable-dialog/mfa-disable-dialog.component";
+import { waitOpen, waitClose } from "../common/waits";
 
 @Component({
     selector: "app-user",
@@ -70,6 +72,8 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        waitOpen(this.eventDispatcher);
+
         this.session$
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(x => {
@@ -107,34 +111,33 @@ export class UserComponent implements OnInit, OnDestroy {
 
     openCountryChange(): void {
         this.eventDispatcher.emit("dialog", {
-                componentType: CountryChangeDialogComponent,
-                defaults:
-                {
-                    provideCode: (code: string) => this.doCountryChange(code),
-                    current: this.country?.code
-                }
-            });
+            componentType: CountryChangeDialogComponent,
+            defaults: {
+                provideCode: (code: string) => this.doCountryChange(code),
+                current: this.country?.code
+            }
+        });
     }
 
     openPasswordChange(): void {
         this.eventDispatcher.emit("dialog", {
-                componentType: PasswordChangeDialogComponent,
-                defaults: { provideModel: (model: IUserPasswordChange) => this.doChangePassword(model) }
-            });
+            componentType: PasswordChangeDialogComponent,
+            defaults: { provideModel: (model: IUserPasswordChange) => this.doChangePassword(model) }
+        });
     }
 
     openPasswordRemove(): void {
         this.eventDispatcher.emit("dialog", {
-                componentType: PasswordRemoveDialogComponent,
-                defaults: { provideModel: (model: IUserPasswordRemove) => this.doRemovePassword(model) }
-            });
+            componentType: PasswordRemoveDialogComponent,
+            defaults: { provideModel: (model: IUserPasswordRemove) => this.doRemovePassword(model) }
+        });
     }
 
     open2faEnable(): void {
         this.eventDispatcher.emit("dialog", {
-                componentType: SudoDialogComponent,
-                defaults: { provideModel: (model: IUserSudo) => this.do2faEnable(model) }
-            });
+            componentType: SudoDialogComponent,
+            defaults: { provideModel: (model: IUserSudo) => this.do2faEnable(model) }
+        });
     }
 
     open2faDisable(): void {
@@ -145,6 +148,7 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     async removeConnection(provider: string): Promise<void> {
+        waitOpen(this.eventDispatcher);
         this.removingConnection = true;
         const result = await this.api.removeConnection(provider);
         if (!result.result) {
@@ -165,9 +169,13 @@ export class UserComponent implements OnInit, OnDestroy {
         }
 
         this.loginSettings = data.result;
+        if (this.connections !== null) {
+            waitClose(this.eventDispatcher);
+        }
     }
 
     private async doCountryChange(code: string): Promise<void> {
+        waitOpen(this.eventDispatcher);
         const session = await this.api.updateCountry(code);
         if (!session.result) {
             this.eventDispatcher.emit("error", { message: "Updating country failed.", reason: session.error });
@@ -175,6 +183,7 @@ export class UserComponent implements OnInit, OnDestroy {
         }
 
         this.sessionProvider.updateSession(session.result);
+        waitClose(this.eventDispatcher);
     }
 
     private async loadSolves(): Promise<void> {
@@ -196,17 +205,20 @@ export class UserComponent implements OnInit, OnDestroy {
         this.connections = connections.isSuccess
             ? connections.result
             : [];
+
+        if (this.loginSettings !== null) {
+            waitClose(this.eventDispatcher);
+        }
     }
 
     private async doRemovePassword(model: IUserPasswordRemove): Promise<void> {
+        waitOpen(this.eventDispatcher);
         this.changingPassword = true;
 
         const result = await this.api.removePassword(model);
         if (!result.isSuccess || !result.result) {
             this.eventDispatcher.emit("error", { message: "Removing password failed.", reason: result.error });
-        }
-
-        if (result.isSuccess === true) {
+        } else {
             this.eventDispatcher.emit("dialog", {
                 componentType: InfoDialogComponent,
                 defaults: { message: "Password removal successful." }
@@ -219,14 +231,13 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     private async doChangePassword(model: IUserPasswordChange): Promise<void> {
+        waitOpen(this.eventDispatcher);
         this.changingPassword = true;
 
         const result = await this.api.changePassword(model);
         if (!result.isSuccess) {
             this.eventDispatcher.emit("error", { message: "Changing password failed.", reason: result.error });
-        }
-
-        if (result.isSuccess === true) {
+        } else {
             this.eventDispatcher.emit("dialog", {
                 componentType: InfoDialogComponent,
                 defaults: { message: "Password change successful." }
@@ -239,14 +250,13 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     private async do2faEnable(model: IUserSudo): Promise<void> {
+        waitOpen(this.eventDispatcher);
         this.changingPassword = true;
 
         const result = await this.api.startMfaEnable(model);
         if (!result.isSuccess) {
             this.eventDispatcher.emit("error", { message: "Enabling 2FA failed.", reason: result.error });
-        }
-
-        if (result.isSuccess === true) {
+        } else {
             this.eventDispatcher.emit("dialog", {
                 componentType: MfaEnableDialogComponent,
                 defaults: {
@@ -262,14 +272,13 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     private async doComplete2faEnable(model: IMfa, backups: string[]): Promise<void> {
+        waitOpen(this.eventDispatcher);
         this.changingPassword = true;
 
         const result = await this.api.completeMfaEnable(model);
         if (!result.isSuccess) {
             this.eventDispatcher.emit("error", { message: "Enabling 2FA failed.", reason: result.error });
-        }
-
-        if (result.isSuccess === true) {
+        } else {
             this.eventDispatcher.emit("dialog", {
                 componentType: InfoDialogComponent,
                 defaults: {
@@ -285,14 +294,13 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     private async do2faDisable(model: IMfaDisable): Promise<void> {
+        waitOpen(this.eventDispatcher);
         this.changingPassword = true;
 
         const result = await this.api.disableMfa(model);
         if (!result.isSuccess) {
             this.eventDispatcher.emit("error", { message: "Disabling 2FA failed.", reason: result.error });
-        }
-
-        if (result.isSuccess === true) {
+        } else {
             this.eventDispatcher.emit("dialog", {
                 componentType: InfoDialogComponent,
                 defaults: { message: "2FA disabled successfully." }

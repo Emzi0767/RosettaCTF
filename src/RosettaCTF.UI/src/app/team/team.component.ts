@@ -19,6 +19,8 @@ import { ActivatedRoute } from "@angular/router";
 
 import { RosettaApiService } from "../services/rosetta-api.service";
 import { ITeam } from "../data/session";
+import { EventDispatcherService } from "../services/event-dispatcher.service";
+import { waitOpen, waitClose } from "../common/waits";
 
 @Component({
     selector: "app-team",
@@ -32,9 +34,12 @@ export class TeamComponent implements OnInit {
     team: ITeam | null = null;
 
     constructor(private api: RosettaApiService,
-                private currentRoute: ActivatedRoute) { }
+                private currentRoute: ActivatedRoute,
+                private eventDispatcher: EventDispatcherService) { }
 
     ngOnInit(): void {
+        waitOpen(this.eventDispatcher);
+
         const args = this.currentRoute.snapshot.paramMap;
         const id = args.has("id") ? args.get("id") : null;
         this.isForeignTeam = id !== null;

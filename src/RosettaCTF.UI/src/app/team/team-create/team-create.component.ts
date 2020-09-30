@@ -22,6 +22,7 @@ import { ITeamInvite } from "../../data/session";
 import { ICreateTeam } from "../../data/api";
 import { EventDispatcherService } from "../../services/event-dispatcher.service";
 import { SessionRefreshManagerService } from "../../services/session-refresh-manager.service";
+import { waitOpen, waitClose } from "../../common/waits";
 
 @Component({
     selector: "app-team-create",
@@ -47,14 +48,17 @@ export class TeamCreateComponent implements OnInit {
             this.invites = x.isSuccess
                 ? x.result
                 : [];
+            waitClose(this.eventDispatcher);
         });
     }
 
     async createSubmit(): Promise<void> {
+        waitOpen(this.eventDispatcher);
         this.hideForm = true;
         const response = await this.api.createTeam(this.model.name);
         if (response.isSuccess) {
             await this.sessionRefresh.forceUpdate();
+            waitClose(this.eventDispatcher);
             this.router.navigate(["/"]);
             return;
         }
@@ -64,10 +68,12 @@ export class TeamCreateComponent implements OnInit {
     }
 
     async acceptInvite(id: string): Promise<void> {
+        waitOpen(this.eventDispatcher);
         this.acceptingInvite = true;
         const response = await this.api.acceptInvite(id);
         if (response.isSuccess) {
             await this.sessionRefresh.forceUpdate();
+            waitClose(this.eventDispatcher);
             this.router.navigate(["/"]);
             return;
         }

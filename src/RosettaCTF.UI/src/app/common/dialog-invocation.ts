@@ -17,16 +17,27 @@
 import { EventDispatcherService } from "../services/event-dispatcher.service";
 import { IApiError } from "../data/api";
 import { ErrorDialogComponent } from "../dialog/error-dialog/error-dialog.component";
+import { WaitDialogComponent } from "../dialog/wait-dialog/wait-dialog.component";
+import { IDialogData } from "../data/dialog";
 
 export function showErrorDialog(eventDispatcher: EventDispatcherService, error: IApiError, message: string): void {
-    eventDispatcher.emit("dialog",
-        {
-            componentType: ErrorDialogComponent,
-            defaults:
-            {
-                message: !!error?.message
-                    ? `${message}\n\nIf the problem persists, contact the organizers, with the following error message: ${error.message} (error code: ${error.code})`
-                    : `${message}\n\nIf the problem persists, contact the organizers.`
-            }
-        });
+    eventDispatcher.emit("dialog", {
+        componentType: ErrorDialogComponent,
+        defaults: {
+            message: !!error?.message
+                ? `${message}\n\nIf the problem persists, contact the organizers, with the following error message: ${error.message} (error code: ${error.code})`
+                : `${message}\n\nIf the problem persists, contact the organizers.`
+        }
+    } as IDialogData);
+}
+
+export function showWaitDialog(eventDispatcher: EventDispatcherService): void {
+    eventDispatcher.emit("dialog", {
+        componentType: WaitDialogComponent,
+        inescapeable: true
+    } as IDialogData);
+}
+
+export function hideWaitDialog(eventDispatcher: EventDispatcherService): void {
+    eventDispatcher.emit("dialogDismiss", { });
 }

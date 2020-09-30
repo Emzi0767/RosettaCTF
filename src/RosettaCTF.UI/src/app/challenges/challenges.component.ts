@@ -28,6 +28,7 @@ import { ErrorDialogComponent } from "../dialog/error-dialog/error-dialog.compon
 import { SubmitFlagDialogComponent } from "../dialog/submit-flag-dialog/submit-flag-dialog.component";
 import { ConfigurationProviderService } from "../services/configuration-provider.service";
 import { TimerService } from "../services/timer.service";
+import { waitOpen, waitClose } from "../common/waits";
 
 @Component({
     selector: "app-challenges",
@@ -59,6 +60,7 @@ export class ChallengesComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        waitOpen(this.eventDispatcher);
         this.configuration$
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(x => { this.configuration = x; this.eventEnd = parseZone(x.endTime); this.recomputeButtonVisibility(); });
@@ -75,6 +77,7 @@ export class ChallengesComponent implements OnInit, OnDestroy {
             }
 
             this.categories = x.result;
+            waitClose(this.eventDispatcher);
         });
     }
 
@@ -99,7 +102,9 @@ export class ChallengesComponent implements OnInit, OnDestroy {
     }
 
     private async submitFlag(flag: IApiFlag): Promise<void> {
+        waitClose(this.eventDispatcher);
         this.disableButtons = true;
+
         const response = await this.api.submitSolve(flag);
         if (!response.isSuccess) {
             this.eventDispatcher.emit("error", { message: "Submitting flag failed.", reason: response.error });
@@ -117,6 +122,7 @@ export class ChallengesComponent implements OnInit, OnDestroy {
 
         this.categories = categories.result;
         this.disableButtons = false;
+        waitClose(this.eventDispatcher);
     }
 
     private recomputeButtonVisibility(): void {

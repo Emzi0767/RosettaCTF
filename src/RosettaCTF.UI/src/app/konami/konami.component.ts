@@ -18,6 +18,7 @@ import { Component, OnInit } from "@angular/core";
 
 import { RosettaApiService } from "../services/rosetta-api.service";
 import { EventDispatcherService } from "../services/event-dispatcher.service";
+import { waitOpen, waitClose } from "../common/waits";
 
 @Component({
     selector: "app-konami",
@@ -31,9 +32,11 @@ export class KonamiComponent implements OnInit {
                 private eventDispatcher: EventDispatcherService) { }
 
     ngOnInit(): void {
+        waitOpen(this.eventDispatcher);
         this.api.enableHidden().then(x => {
             this.enabling = false;
             if (x.isSuccess) {
+                waitClose(this.eventDispatcher);
                 return;
             }
 

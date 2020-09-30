@@ -23,6 +23,7 @@ import { RosettaApiService } from "../../services/rosetta-api.service";
 import { EventDispatcherService } from "../../services/event-dispatcher.service";
 import { SessionProviderService } from "../../services/session-provider.service";
 import { ConfigurationProviderService } from "../../services/configuration-provider.service";
+import { waitOpen, waitClose } from "../../common/waits";
 
 @Component({
     selector: "app-team-detail",
@@ -52,10 +53,12 @@ export class TeamDetailComponent implements OnInit {
         const start = parseZone(config.startTime);
 
         if (start.isAfter(utc())) {
+            waitClose(this.eventDispatcher);
             return;
         }
 
         if (!await this.sessionProvider.isAuthenticated()) {
+            waitClose(this.eventDispatcher);
             return;
         }
 
@@ -75,5 +78,6 @@ export class TeamDetailComponent implements OnInit {
             .reduce((acc: number, current: number) => acc + current, 0);
 
         this.solves = solves.result;
+        waitClose(this.eventDispatcher);
     }
 }

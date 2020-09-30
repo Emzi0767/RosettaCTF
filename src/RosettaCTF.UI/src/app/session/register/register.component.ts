@@ -21,6 +21,7 @@ import { IUserRegister } from "../../data/api";
 import { RosettaApiService } from "../../services/rosetta-api.service";
 import { EventDispatcherService } from "../../services/event-dispatcher.service";
 import { InfoDialogComponent } from "../../dialog/info-dialog/info-dialog.component";
+import { waitOpen } from "../../common/waits";
 
 @Component({
     selector: "app-register",
@@ -37,6 +38,7 @@ export class RegisterComponent {
                 private router: Router) { }
 
     async registerSubmit(): Promise<void> {
+        waitOpen(this.eventDispatcher);
         this.lockControls = true;
         const registerResult = await this.api.register(this.registerModel);
         if (!registerResult.isSuccess) {
@@ -46,11 +48,10 @@ export class RegisterComponent {
             return;
         }
 
-        this.eventDispatcher.emit("dialog",
-            {
-                componentType: InfoDialogComponent,
-                defaults: { message: "Registration complete. You may now log in." }
-            });
+        this.eventDispatcher.emit("dialog", {
+            componentType: InfoDialogComponent,
+            defaults: { message: "Registration complete. You may now log in." }
+        });
         this.router.navigate(["/session", "login"]);
     }
 }

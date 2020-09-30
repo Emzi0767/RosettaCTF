@@ -20,6 +20,7 @@ import { Router } from "@angular/router";
 import { RosettaApiService } from "../services/rosetta-api.service";
 import { EventDispatcherService } from "../services/event-dispatcher.service";
 import { IScoreboardEntry } from "../data/api";
+import { waitOpen, waitClose } from "../common/waits";
 
 @Component({
     selector: "app-scoreboard",
@@ -35,6 +36,7 @@ export class ScoreboardComponent implements OnInit {
                 private router: Router) { }
 
     ngOnInit(): void {
+        waitOpen(this.eventDispatcher);
         this.api.getScoreboard().then(x => {
             if (!x.isSuccess) {
                 this.eventDispatcher.emit("error", { message: "Fetching scoreboard failed.", reason: x.error });
@@ -43,6 +45,7 @@ export class ScoreboardComponent implements OnInit {
             }
 
             this.scoreboard = x.result;
+            waitClose(this.eventDispatcher);
         });
     }
 }

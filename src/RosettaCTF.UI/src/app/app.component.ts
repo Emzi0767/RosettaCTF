@@ -17,13 +17,13 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
 
-import { IErrorData } from "./data/error";
+import { IEmptyData, IErrorData } from "./data/events";
 import { EventDispatcherService, EventHandler, IEventTriple } from "./services/event-dispatcher.service";
 import { RosettaApiService } from "./services/rosetta-api.service";
 import { ConfigurationProviderService } from "./services/configuration-provider.service";
 import { SessionProviderService } from "./services/session-provider.service";
 import { SessionRefreshManagerService } from "./services/session-refresh-manager.service";
-import { showErrorDialog } from "./common/error-invocation";
+import { hideWaitDialog, showErrorDialog, showWaitDialog } from "./common/dialog-invocation";
 
 @Component({
     selector: "app-root",
@@ -78,12 +78,24 @@ export class AppComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.eventDispatcher.unregister("error", `error:${this.constructor.name}`);
+        this.eventDispatcher.unregister("waitOpen", `waitOpen:${this.constructor.name}`);
+        this.eventDispatcher.unregister("waitClose", `waitClose:${this.constructor.name}`);
     }
 
     @EventHandler("error")
     handleError(e: IErrorData): void {
         const message = e.message || "Error occured while communicating with the API.";
         showErrorDialog(this.eventDispatcher, e.reason, message);
+    }
+
+    @EventHandler("waitOpen")
+    handleWaitOpen(e: IEmptyData): void {
+        showWaitDialog(this.eventDispatcher);
+    }
+
+    @EventHandler("waitClose")
+    handleWaitClose(e: IEmptyData): void {
+        hideWaitDialog(this.eventDispatcher);
     }
 
     registerEventHandler<T>(name: string, handler: (e: T) => void): void {

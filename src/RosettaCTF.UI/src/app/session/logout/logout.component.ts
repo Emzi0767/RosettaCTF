@@ -23,6 +23,7 @@ import { EventDispatcherService } from "../../services/event-dispatcher.service"
 import { RosettaApiService } from "../../services/rosetta-api.service";
 import { SessionProviderService } from "../../services/session-provider.service";
 import { ISession } from "../../data/session";
+import { waitOpen, waitClose } from "../../common/waits";
 
 @Component({
     selector: "app-logout",
@@ -42,16 +43,6 @@ export class LogoutComponent implements OnInit, OnDestroy {
         this.sessionProvider.sessionChange
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(x => this.beginLogout(x));
-
-        this.api.logout().then(x => {
-            if (x.isSuccess) {
-                this.sessionProvider.updateSession(x.result);
-            } else {
-                this.eventDispatcher.emit("error", { message: "Failed to log out.", reason: x.error });
-            }
-
-            this.api.refreshXsrf().then(_ => { this.router.navigate(["/"]); });
-        });
     }
 
     ngOnDestroy(): void {
@@ -64,5 +55,19 @@ export class LogoutComponent implements OnInit, OnDestroy {
             this.router.navigate(["/"]);
             return;
         }
+
+        waitOpen(this.eventDispatcher);
+        this.api.logout().then(x => {
+            if (x.isSuccess) {
+                this.sessionProvider.updateSession(x.result);
+            } else {
+                this.eventDispatcher.emit("error", { message: "Failed to log out.", reason: x.error });
+            }
+
+            this.api.refreshXsrf().then(_ => {
+                waitClose(this.eventDispatcher);
+                this.router.navigate(["/"]);
+            });
+        });
     }
 }

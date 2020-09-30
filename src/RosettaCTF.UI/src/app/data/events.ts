@@ -20,3 +20,6 @@ export interface IErrorData {
     message?: string;
     reason?: IApiError;
 }
+
+// tslint:disable-next-line: no-empty-interface
+export interface IEmptyData { }
