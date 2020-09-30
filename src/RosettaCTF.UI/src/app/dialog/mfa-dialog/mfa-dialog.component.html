@@ -23,9 +23,9 @@
 <form (ngSubmit)="doNothing()" #mfaForm="ngForm">
     <div class="form-container">
         <div class="input-container">
-            <input type="number" 
+            <input type="text" 
                 placeholder="Multi-factor code"
-                required minlength="6" maxlength="6"
+                required minlength="6" maxlength="8" pattern="^[0-9]+$"
                 [(ngModel)]="model.mfaCode" name="mfaCode" #mfaCode="ngModel" />
         </div>
         <div class="validation-error" [hidden]="mfaCode.valid || mfaCode.pristine">

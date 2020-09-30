@@ -237,6 +237,17 @@ export class RosettaApiService {
         };
     }
 
+    async getMfaBackups(data: IUserSudo): Promise<IApiResult<string[]>> {
+        try {
+            const response = await this.http.post<IApiResult<string[]>>("/api/session/mfa/backups", data, this.getOptions()).toPromise();
+            return response.body;
+        } catch (ex) { }
+
+        return {
+            isSuccess: false
+        };
+    }
+
     // REFRESH -------------------------------------------------------
     async refreshToken(): Promise<IApiResult<ISession>> {
         try {

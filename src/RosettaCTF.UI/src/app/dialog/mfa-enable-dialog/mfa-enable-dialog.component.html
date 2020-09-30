@@ -22,34 +22,34 @@
 
 <form (ngSubmit)="doNothing()" #mfaForm="ngForm">
     <div class="form-container">
-        <p class="mfa-display" [hidden]="!displayCode">
+        <p class="mfa-display" *ngIf="displayCode">
             <qr-code [value]="authenticatorUri" [size]="256" [level]="'L'" [canvas]="true"></qr-code>
         </p>
 
-        <p class="content" [hidden]="displayCode">
+        <p class="content" *ngIf="!displayCode">
             In case you cannnot scan the code, or prefer to input the settings manually, input the following settings into your 2FA application:
         </p>
 
-        <p class="content" [hidden]="displayCode">
+        <p class="content" *ngIf="!displayCode">
             <strong>Account name:</strong><br>{{ accountLabel }}
         </p>
 
-        <p class="content" [hidden]="displayCode">
+        <p class="content" *ngIf="!displayCode">
             <strong>Secret:</strong><br>{{ secret }}
         </p>
 
-        <p class="content" [hidden]="displayCode">
+        <p class="content" *ngIf="!displayCode">
             <strong>Type:</strong><br>Time-based
         </p>
 
         <p class="content align-center">
-            <button class="small" (click)="toggleCodeDisplay()">{{ displayCode ? "Problem scanning code?" : "Prefer to scan code instead?" }}</button>
+            <button class="small" type="button" (click)="toggleCodeDisplay()">{{ displayCode ? "Problem scanning code?" : "Prefer to scan code instead?" }}</button>
         </p>
 
         <div class="input-container">
-            <input type="number" 
+            <input type="text" 
                 placeholder="Multi-factor code"
-                required minlength="6" maxlength="6"
+                required minlength="6" maxlength="6" pattern="^[0-9]+$"
                 [(ngModel)]="model.mfaCode" name="mfaCode" #mfaCode="ngModel" />
         </div>
         <div class="validation-error" [hidden]="mfaCode.valid || mfaCode.pristine">

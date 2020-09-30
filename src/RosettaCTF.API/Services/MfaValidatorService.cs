@@ -15,6 +15,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -58,16 +59,24 @@ namespace RosettaCTF.Services
             var otps = new TotpGeneratorSettings(label, issuer, mfa.Secret, ByteEncoding.Base32, (HmacAlgorithm)mfa.HmacAlgorithm, mfa.Digits, mfa.Additional, mfa.Period);
             var uri = otps.ToUri().OriginalString;
 
-            var recs = this.ToHotp(mfa);
-            var otp = new OtpGenerator(recs);
-            var reccodes = Enumerable.Range(0, 10).Select(x => otp.Generate(groupSize: 4)).ToArray();
-
             return new MfaSettingsModel
             {
                 AuthenticatorUri = uri,
-                RecoveryCodes = reccodes,
+                RecoveryCodes = this.GenerateRecoveryCodes(mfa),
                 Continuation = continuation
             };
+        }
+
+        public IEnumerable<string> GenerateRecoveryCodes(IMultiFactorSettings mfa)
+        {
+            var recs = this.ToHotp(mfa);
+            var otp = new OtpGenerator(recs);
+            for (var i = 0; i < 10; i++)
+            {
+                var code = otp.Generate(groupSize: 4);
+                if (i >= mfa.RecoveryTripCount)
+                    yield return code;
+            }
         }
 
         private OtpGeneratorSettings ToTotp(IMultiFactorSettings mfa)

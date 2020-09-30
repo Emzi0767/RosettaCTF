@@ -44,6 +44,7 @@
     <p>
         <button (click)="open2faEnable()" [disabled]="changingPassword" *ngIf="!session.requiresMfa">Enable 2FA</button>
         <button (click)="open2faDisable()" [disabled]="changingPassword" *ngIf="session.requiresMfa">Disable 2FA</button>
+        <button (click)="open2faBackups()" [disabled]="changingPassword" *ngIf="session.requiresMfa">Show 2FA backup codes</button>
     </p>
 </ng-container>
 

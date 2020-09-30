@@ -147,6 +147,13 @@ export class UserComponent implements OnInit, OnDestroy {
         });
     }
 
+    open2faBackups(): void {
+        this.eventDispatcher.emit("dialog", {
+            componentType: SudoDialogComponent,
+            defaults: { provideModel: (model: IUserSudo) => this.do2faBackups(model) }
+        });
+    }
+
     async removeConnection(provider: string): Promise<void> {
         waitOpen(this.eventDispatcher);
         this.removingConnection = true;
@@ -282,7 +289,7 @@ export class UserComponent implements OnInit, OnDestroy {
             this.eventDispatcher.emit("dialog", {
                 componentType: InfoDialogComponent,
                 defaults: {
-                    message: "2FA enabled successfully.\n\n2FA recovery codes (they need to be used in that exact order): "
+                    message: "2FA enabled successfully.\n\n2FA recovery codes (they need to be used in that exact order):\n\n"
                         + backups.join(", ")
                 }
             });
@@ -307,6 +314,27 @@ export class UserComponent implements OnInit, OnDestroy {
             });
 
             this.sessionProvider.updateSession(result.result);
+        }
+
+        this.changingPassword = false;
+    }
+
+    private async do2faBackups(model: IUserSudo): Promise<void> {
+        waitOpen(this.eventDispatcher);
+        this.changingPassword = true;
+
+        const result = await this.api.getMfaBackups(model);
+        if (!result.isSuccess) {
+            this.eventDispatcher.emit("error", { message: "Cannot display 2FA backup codes.", reason: result.error });
+        } else {
+            this.eventDispatcher.emit("dialog", {
+                componentType: InfoDialogComponent,
+                defaults: {
+                    message: result.result.length > 0
+                        ? ("Remaining 2FA backup codes:\n\n" + result.result?.join(", "))
+                        : "No recovery codes remaining."
+                }
+            });
         }
 
         this.changingPassword = false;

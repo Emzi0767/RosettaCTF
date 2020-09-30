@@ -394,6 +394,25 @@ namespace RosettaCTF.Controllers
             return this.Ok(ApiResult.FromResult(this.UserPreviewRepository.GetSession(ruser, token.Token, token.ExpiresAt, user.RequiresMfa)));
         }
 
+        [HttpPost]
+        [Authorize]
+        [ServiceFilter(typeof(ValidRosettaUserFilter))]
+        [Route("mfa/backups")]
+        public async Task<ActionResult<ApiResult<IEnumerable<string>>>> MfaGetBackups([FromBody] UserSudoModel data, CancellationToken cancellationToken = default)
+        {
+            var user = this.RosettaUser;
+            var pwd = await this.UserRepository.GetUserPasswordAsync(user.Id, cancellationToken);
+            if (pwd == null || !await this.Password.ValidatePasswordHashAsync(data.Password, pwd))
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "Specified credentials were invalid.")));
+
+            var mfa = await this.MfaRepository.GetMfaSettingsAsync(user.Id, cancellationToken);
+            if (mfa == null)
+                return this.StatusCode(401, ApiResult.FromError<SessionPreview>(new ApiError(ApiErrorCode.InvalidCredentials, "MFA not configured.")));
+
+            var codes = this.MfaValidator.GenerateRecoveryCodes(mfa);
+            return this.Ok(ApiResult.FromResult(codes));
+        }
+
         [HttpPatch]
         [Authorize]
         [ServiceFilter(typeof(ValidRosettaUserFilter))]

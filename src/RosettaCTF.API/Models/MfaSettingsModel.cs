@@ -14,6 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Generic;
+
 namespace RosettaCTF.Models
 {
     /// <summary>
@@ -29,7 +31,7 @@ namespace RosettaCTF.Models
         /// <summary>
         /// Gets or sets the collection of recovery codes.
         /// </summary>
-        public string[] RecoveryCodes { get; set; }
+        public IEnumerable<string> RecoveryCodes { get; set; }
 
         /// <summary>
         /// Gets or sets the continuation token for the operation.

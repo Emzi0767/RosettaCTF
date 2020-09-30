@@ -57,7 +57,7 @@ export class MfaEnableDialogComponent implements IDialogComponent {
     }
 
     submit(): void {
-        this.model.mfaCode = this.model.mfaCode.toString().padStart(6, "0");
+        this.model.mfaCode = this.model.mfaCode;
         this.cancel();
         this.provideModel(this.model, this.backups);
     }
