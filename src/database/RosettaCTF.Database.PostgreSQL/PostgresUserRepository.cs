@@ -339,7 +339,7 @@ namespace RosettaCTF
 
         public async Task<IEnumerable<ICountry>> GetAllCountriesAsync(CancellationToken cancellationToken = default)
             => await this.Database.Countries
-                .OrderBy(x => x.Code)
+                .OrderBy(x => x.Name)
                 .ToListAsync(cancellationToken);
     }
 }
