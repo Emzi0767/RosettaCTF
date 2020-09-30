@@ -24,6 +24,7 @@ import { ConfigurationProviderService } from "./services/configuration-provider.
 import { SessionProviderService } from "./services/session-provider.service";
 import { SessionRefreshManagerService } from "./services/session-refresh-manager.service";
 import { hideWaitDialog, showErrorDialog, showWaitDialog } from "./common/dialog-invocation";
+import { waitOpen, waitClose } from "./common/waits";
 
 @Component({
     selector: "app-root",
@@ -52,28 +53,34 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        waitOpen(this.eventDispatcher);
         this.sessionRefresh.start();
-        this.api.testApi().then(x => {
-            if (!x.isSuccess) {
-                showErrorDialog(this.eventDispatcher, x.error, "Could not establish a connection with the API");
-                return;
-            }
+        this.completeInit();
+    }
 
-            this.configurationProvider.updateConfiguration(x.result);
-            if (!this.sessionProvider.shouldInitialize()) {
-                this.sessionProvider.manuallyFinishInit();
-                return;
-            }
+    async completeInit(): Promise<void> {
+        const x = await this.api.testApi();
+        if (!x.isSuccess) {
+            showErrorDialog(this.eventDispatcher, x.error, "Could not establish a connection with the API");
+            return;
+        }
 
-            this.api.getSession().then(y => {
-                if (y.isSuccess) {
-                    this.sessionProvider.updateSession(y.result);
-                    this.api.refreshXsrf();
-                } else {
-                    this.sessionProvider.manuallyFinishInit();
-                }
-            });
-        });
+        this.configurationProvider.updateConfiguration(x.result);
+        if (!this.sessionProvider.shouldInitialize()) {
+            this.sessionProvider.manuallyFinishInit();
+            waitClose(this.eventDispatcher);
+            return;
+        }
+
+        const y = await this.api.getSession();
+        if (y.isSuccess) {
+            this.sessionProvider.updateSession(y.result);
+            await this.api.refreshXsrf();
+        } else {
+            this.sessionProvider.manuallyFinishInit();
+        }
+
+        waitClose(this.eventDispatcher);
     }
 
     ngOnDestroy(): void {

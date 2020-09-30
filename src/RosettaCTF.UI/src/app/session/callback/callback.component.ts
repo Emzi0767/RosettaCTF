@@ -15,12 +15,12 @@
 // limitations under the License.
 
 import { Component, OnInit } from "@angular/core";
-import { Router, ActivatedRoute } from "@angular/router";
+import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 
-import { EventDispatcherService } from "src/app/services/event-dispatcher.service";
-import { RosettaApiService } from "src/app/services/rosetta-api.service";
-import { ErrorDialogComponent } from "src/app/dialog/error-dialog/error-dialog.component";
-import { SessionProviderService } from "src/app/services/session-provider.service";
+import { EventDispatcherService } from "../../services/event-dispatcher.service";
+import { RosettaApiService } from "../../services/rosetta-api.service";
+import { ErrorDialogComponent } from "../../dialog/error-dialog/error-dialog.component";
+import { SessionProviderService } from "../../services/session-provider.service";
 import { waitOpen, waitClose } from "../../common/waits";
 
 @Component({
@@ -37,7 +37,6 @@ export class CallbackComponent implements OnInit {
                 private sessionProvider: SessionProviderService) { }
 
     ngOnInit(): void {
-        waitOpen(this.eventDispatcher);
         const args = this.currentRoute.snapshot.queryParamMap;
         if (args.has("error") || !args.has("code") || !args.has("state")) {
             if (args.has("error")) {
@@ -50,18 +49,24 @@ export class CallbackComponent implements OnInit {
             return;
         }
 
-        this.api.completeOAuthLogin(args.get("code"), args.get("state"), document.referrer).then(x => {
-            if (!x.isSuccess) {
-                this.eventDispatcher.emit("error", { message: "Login failed. Please try again.", reason: x.error });
-                this.router.navigate(["/"]);
-                return;
-            }
-
-            this.sessionProvider.updateSession(x.result);
-            this.api.refreshXsrf().then(_ => {
-                waitClose(this.eventDispatcher);
-                this.router.navigate(["/"]);
-            });
-        });
+        this.completeInit(args);
     }
+
+    async completeInit(args: ParamMap): Promise<void> {
+        await this.sessionProvider.isAuthenticated();
+        waitOpen(this.eventDispatcher);
+
+        const x = await this.api.completeOAuthLogin(args.get("code"), args.get("state"), document.referrer);
+        if (!x.isSuccess) {
+            this.eventDispatcher.emit("error", { message: "Login failed. Please try again.", reason: x.error });
+            this.router.navigate(["/"]);
+            return;
+        }
+
+        this.sessionProvider.updateSession(x.result);
+        await this.api.refreshXsrf();
+        waitClose(this.eventDispatcher);
+        this.router.navigate(["/"]);
+    }
+
 }
