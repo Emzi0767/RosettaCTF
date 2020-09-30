@@ -26,8 +26,11 @@ import { IMfaEnableDefaults, IDialogComponent } from "../../data/dialog";
 })
 export class MfaEnableDialogComponent implements IDialogComponent {
 
-    authenticatorUri: string;
-    backups: string[];
+    authenticatorUri: string = null;
+    backups: string[] = null;
+    secret: string = null;
+    accountLabel: string = null;
+    displayCode = true;
 
     provideModel: (id: IMfa, backups: string[]) => void;
     model: IMfa = { mfaCode: null, actionToken: null };
@@ -41,6 +44,16 @@ export class MfaEnableDialogComponent implements IDialogComponent {
         this.model.actionToken = defaults.continuation;
         this.authenticatorUri = defaults.authenticatorUri;
         this.backups = defaults.backups;
+
+        const uri = new URL(this.authenticatorUri);
+        this.secret = uri.searchParams.get("secret");
+        this.accountLabel = `${uri.searchParams.get("issuer")}`;
+
+        const secretIndices = [];
+        for (let i = 0; i < this.secret.length; i += 4) {
+            secretIndices.push(this.secret.substr(i, 4));
+        }
+        this.secret = secretIndices.join(" ");
     }
 
     submit(): void {
@@ -54,4 +67,8 @@ export class MfaEnableDialogComponent implements IDialogComponent {
     }
 
     doNothing(): void { }
+
+    toggleCodeDisplay(): void {
+        this.displayCode = !this.displayCode;
+    }
 }

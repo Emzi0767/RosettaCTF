@@ -18,12 +18,32 @@
  
 -->
 
-<h5 class="title">Enter a 2FA code from your application</h5>
+<h5 class="title">Enter 2FA code from your application</h5>
 
 <form (ngSubmit)="doNothing()" #mfaForm="ngForm">
     <div class="form-container">
-        <p class="mfa-display">
+        <p class="mfa-display" [hidden]="!displayCode">
             <qr-code [value]="authenticatorUri" [size]="256" [level]="'L'" [canvas]="true"></qr-code>
+        </p>
+
+        <p class="content" [hidden]="displayCode">
+            In case you cannnot scan the code, or prefer to input the settings manually, input the following settings into your 2FA application:
+        </p>
+
+        <p class="content" [hidden]="displayCode">
+            <strong>Account name:</strong><br>{{ accountLabel }}
+        </p>
+
+        <p class="content" [hidden]="displayCode">
+            <strong>Secret:</strong><br>{{ secret }}
+        </p>
+
+        <p class="content" [hidden]="displayCode">
+            <strong>Type:</strong><br>Time-based
+        </p>
+
+        <p class="content align-center">
+            <button class="small" (click)="toggleCodeDisplay()">{{ displayCode ? "Problem scanning code?" : "Prefer to scan code instead?" }}</button>
         </p>
 
         <div class="input-container">
