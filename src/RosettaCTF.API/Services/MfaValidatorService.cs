@@ -56,7 +56,7 @@ namespace RosettaCTF.Services
         public MfaSettingsModel GenerateClientData(IMultiFactorSettings mfa, string label, string issuer, string continuation)
         {
             var otps = new TotpGeneratorSettings(label, issuer, mfa.Secret, ByteEncoding.Base32, (HmacAlgorithm)mfa.HmacAlgorithm, mfa.Digits, mfa.Additional, mfa.Period);
-            var uri = otps.ToUri().ToString();
+            var uri = otps.ToUri().OriginalString;
 
             var recs = this.ToHotp(mfa);
             var otp = new OtpGenerator(recs);
