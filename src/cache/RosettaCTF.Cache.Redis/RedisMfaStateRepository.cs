@@ -39,8 +39,8 @@ namespace RosettaCTF
             var state = Guid.NewGuid().ToString();
             var tkstring = serverToken.ExportString();
 
-            await this.Redis.CreateTemporaryValueAsync(remoteAddress, TimeSpan.FromMinutes(2), MfaKey, state);
-            await this.Redis.CreateTemporaryValueAsync(tkstring, TimeSpan.FromMinutes(2), MfaKey, state, MfaTokenKey);
+            await this.Redis.CreateTemporaryValueAsync(remoteAddress, TimeSpan.FromMinutes(5), MfaKey, state);
+            await this.Redis.CreateTemporaryValueAsync(tkstring, TimeSpan.FromMinutes(5), MfaKey, state, MfaTokenKey);
             return MfaPrefix + state;
         }
 
