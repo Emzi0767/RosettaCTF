@@ -20,21 +20,23 @@
 
 <h5 class="title">Submit your flag</h5>
 
-<p class="content">Enter the flag for <strong>{{ challenge.title }}</strong>:</p>
-
 <form (ngSubmit)="doNothing()" #flagForm="ngForm">
-    <div class="input-container">
-        <input type="text" 
-            minlength="1" maxlength="256" 
-            placeholder="Flag"
-            [(ngModel)]="model.flag" name="flag" #flag="ngModel" />
+    <div class="form-container">
+        <p class="content">Enter the flag for <strong>{{ challenge.title }}</strong>:</p>
+        
+        <div class="input-container">
+            <input type="text" 
+                minlength="1" maxlength="256" 
+                placeholder="Flag"
+                [(ngModel)]="model.flag" name="flag" #flag="ngModel" />
+        </div>
+        <div class="validation-error" [hidden]="flag.valid || flag.pristine">
+            Invalid flag. A flag must consist of no less than 1 character and no more than 256 characters.
+        </div>
     </div>
-    <div class="validation-error" [hidden]="flag.valid || flag.pristine">
-        Invalid flag. A flag must consist of no less than 1 character and no more than 256 characters.
+
+    <div class="buttons">
+        <button type="button" (click)="cancel()">Cancel</button>
+        <button type="submit" (click)="submit()" [disabled]="!flagForm.valid || flagForm.pristine">Submit</button>
     </div>
 </form>
-
-<div class="buttons">
-    <button (click)="cancel()">Cancel</button>
-    <button (click)="submit()" [disabled]="!flagForm.valid || flagForm.pristine">Submit</button>
-</div>

@@ -18,25 +18,27 @@
  
 -->
 
-<h5 class="title">Scan the QR code and enter a 2FA code from your application</h5>
+<h5 class="title">Enter a 2FA code from your application</h5>
 
 <form (ngSubmit)="doNothing()" #mfaForm="ngForm">
-    <p class="mfa-display">
-        <qr-code [value]="authenticatorUri" [size]="256" [level]="'L'" [canvas]="true"></qr-code>
-    </p>
+    <div class="form-container">
+        <p class="mfa-display">
+            <qr-code [value]="authenticatorUri" [size]="256" [level]="'L'" [canvas]="true"></qr-code>
+        </p>
 
-    <div class="input-container">
-        <input type="number" 
-            placeholder="Multi-factor code"
-            required minlength="6" maxlength="6"
-            [(ngModel)]="model.mfaCode" name="mfaCode" #mfaCode="ngModel" />
+        <div class="input-container">
+            <input type="number" 
+                placeholder="Multi-factor code"
+                required minlength="6" maxlength="6"
+                [(ngModel)]="model.mfaCode" name="mfaCode" #mfaCode="ngModel" />
+        </div>
+        <div class="validation-error" [hidden]="mfaCode.valid || mfaCode.pristine">
+            Invalid multi-factor code.
+        </div>
     </div>
-    <div class="validation-error" [hidden]="mfaCode.valid || mfaCode.pristine">
-        Invalid multi-factor code.
+
+    <div class="buttons">
+        <button type="button" (click)="cancel()">Cancel</button>
+        <button type="submit" (click)="submit()" [disabled]="!mfaForm.valid || mfaForm.pristine">Confirm</button>
     </div>
 </form>
-
-<div class="buttons">
-    <button (click)="cancel()">Cancel</button>
-    <button (click)="submit()" [disabled]="!mfaForm.valid || mfaForm.pristine">Confirm</button>
-</div>

@@ -18,33 +18,35 @@
  
 -->
 
-<h5 class="title">Confirm disabling multi-factor authentication</h5>
+<h5 class="title">Disable multi-factor authentication</h5>
 
 <form (ngSubmit)="doNothing()" #mfaForm="ngForm">
-    <div class="input-container">
-        <input type="password" 
-            required
-            placeholder="Password"
-            [(ngModel)]="model.password" name="password" #password="ngModel" />
-    </div>
-    <div class="validation-error" [hidden]="password.valid || password.pristine">
-        You must enter your password.
+    <div class="form-container">
+        <div class="input-container">
+            <input type="password" 
+                required
+                placeholder="Password"
+                [(ngModel)]="model.password" name="password" #password="ngModel" />
+        </div>
+        <div class="validation-error" [hidden]="password.valid || password.pristine">
+            You must enter your password.
+        </div>
+
+        <p class="content">Enter your 2FA code to confirm</p>
+
+        <div class="input-container">
+            <input type="number" 
+                placeholder="Multi-factor code"
+                required minlength="6" maxlength="8"
+                [(ngModel)]="model.mfaCode" name="mfaCode" #mfaCode="ngModel" />
+        </div>
+        <div class="validation-error" [hidden]="mfaCode.valid || mfaCode.pristine">
+            Invalid multi-factor code.
+        </div>
     </div>
 
-    <p class="content">Enter your 2FA code to confirm</p>
-
-    <div class="input-container">
-        <input type="number" 
-            placeholder="Multi-factor code"
-            required minlength="6" maxlength="8"
-            [(ngModel)]="model.mfaCode" name="mfaCode" #mfaCode="ngModel" />
-    </div>
-    <div class="validation-error" [hidden]="mfaCode.valid || mfaCode.pristine">
-        Invalid multi-factor code.
+    <div class="buttons">
+        <button type="button" (click)="cancel()">Cancel</button>
+        <button type="submit" (click)="submit()" [disabled]="!mfaForm.valid || mfaForm.pristine">Confirm</button>
     </div>
 </form>
-
-<div class="buttons">
-    <button (click)="cancel()">Cancel</button>
-    <button (click)="submit()" [disabled]="!mfaForm.valid || mfaForm.pristine">Confirm</button>
-</div>

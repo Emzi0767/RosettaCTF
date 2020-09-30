@@ -23,18 +23,20 @@
 <p class="content">Enter ID of the user to invite:</p>
 
 <form (ngSubmit)="doNothing()" #inviteForm="ngForm">
-    <div class="input-container">
-        <input type="text" 
-            minlength="1" maxlength="22" pattern="^[0-9]+$"
-            placeholder="User ID"
-            [(ngModel)]="model.id" name="id" #id="ngModel" />
+    <div class="form-container">
+        <div class="input-container">
+            <input type="text" 
+                minlength="1" maxlength="22" pattern="^[0-9]+$"
+                placeholder="User ID"
+                [(ngModel)]="model.id" name="id" #id="ngModel" />
+        </div>
+        <div class="validation-error" [hidden]="id.valid || id.pristine">
+            Invalid user ID.
+        </div>
     </div>
-    <div class="validation-error" [hidden]="id.valid || id.pristine">
-        Invalid user ID.
+
+    <div class="buttons">
+        <button type="button" (click)="cancel()">Cancel</button>
+        <button type="submit" (click)="submit()" [disabled]="!inviteForm.valid || inviteForm.pristine">Invite</button>
     </div>
 </form>
-
-<div class="buttons">
-    <button (click)="cancel()">Cancel</button>
-    <button (click)="submit()" [disabled]="!inviteForm.valid || inviteForm.pristine">Invite</button>
-</div>
