@@ -30,7 +30,7 @@
   <!-- Project info -->
   <PropertyGroup>
     <RootNamespace>RosettaCTF</RootNamespace>
-    <Version>1.1.2</Version>
+    <Version>1.1.3</Version>
     <AssemblyVersion>$(Version).0</AssemblyVersion>
     <FileVersion>$(Version).0</FileVersion>
   </PropertyGroup>

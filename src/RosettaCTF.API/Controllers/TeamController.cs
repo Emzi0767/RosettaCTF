@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -95,11 +96,15 @@ namespace RosettaCTF.Controllers
             if (tuser.Team == null || tuser.Team.Id != this.RosettaUser.Team.Id)
                 return this.NotFound(ApiResult.FromError<TeamPreview>(new ApiError(ApiErrorCode.UserNotFound, "Specified user is not part of this team.")));
 
+            var teamId = tuser.Team.Id;
             await this.UserRepository.AssignTeamMembershipAsync(tuser.Id, null, cancellationToken);
+
+            var team = await this.UserRepository.GetTeamAsync(teamId);
+            if (!team.Members.Any())
+                await this.UserRepository.DeleteTeamAsync(teamId);
 
             if (this.RosettaUser.Id != tuser.Id)
             {
-                var team = await this.UserRepository.GetTeamAsync(this.RosettaUser.Team.Id);
                 var rteam = this.UserPreviewRepository.GetTeam(team);
                 return this.Ok(ApiResult.FromResult(rteam));
             }
