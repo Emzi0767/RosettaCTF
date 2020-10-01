@@ -7,7 +7,7 @@
 
 /* WEIGHT: 100 (THIN); STYLES: REGULAR+ITALIC */
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-Thin.eot');
     src: url('IBMPlexSans-Thin.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-Thin.woff') format('woff'),
@@ -18,7 +18,7 @@
 }
 
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-ThinItalic.eot');
     src: url('IBMPlexSans-ThinItalic.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-ThinItalic.woff') format('woff'),
@@ -30,7 +30,7 @@
 
 /* WEIGHT: 200 (EXTRA LIGHT); STYLES: REGULAR+ITALIC */
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-ExtraLight.eot');
     src: url('IBMPlexSans-ExtraLight.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-ExtraLight.woff') format('woff'),
@@ -41,7 +41,7 @@
 }
 
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-ExtraLightItalic.eot');
     src: url('IBMPlexSans-ExtraLightItalic.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-ExtraLightItalic.woff') format('woff'),
@@ -53,7 +53,7 @@
 
 /* WEIGHT: 300 (LIGHT); STYLES: REGULAR+ITALIC */
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-Light.eot');
     src: url('IBMPlexSans-Light.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-Light.woff') format('woff'),
@@ -64,7 +64,7 @@
 }
 
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-LightItalic.eot');
     src: url('IBMPlexSans-LightItalic.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-LightItalic.woff') format('woff'),
@@ -76,7 +76,7 @@
 
 /* WEIGHT: 400 (REGULAR); STYLES: REGULAR+ITALIC */
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-Regular.eot');
     src: url('IBMPlexSans-Regular.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-Regular.woff') format('woff'),
@@ -87,7 +87,7 @@
 }
 
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-Italic.eot');
     src: url('IBMPlexSans-Italic.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-Italic.woff') format('woff'),
@@ -99,7 +99,7 @@
 
 /* WEIGHT: 450 (TEXT); STYLES: REGULAR+ITALIC */
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-Text.eot');
     src: url('IBMPlexSans-Text.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-Text.woff') format('woff'),
@@ -110,7 +110,7 @@
 }
 
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-TextItalic.eot');
     src: url('IBMPlexSans-TextItalic.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-TextItalic.woff') format('woff'),
@@ -122,7 +122,7 @@
 
 /* WEIGHT: 500 (MEDIUM); STYLES: REGULAR+ITALIC */
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-Medium.eot');
     src: url('IBMPlexSans-Medium.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-Medium.woff') format('woff'),
@@ -133,7 +133,7 @@
 }
 
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-MediumItalic.eot');
     src: url('IBMPlexSans-MediumItalic.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-MediumItalic.woff') format('woff'),
@@ -145,7 +145,7 @@
 
 /* WEIGHT: 600 (SEMIBOLD); STYLES: REGULAR+ITALIC */
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-SemiBold.eot');
     src: url('IBMPlexSans-SemiBold.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-SemiBold.woff') format('woff'),
@@ -156,7 +156,7 @@
 }
 
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-SemiBoldItalic.eot');
     src: url('IBMPlexSans-SemiBoldItalic.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-SemiBoldItalic.woff') format('woff'),
@@ -168,7 +168,7 @@
 
 /* WEIGHT: 700 (BOLD); STYLES: REGULAR+ITALIC */
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-Bold.eot');
     src: url('IBMPlexSans-Bold.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-Bold.woff') format('woff'),
@@ -179,7 +179,7 @@
 }
 
 @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: 'IBM Plex Sans';
     src: url('IBMPlexSans-BoldItalic.eot');
     src: url('IBMPlexSans-BoldItalic.eot?#iefix') format('embedded-opentype'),
          url('IBMPlexSans-BoldItalic.woff') format('woff'),
