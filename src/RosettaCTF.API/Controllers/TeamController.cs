@@ -63,12 +63,8 @@ namespace RosettaCTF.Controllers
         [HttpPost]
         [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
         [Authorize(Roles = JwtAuthenticationOptions.RoleUnteamed)]
-        [ServiceFilter(typeof(EventNotStartedFilter))]
         public async Task<ActionResult<ApiResult<TeamPreview>>> Create([FromBody] TeamCreateModel teamCreate, CancellationToken cancellationToken = default)
         {
-            if (DateTimeOffset.UtcNow >= this.EventConfiguration.StartTime)
-                return this.StatusCode(403, ApiResult.FromError<TeamPreview>(new ApiError(ApiErrorCode.EventStarted, "Cannot modify team composition after the event has started.")));
-
             var team = await this.UserRepository.CreateTeamAsync(teamCreate.Name, cancellationToken);
             if (team == null)
                 return this.Conflict(ApiResult.FromError<TeamPreview>(new ApiError(ApiErrorCode.DuplicateTeamName, "A team with given name already exists.")));
@@ -117,13 +113,9 @@ namespace RosettaCTF.Controllers
         [HttpPost]
         [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
         [Authorize(Roles = JwtAuthenticationOptions.RoleTeamMember)]
-        [ServiceFilter(typeof(EventNotStartedFilter))]
         [Route("invites/{userId}")]
         public async Task<ActionResult<ApiResult<TeamPreview>>> Invite(long userId, CancellationToken cancellationToken = default)
         {
-            if (DateTimeOffset.UtcNow >= this.EventConfiguration.StartTime)
-                return this.StatusCode(403, ApiResult.FromError<TeamPreview>(new ApiError(ApiErrorCode.EventStarted, "Cannot modify team composition after the event has started.")));
-
             var tuser = await this.UserRepository.GetUserAsync(userId, cancellationToken);
             if (tuser == null)
                 return this.NotFound(ApiResult.FromError<TeamPreview>(new ApiError(ApiErrorCode.UserNotFound, "Specified user does not exist.")));
@@ -143,13 +135,9 @@ namespace RosettaCTF.Controllers
         [HttpPost]
         [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
         [Authorize(Roles = JwtAuthenticationOptions.RoleUnteamed)]
-        [ServiceFilter(typeof(EventNotStartedFilter))]
         [Route("invites/{teamId}/accept")]
         public async Task<ActionResult<ApiResult<TeamPreview>>> AcceptInvite(long teamId, CancellationToken cancellationToken = default)
         {
-            if (DateTimeOffset.UtcNow >= this.EventConfiguration.StartTime)
-                return this.StatusCode(403, ApiResult.FromError<TeamPreview>(new ApiError(ApiErrorCode.EventStarted, "Cannot modify team composition after the event has started.")));
-
             var invite = await this.UserRepository.GetTeamInviteAsync(this.RosettaUser.Id, teamId, cancellationToken);
             if (invite == null)
                 return this.NotFound(ApiResult.FromError<TeamPreview>(new ApiError(ApiErrorCode.Unauthorized, "You were not invited to that team.")));
@@ -165,13 +153,9 @@ namespace RosettaCTF.Controllers
         [HttpGet]
         [Authorize(Roles = JwtAuthenticationOptions.RoleParticipant)]
         [Authorize(Roles = JwtAuthenticationOptions.RoleUnteamed)]
-        [ServiceFilter(typeof(EventNotStartedFilter))]
         [Route("invites")]
         public async Task<ActionResult<ApiResult<IEnumerable<TeamInvitePreview>>>> GetInvites(CancellationToken cancellationToken = default)
         {
-            if (DateTimeOffset.UtcNow >= this.EventConfiguration.StartTime)
-                return this.StatusCode(403, ApiResult.FromError<IEnumerable<TeamInvitePreview>>(new ApiError(ApiErrorCode.EventStarted, "Cannot modify team composition after the event has started.")));
-
             var invites = await this.UserRepository.GetTeamInvitesAsync(this.RosettaUser.Id, cancellationToken);
 
             var rinvites = this.UserPreviewRepository.GetInvites(invites);

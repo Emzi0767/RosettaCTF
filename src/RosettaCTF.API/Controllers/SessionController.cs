@@ -416,7 +416,6 @@ namespace RosettaCTF.Controllers
         [HttpPatch]
         [Authorize]
         [ServiceFilter(typeof(ValidRosettaUserFilter))]
-        [ServiceFilter(typeof(EventNotStartedFilter))]
         [Route("country")]
         public async Task<ActionResult<ApiResult<SessionPreview>>> UpdateUserCountry([FromBody] UserCountryModel data, CancellationToken cancellationToken = default)
         {
