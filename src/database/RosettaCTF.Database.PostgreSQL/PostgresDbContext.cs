@@ -96,10 +96,6 @@ namespace RosettaCTF
                     .IsRequired()
                     .HasColumnName("authorized");
 
-                e.Property(m => m.HasHiddenAccess)
-                    .IsRequired()
-                    .HasColumnName("access_hidden");
-
                 e.Property(m => m.TeamId)
                     .HasColumnName("team_id")
                     .HasDefaultValue(null);
@@ -407,10 +403,6 @@ namespace RosettaCTF
                 e.Property(m => m.EndpointId)
                     .HasColumnName("endpoint_id");
 
-                e.Property(m => m.IsHidden)
-                    .IsRequired()
-                    .HasColumnName("hidden");
-
                 e.Property(m => m.BaseScore)
                     .IsRequired()
                     .HasColumnName("base_score");
@@ -445,10 +437,6 @@ namespace RosettaCTF
                 e.Property(m => m.Name)
                     .IsRequired()
                     .HasColumnName("name");
-
-                e.Property(m => m.IsHidden)
-                    .IsRequired()
-                    .HasColumnName("hidden");
 
                 e.Property(m => m.Ordinality)
                     .IsRequired()

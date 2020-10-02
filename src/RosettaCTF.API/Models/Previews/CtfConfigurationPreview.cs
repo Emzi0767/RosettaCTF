@@ -32,8 +32,6 @@ namespace RosettaCTF.Models
 
         public CtfScoringMode Scoring { get; }
 
-        public int Flags { get; }
-
         public IEnumerable<ICountry> Countries { get; }
 
         public CtfConfigurationPreview(ICtfEvent ctf, IEnumerable<ICountry> countries)
@@ -43,7 +41,6 @@ namespace RosettaCTF.Models
             this.StartTime = ctf.StartTime;
             this.EndTime = ctf.EndTime;
             this.Scoring = ctf.Scoring;
-            this.Flags = ctf.Flags;
             this.Countries = countries;
         }
     }

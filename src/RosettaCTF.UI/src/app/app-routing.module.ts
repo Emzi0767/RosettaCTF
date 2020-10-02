@@ -19,12 +19,10 @@ import { Routes, RouterModule } from "@angular/router";
 
 import { CompositeRouteGuardService } from "./services/composite-route-guard.service";
 import { AuthenticationGuardService } from "./services/authentication-guard.service";
-import { KonamiGuardService } from "./services/konami-guard.service";
 import { EventStartGuardService } from "./services/event-start-guard.service";
 
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { LandingComponent } from "./landing/landing.component";
-import { KonamiComponent } from "./konami/konami.component";
 import { LoginComponent } from "./session/login/login.component";
 import { LogoutComponent } from "./session/logout/logout.component";
 import { CallbackComponent } from "./session/callback/callback.component";
@@ -42,12 +40,6 @@ const routes: Routes = [
     {
         path: "notyet",
         component: NotYetComponent
-    },
-    {
-        path: "konami",
-        component: KonamiComponent,
-        data: { routeGuards: [ KonamiGuardService, AuthenticationGuardService ] },
-        canActivate: [ CompositeRouteGuardService ]
     },
     {
         path: "session/login",

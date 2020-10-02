@@ -41,26 +41,24 @@ namespace RosettaCTF.Models
         /// </summary>
         public IEnumerable<ChallengePreview> Challenges { get; }
 
-        internal ChallengeCategoryPreview(ICtfChallengeCategory category, TimeSpan elapsed, EnumDisplayConverter enumCv, bool includeHidden)
-            : this(category, elapsed, enumCv, includeHidden, null)
+        internal ChallengeCategoryPreview(ICtfChallengeCategory category, TimeSpan elapsed, EnumDisplayConverter enumCv)
+            : this(category, elapsed, enumCv, null)
         { }
 
-        internal ChallengeCategoryPreview(ICtfChallengeCategory category, TimeSpan elapsed, EnumDisplayConverter enumCv, bool includeHidden, IReadOnlyDictionary<string, int> scores)
-            : this(category, elapsed, enumCv, includeHidden, scores, null)
+        internal ChallengeCategoryPreview(ICtfChallengeCategory category, TimeSpan elapsed, EnumDisplayConverter enumCv, IReadOnlyDictionary<string, int> scores)
+            : this(category, elapsed, enumCv, scores, null)
         { }
 
         internal ChallengeCategoryPreview(
             ICtfChallengeCategory category, 
             TimeSpan elapsed, 
             EnumDisplayConverter enumCv, 
-            bool includeHidden, 
             IReadOnlyDictionary<string, int> scores,
             HashSet<string> solveIds)
         {
             this.Id = category.Id;
             this.Name = category.Name;
             this.Challenges = category.Challenges
-                .Where(x => !x.IsHidden || includeHidden)
                 .Select(x => scores != null && scores.TryGetValue(x.Id, out var score) ? new ChallengePreview(x, elapsed, enumCv, score, solveIds?.Contains(x.Id)) : new ChallengePreview(x, elapsed, enumCv, null, solveIds?.Contains(x.Id)))
                 .ToList();
         }

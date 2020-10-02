@@ -28,9 +28,6 @@ namespace RosettaCTF
         [YamlMember("id")]
         public string Id { get; set; }
 
-        [YamlMember("hidden")]
-        public bool IsHidden { get; set; }
-
         [YamlMember("order")]
         public int Ordinality { get; set; }
 

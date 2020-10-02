@@ -65,8 +65,7 @@ namespace RosettaCTF
                 Id = this.IdGenerator.Generate(),
                 Username = username,
                 AvatarUrl = null,
-                IsAuthorized = isAuthorized,
-                HasHiddenAccess = false
+                IsAuthorized = isAuthorized
             };
 
             try
@@ -276,18 +275,6 @@ namespace RosettaCTF
                 : null;
 
             this.Database.ConnectedAccounts.Update(extUser);
-            await this.Database.SaveChangesAsync(cancellationToken);
-        }
-
-        public async Task EnableHiddenChallengesAsync(long userId, bool enable, CancellationToken cancellationToken = default)
-        {
-            var user = await this.Database.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
-            if (user == null)
-                return;
-
-            user.HasHiddenAccess = enable;
-
-            this.Database.Users.Update(user);
             await this.Database.SaveChangesAsync(cancellationToken);
         }
 

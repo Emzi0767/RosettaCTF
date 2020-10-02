@@ -15,7 +15,6 @@
 // limitations under the License.
 
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { Router } from "@angular/router";
 
 import { IEmptyData, IErrorData } from "./data/events";
 import { EventDispatcherService, EventHandler, IEventTriple } from "./services/event-dispatcher.service";
@@ -36,7 +35,6 @@ export class AppComponent implements OnInit, OnDestroy {
     private eventHandlerQueue: Array<IEventTriple<any>>;
 
     constructor(private eventDispatcher: EventDispatcherService,
-                private router: Router,
                 private api: RosettaApiService,
                 private configurationProvider: ConfigurationProviderService,
                 private sessionProvider: SessionProviderService,
@@ -46,10 +44,6 @@ export class AppComponent implements OnInit, OnDestroy {
                 this.eventDispatcher.register(handler.name, handler.handler.bind(this), handler.tag);
             }
         }
-    }
-
-    test(): void {
-        this.router.navigate(["konami"]);
     }
 
     ngOnInit(): void {

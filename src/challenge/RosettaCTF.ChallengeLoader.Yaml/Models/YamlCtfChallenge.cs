@@ -49,9 +49,6 @@ namespace RosettaCTF
         [YamlMember("endpoint")]
         public ICtfChallengeEndpoint Endpoint { get; set; }
 
-        [YamlMember("hidden")]
-        public bool IsHidden { get; set; }
-
         [YamlMember("baseScore")]
         public int BaseScore { get; set; }
     }

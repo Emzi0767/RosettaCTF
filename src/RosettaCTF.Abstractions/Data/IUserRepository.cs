@@ -177,15 +177,6 @@ namespace RosettaCTF.Data
         Task UpdateTokensAsync(long userId, string providerId, string token, string refreshToken, DateTimeOffset tokenExpiresAt, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Updates a user's ability to view hidden challenges and categories.
-        /// </summary>
-        /// <param name="userId">ID of the user to update the relevant flags for.</param>
-        /// <param name="enable">Whether hidden challenges should be visible or not.</param>
-        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
-        /// <returns>A task encapsulating the operation.</returns>
-        Task EnableHiddenChallengesAsync(long userId, bool enable, CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Gets outstanding team invites for a given user.
         /// </summary>
         /// <param name="userId">ID of the user to get invites for.</param>

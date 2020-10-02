@@ -84,7 +84,6 @@ namespace RosettaCTF
                 {
                     Id = category.Id,
                     Name = category.Name,
-                    IsHidden = category.IsHidden,
                     Ordinality = category.Ordinality
                 };
                 cats.Add(cat);
@@ -100,7 +99,6 @@ namespace RosettaCTF
                         Flag = challenge.Flag,
                         Difficulty = challenge.Difficulty,
                         Description = challenge.Description,
-                        IsHidden = challenge.IsHidden,
                         BaseScore = challenge.BaseScore
                     };
                     chls.Add(chl);

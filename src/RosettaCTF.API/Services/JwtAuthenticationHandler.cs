@@ -72,9 +72,6 @@ namespace RosettaCTF.Services
             else
                 claims.Add(new Claim(ClaimTypes.Role, JwtAuthenticationOptions.RoleUnteamed));
 
-            if (user.HasHiddenAccess)
-                claims.Add(new Claim(ClaimTypes.Role, JwtAuthenticationOptions.RoleHiddenAccess));
-
             var identity = new ClaimsIdentity(claims, this.Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, this.Scheme.Name);

@@ -46,8 +46,6 @@ namespace RosettaCTF.Models
 
         public bool IsAuthorized { get; set; }
 
-        public bool HasHiddenAccess { get; set; }
-
         public long? TeamId { get; set; }
 
         public PostgresTeam TeamInternal { get; set; }

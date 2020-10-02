@@ -42,9 +42,5 @@ namespace RosettaCTF
         /// <inheritdoc />
         [YamlMember("scoring")]
         public CtfScoringMode Scoring { get; set; }
-
-        /// <inheritdoc />
-        [YamlMember("flags")]
-        public int Flags { get; set; }
     }
 }

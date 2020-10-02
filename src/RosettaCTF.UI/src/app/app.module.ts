@@ -21,7 +21,6 @@ import { FormsModule } from "@angular/forms";
 import { HttpClientModule, HttpClientXsrfModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { MarkdownModule } from "ngx-markdown";
 
-import { KonamiModule } from "ngx-konami";
 import { QRCodeModule } from "angular2-qrcode";
 
 import { AppRoutingModule } from "./app-routing.module";
@@ -34,7 +33,6 @@ import { RosettaHttpInterceptor } from "./services/rosetta-http-interceptor.serv
 import { SessionRefreshManagerService } from "./services/session-refresh-manager.service";
 import { CompositeRouteGuardService } from "./services/composite-route-guard.service";
 import { AuthenticationGuardService } from "./services/authentication-guard.service";
-import { KonamiGuardService } from "./services/konami-guard.service";
 import { EventStartGuardService } from "./services/event-start-guard.service";
 
 import { NavbarComponent } from "./navbar/navbar.component";
@@ -44,7 +42,6 @@ import { DialogComponent } from "./dialog/dialog.component";
 import { ErrorDialogComponent } from "./dialog/error-dialog/error-dialog.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { LandingComponent } from "./landing/landing.component";
-import { KonamiComponent } from "./konami/konami.component";
 import { LoginComponent } from "./session/login/login.component";
 import { LogoutComponent } from "./session/logout/logout.component";
 import { CallbackComponent } from "./session/callback/callback.component";
@@ -83,7 +80,6 @@ import { WaitDialogComponent } from "./dialog/wait-dialog/wait-dialog.component"
         ErrorDialogComponent,
         NotFoundComponent,
         LandingComponent,
-        KonamiComponent,
         LoginComponent,
         LogoutComponent,
         CallbackComponent,
@@ -116,7 +112,6 @@ import { WaitDialogComponent } from "./dialog/wait-dialog/wait-dialog.component"
         BrowserModule,
         FormsModule,
         AppRoutingModule,
-        KonamiModule,
         BrowserAnimationsModule,
         HttpClientModule,
         HttpClientXsrfModule.withOptions({
@@ -134,7 +129,6 @@ import { WaitDialogComponent } from "./dialog/wait-dialog/wait-dialog.component"
         { provide: HTTP_INTERCEPTORS, useClass: RosettaHttpInterceptor, multi: true },
         CompositeRouteGuardService,
         AuthenticationGuardService,
-        KonamiGuardService,
         EventStartGuardService
     ],
     bootstrap: [AppComponent],

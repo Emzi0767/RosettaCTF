@@ -33,12 +33,6 @@ export class ConfigurationProviderService implements OnDestroy {
         this.init$ = new Promise<void>((resolve, reject) => { this.initResolve = resolve; });
     }
 
-    async hasAdditionalFeatures(): Promise<boolean> {
-        await this.init$;
-        // tslint:disable-next-line: no-bitwise
-        return (this.currentConfiguration.flags & 1) === 1;
-    }
-
     async getCurrent(): Promise<IApiEventConfiguration> {
         await this.init$;
         return this.currentConfiguration;

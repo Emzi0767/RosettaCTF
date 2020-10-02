@@ -500,11 +500,6 @@ export interface IApiEventConfiguration {
     scoring: ApiEventScoringMode;
 
     /**
-     * Gets additional settings for this event.
-     */
-    flags: number;
-
-    /**
      * Gets the countries defined for the event.
      */
     countries: ICountry[];

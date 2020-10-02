@@ -72,7 +72,7 @@ namespace RosettaCTF.Controllers
             var solveIds = solves.Select(x => x.Challenge.Id)
                 .ToHashSet();
 
-            var rcategories = this.ChallengePreviewRepository.GetChallengeCategories(categories, this.Elapsed, this.RosettaUser.HasHiddenAccess, scores, solveIds);
+            var rcategories = this.ChallengePreviewRepository.GetChallengeCategories(categories, this.Elapsed, scores, solveIds);
             return this.Ok(ApiResult.FromResult(rcategories));
         }
 
@@ -131,9 +131,6 @@ namespace RosettaCTF.Controllers
         public async Task<ActionResult<ApiResult<bool>>> SubmitFlag([FromRoute] string id, [FromBody] ChallengeFlagModel challengeFlag, CancellationToken cancellationToken = default)
         {
             var challenge = await this.ChallengeRepository.GetChallengeAsync(id, cancellationToken);
-            if (challenge.IsHidden && !this.RosettaUser.HasHiddenAccess)
-                return this.StatusCode(403, ApiResult.FromError<bool>(new ApiError(ApiErrorCode.ChallengeUnavailable, "This user is not authorized to access this challenge.")));
-
             var flag = challengeFlag.Flag;
             var valid = flag == challenge.Flag;
             int? score = null;

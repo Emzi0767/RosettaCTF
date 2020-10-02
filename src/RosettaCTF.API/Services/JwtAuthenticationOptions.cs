@@ -25,6 +25,5 @@ namespace RosettaCTF.Services
         public const string RoleParticipant = "Participant";
         public const string RoleTeamMember = "TeamMember";
         public const string RoleUnteamed = "Unteamed";
-        public const string RoleHiddenAccess = "Konami";
     }
 }

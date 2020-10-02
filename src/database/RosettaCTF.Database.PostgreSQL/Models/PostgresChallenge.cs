@@ -51,8 +51,6 @@ namespace RosettaCTF.Models
 
         public ICtfChallengeEndpoint Endpoint => this.EndpointInternal;
 
-        public bool IsHidden { get; set; }
-
         public int BaseScore { get; set; }
 
         public IEnumerable<PostgresSolveSubmission> SolvesInternal { get; set; }

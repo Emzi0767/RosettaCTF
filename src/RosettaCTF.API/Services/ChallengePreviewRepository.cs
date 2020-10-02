@@ -74,79 +74,68 @@ namespace RosettaCTF.Services
         /// </summary>
         /// <param name="category">Category to convert.</param>
         /// <param name="elapsed">Time elapsed since the beginning of the event.</param>
-        /// <param name="includeHidden">Whether to include hidden challenges in the listing.</param>
         /// <returns>An abridged challenge category.</returns>
-        public ChallengeCategoryPreview GetChallengeCategory(ICtfChallengeCategory category, TimeSpan elapsed, bool includeHidden)
-            => this.GetChallengeCategory(category, elapsed, includeHidden, null);
+        public ChallengeCategoryPreview GetChallengeCategory(ICtfChallengeCategory category, TimeSpan elapsed)
+            => this.GetChallengeCategory(category, elapsed, null);
 
         /// <summary>
         /// Converts a <see cref="ICtfChallengeCategory"/> to its abridged variant with specified scoring.
         /// </summary>
         /// <param name="category">Category to convert.</param>
         /// <param name="elapsed">Time elapsed since the beginning of the event.</param>
-        /// <param name="includeHidden">Whether to include hidden challenges in the listing.</param>
         /// <param name="scores">Scores for the challenges herein.</param>
         /// <returns>An abridged challenge category.</returns>
-        public ChallengeCategoryPreview GetChallengeCategory(ICtfChallengeCategory category, TimeSpan elapsed, bool includeHidden, IReadOnlyDictionary<string, int> scores)
-            => this.GetChallengeCategory(category, elapsed, includeHidden, scores, null);
+        public ChallengeCategoryPreview GetChallengeCategory(ICtfChallengeCategory category, TimeSpan elapsed, IReadOnlyDictionary<string, int> scores)
+            => this.GetChallengeCategory(category, elapsed, scores, null);
 
         /// <summary>
         /// Converts a <see cref="ICtfChallengeCategory"/> to its abridged variant with specified scoring.
         /// </summary>
         /// <param name="category">Category to convert.</param>
         /// <param name="elapsed">Time elapsed since the beginning of the event.</param>
-        /// <param name="includeHidden">Whether to include hidden challenges in the listing.</param>
         /// <param name="scores">Scores for the challenges herein.</param>
         /// <param name="solveIds">IDs of challenges solved by current user's team.</param>
         /// <returns>An abridged challenge category.</returns>
         public ChallengeCategoryPreview GetChallengeCategory(
-            ICtfChallengeCategory category, 
-            TimeSpan elapsed, 
-            bool includeHidden, 
+            ICtfChallengeCategory category,
+            TimeSpan elapsed,
             IReadOnlyDictionary<string, int> scores,
             HashSet<string> solveIds)
-            => !category.IsHidden || includeHidden
-                ? new ChallengeCategoryPreview(category, elapsed, this.EnumDisplayConverter, includeHidden, scores, solveIds)
-                : null;
+            => new ChallengeCategoryPreview(category, elapsed, this.EnumDisplayConverter, scores, solveIds);
 
         /// <summary>
         /// Converts an enumerable of <see cref="ICtfChallengeCategory"/> to an enumerable of its abridged variants.
         /// </summary>
         /// <param name="categories">Enumerable of categories to convert.</param>
         /// <param name="elapsed">Time elapsed since the beginning of the event.</param>
-        /// <param name="includeHidden">Whether to include hidden challenges and categories in the listing.</param>
         /// <returns>An enumerable of abridged challenge categories.</returns>
-        public IEnumerable<ChallengeCategoryPreview> GetChallengeCategories(IEnumerable<ICtfChallengeCategory> categories, TimeSpan elapsed, bool includeHidden)
-            => this.GetChallengeCategories(categories, elapsed, includeHidden, null);
+        public IEnumerable<ChallengeCategoryPreview> GetChallengeCategories(IEnumerable<ICtfChallengeCategory> categories, TimeSpan elapsed)
+            => this.GetChallengeCategories(categories, elapsed, null);
 
         /// <summary>
         /// Converts an enumerable of <see cref="ICtfChallengeCategory"/> to an enumerable of its abridged variants with specified scoring.
         /// </summary>
         /// <param name="categories">Enumerable of categories to convert.</param>
         /// <param name="elapsed">Time elapsed since the beginning of the event.</param>
-        /// <param name="includeHidden">Whether to include hidden challenges and categories in the listing.</param>
         /// <param name="scores">Scores for the challenges herein.</param>
         /// <returns>An enumerable of abridged challenge categories.</returns>
-        public IEnumerable<ChallengeCategoryPreview> GetChallengeCategories(IEnumerable<ICtfChallengeCategory> categories, TimeSpan elapsed, bool includeHidden, IReadOnlyDictionary<string, int> scores)
-            => this.GetChallengeCategories(categories, elapsed, includeHidden, scores, null);
+        public IEnumerable<ChallengeCategoryPreview> GetChallengeCategories(IEnumerable<ICtfChallengeCategory> categories, TimeSpan elapsed, IReadOnlyDictionary<string, int> scores)
+            => this.GetChallengeCategories(categories, elapsed, scores, null);
 
         /// <summary>
         /// Converts an enumerable of <see cref="ICtfChallengeCategory"/> to an enumerable of its abridged variants with specified scoring.
         /// </summary>
         /// <param name="categories">Enumerable of categories to convert.</param>
         /// <param name="elapsed">Time elapsed since the beginning of the event.</param>
-        /// <param name="includeHidden">Whether to include hidden challenges and categories in the listing.</param>
         /// <param name="scores">Scores for the challenges herein.</param>
         /// <param name="solveIds">IDs </param>
         /// <param name="solveIds">IDs of challenges solved by current user's team.</param>
         public IEnumerable<ChallengeCategoryPreview> GetChallengeCategories(
             IEnumerable<ICtfChallengeCategory> categories,
             TimeSpan elapsed,
-            bool includeHidden,
             IReadOnlyDictionary<string, int> scores,
             HashSet<string> solveIds)
-            => categories.Where(x => !x.IsHidden || includeHidden)
-                .Select(x => this.GetChallengeCategory(x, elapsed, includeHidden, scores, solveIds))
+            => categories.Select(x => this.GetChallengeCategory(x, elapsed, scores, solveIds))
                 .ToList();
 
         /// <summary>

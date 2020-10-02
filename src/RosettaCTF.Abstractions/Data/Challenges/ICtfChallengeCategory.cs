@@ -34,11 +34,6 @@ namespace RosettaCTF.Data
         string Id { get; }
 
         /// <summary>
-        /// Gets whether this category is hidden by default.
-        /// </summary>
-        bool IsHidden { get; }
-
-        /// <summary>
         /// Gets the ordinality of this category.
         /// </summary>
         int Ordinality { get; }
