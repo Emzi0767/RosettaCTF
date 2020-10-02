@@ -61,7 +61,7 @@ namespace RosettaCTF.Controllers
             {
                 Tasks = challenges.Select(x => x.Title),
                 Standings = this.CreateStandings(solves.GroupBy(x => x.Team), points)
-                    .OrderBy(x => x.Score)
+                    .OrderByDescending(x => x.Score)
                     .Select((x, i) => { x.Pos = i + 1; return x; })
             };
             return this.Ok(scoreboard);
