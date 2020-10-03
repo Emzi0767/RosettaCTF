@@ -14,10 +14,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Component, OnInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, ComponentRef, OnDestroy, Input } from "@angular/core";
-import { Router, ResolveEnd } from "@angular/router";
+import { Component, OnInit, ComponentRef, OnDestroy } from "@angular/core";
+import { animate, state, style, transition, trigger } from "@angular/animations";
 
-import { INavbarData } from "../data/navbar";
 import { Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { IApiEventConfiguration } from "../data/api";
@@ -28,15 +27,37 @@ import { SessionProviderService } from "../services/session-provider.service";
 @Component({
     selector: "app-navbar",
     templateUrl: "./navbar.component.html",
-    styleUrls: ["./navbar.component.less"]
+    styleUrls: ["./navbar.component.less"],
+    animations: [
+        trigger("toggleMenuVisibility", [
+            state("*", style({ height: "0" })),
+            state("showing", style({ height: "0" })),
+            state("hiding", style({ height: "0" })),
+            state("visible", style({ height: "384px" })),
+            transition("collapsed => showing", animate("0s")),
+            transition("showing => visible", animate("0.1s")),
+            transition("visible => hiding", animate("0.1s")),
+            transition("hiding => collapsed", animate("0s"))
+        ]),
+        trigger("rotateMenuArrow", [
+            state("*", style({ transform: "rotate(0deg)" })),
+            state("showing", style({ transform: "rotate(0deg)" })),
+            state("hiding", style({ transform: "rotate(360deg)" })),
+            state("visible", style({ transform: "rotate(180deg)" })),
+            transition("collapsed => showing", animate("0s")),
+            transition("showing => visible", animate("0.1s")),
+            transition("visible => hiding", animate("0.1s")),
+            transition("hiding => collapsed", animate("0s"))
+        ])
+    ]
 })
 export class NavbarComponent implements OnInit, OnDestroy {
 
     private ngUnsubscribe = new Subject();
 
-    @ViewChild("buttonContainer", { read: ViewContainerRef, static: true })
-    container: ViewContainerRef;
     private component: ComponentRef<any>;
+
+    menuState: "collapsed" | "showing" | "visible" | "hiding" = "collapsed";
 
     configuration$: Observable<IApiEventConfiguration>;
     configuration: IApiEventConfiguration;
@@ -44,35 +65,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
     session$: Observable<ISession>;
     session: ISession;
 
-    constructor(private router: Router,
-                private resolver: ComponentFactoryResolver,
-                private configurationProvider: ConfigurationProviderService,
+    constructor(private configurationProvider: ConfigurationProviderService,
                 private sessionProvider: SessionProviderService) {
         this.configuration$ = this.configurationProvider.configurationChange;
         this.session$ = this.sessionProvider.sessionChange;
     }
 
     ngOnInit(): void {
-        this.router.events
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(x => {
-                if (!(x instanceof ResolveEnd)) {
-                    return;
-                }
-                const data = x.state.root.children[0].data as INavbarData;
-
-                this.container.clear();
-                if (!!this.component) {
-                    this.component.destroy();
-                    this.component = null;
-                }
-
-                if (!!data.buttons) {
-                    const factory = this.resolver.resolveComponentFactory(data.buttons);
-                    this.component = this.container.createComponent(factory);
-                }
-            });
-
         this.configuration$
             .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(x => { this.configuration = x; });
@@ -87,5 +86,27 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
+    }
+
+    toggleMenu(): void {
+        if (this.menuState === "collapsed") {
+            this.menuState = "showing";
+        } else if (this.menuState === "visible") {
+            this.menuState = "hiding";
+        }
+    }
+
+    hideMenu(): void {
+        this.menuState = "hiding";
+    }
+
+    animated(): void {
+        window.setTimeout(() => {
+            if (this.menuState === "showing") {
+                this.menuState = "visible";
+            } else if (this.menuState === "hiding") {
+                this.menuState = "collapsed";
+            }
+        }, 1);
     }
 }

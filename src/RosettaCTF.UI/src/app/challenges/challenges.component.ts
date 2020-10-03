@@ -91,26 +91,27 @@ export class ChallengesComponent implements OnInit, OnDestroy {
     }
 
     openSolveDialog(challenge: IChallenge): void {
-        this.eventDispatcher.emit("dialog",
-            {
-                componentType: SubmitFlagDialogComponent,
-                defaults: {
-                    challenge,
-                    provideFlag: flag => this.submitFlag(flag)
-                }
-            });
+        this.eventDispatcher.emit("dialog", {
+            componentType: SubmitFlagDialogComponent,
+            defaults: {
+                challenge,
+                provideFlag: (flag: IApiFlag) => this.submitFlag(flag)
+            }
+        });
     }
 
     private async submitFlag(flag: IApiFlag): Promise<void> {
-        waitClose(this.eventDispatcher);
+        waitOpen(this.eventDispatcher);
         this.disableButtons = true;
 
         const response = await this.api.submitSolve(flag);
         if (!response.isSuccess) {
             this.eventDispatcher.emit("error", { message: "Submitting flag failed.", reason: response.error });
+            return;
         } else if (!response.result) {
             // tslint:disable-next-line: max-line-length
             this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message: "Your response was incorrect." } });
+            return;
         }
 
         const categories = await this.api.getCategories();

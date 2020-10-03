@@ -18,6 +18,11 @@
     display: inline-block;
     height: 100%;
     margin: 0; padding: 0;
+
+    @media (max-width: 859px) {
+        display: block;
+        width: 100%; height: auto;
+    }
 }
 
 .labelled-button-container {
@@ -69,6 +74,13 @@
         }
     }
 
+    @media (max-width: 859px) {
+        display: block;
+        width: 100%;
+        margin: 0;
+        position: initial;
+    }
+
     & > .label {
         font-weight: 450;
         white-space: nowrap;
@@ -83,6 +95,10 @@
         top: 64px;
         right: -8px;
     
-        background: rgba(34, 34, 34, 0.75);    
+        background: rgba(34, 34, 34, 0.75);
+
+        @media (max-width: 1240px) {
+            display: none !important;
+        }
     }
 }

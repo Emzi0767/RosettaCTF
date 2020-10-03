@@ -19,18 +19,20 @@
 -->
 
 <div class="navbar-root">
-    <div class="navbar-title"><a [routerLink]="['/']">{{ configuration?.name || "RosettaCTF" }}</a></div>
-    <div class="spacer"></div>
-    <div class="buttons">
-        <span #buttonContainer></span>
-        <labelled-button [actionId]="'landing'" [actionDescription]="'Go to landing page'" [actionText]="'Home'" [actionRoute]="['/']"></labelled-button>
-        <labelled-button [actionId]="'challenges'" [actionDescription]="'Show currently-available challenges'" [actionText]="'Challenges'" [actionRoute]="['/challenges']"></labelled-button>
-        <labelled-button [actionId]="'scoreboard'" [actionDescription]="'Display current team ranking'" [actionText]="'Scoreboard'" [actionRoute]="['/scoreboard']"></labelled-button>
-        <labelled-button [actionId]="'profile'" [actionDescription]="'View your user profile'" [actionText]="'Profile'" [actionRoute]="['/profile']"></labelled-button>
-        <labelled-button [actionId]="'team'" [actionDescription]="'View your team\'s profile'" [actionText]="'Team'" [actionRoute]="['/team']"></labelled-button>
-        <labelled-button *ngIf="!session.isAuthenticated else elseBlock" [actionId]="'login'" [actionDescription]="'Log in'" [actionText]="'Log in'" [actionRoute]="['/session/login']"></labelled-button>
+    <div class="navbar-subroot">
+        <div class="navbar-title"><a [routerLink]="['/']">{{ configuration?.name || "RosettaCTF" }}</a></div>
+        <div class="spacer"></div>
+        <div class="mobile-expander" (click)="toggleMenu()">Menu <span class="drop-arrow" [@rotateMenuArrow]="menuState">&#xe313;</span></div>
+    </div>
+    <div class="buttons" [@toggleMenuVisibility]="menuState" (@toggleMenuVisibility.done)="animated()">
+        <labelled-button (click)="hideMenu()" [actionId]="'landing'" [actionDescription]="'Go to landing page'" [actionText]="'Home'" [actionRoute]="['/']"></labelled-button>
+        <labelled-button (click)="hideMenu()" [actionId]="'challenges'" [actionDescription]="'Show currently-available challenges'" [actionText]="'Challenges'" [actionRoute]="['/challenges']"></labelled-button>
+        <labelled-button (click)="hideMenu()" [actionId]="'scoreboard'" [actionDescription]="'Display current team ranking'" [actionText]="'Scoreboard'" [actionRoute]="['/scoreboard']"></labelled-button>
+        <labelled-button (click)="hideMenu()" [actionId]="'profile'" [actionDescription]="'View your user profile'" [actionText]="'Profile'" [actionRoute]="['/profile']"></labelled-button>
+        <labelled-button (click)="hideMenu()" [actionId]="'team'" [actionDescription]="'View your team\'s profile'" [actionText]="'Team'" [actionRoute]="['/team']"></labelled-button>
+        <labelled-button (click)="hideMenu()" *ngIf="!session.isAuthenticated else elseBlock" [actionId]="'login'" [actionDescription]="'Log in'" [actionText]="'Log in'" [actionRoute]="['/session/login']"></labelled-button>
         <ng-template #elseBlock>
-            <labelled-button [actionId]="'logout'" [actionDescription]="'Log out to have a nice walk outside. Just kidding, everyone knows you never leave your room.'" [actionText]="'Log out'" [actionRoute]="['/session/logout']"></labelled-button>
+            <labelled-button (click)="hideMenu()" [actionId]="'logout'" [actionDescription]="'Log out to have a nice walk outside. Just kidding, everyone knows you never leave your room.'" [actionText]="'Log out'" [actionRoute]="['/session/logout']"></labelled-button>
         </ng-template>
     </div>
 </div>

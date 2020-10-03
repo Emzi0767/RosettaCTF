@@ -21,21 +21,61 @@
     display: flex;
     flex-direction: row;
 
-    & > .navbar-title {
-        flex: 0 0 auto;
-        font-size: 36px;
-        font-weight: 700;
-        line-height: 64px;
-    }
+    overflow: hidden;
 
-    & > .spacer {
+    & > .navbar-subroot {
+        display: flex;
         flex: 100 0 auto;
+
+        & > .navbar-title {
+            flex: 0 0 auto;
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 64px;
+        }
+
+        & > .spacer {
+            flex: 100 0 auto;
+        }
+
+        & > .mobile-expander {
+            display: none;
+
+            font-weight: 450;
+            color: #eee;
+
+            & > .drop-arrow {
+                display: inline-block;
+
+                font-family: 'Material Icons';
+                font-weight: 400;
+                font-size: 18px;
+                line-height: 20px;
+
+                vertical-align: middle;
+            }
+        }
     }
 
     & > .buttons {
         flex: 0 0 auto;
 
         padding-left: 16px;
+    }
+
+    @media (max-width: 859px) {
+        display: block;
+
+        & > .navbar-subroot {
+            & > .mobile-expander {
+                display: block;
+            }
+        }
+
+        & > .buttons {
+            display: block;
+            padding-left: 0;
+        }
     }
     
     a {

@@ -7,7 +7,6 @@ organizers:
 startTime: 2020-08-20T00:00:00+00:00
 endTime: 2020-08-22T00:00:00+00:00
 scoring: jeopardy
-flags: 1
 ---
 - id: start
   name: Starter
@@ -82,26 +81,4 @@ flags: 1
       host: tcp.myrosettactfinstance.xyz
       port: 42000
     baseScore: 500
-- id: hidden
-  name: Hidden
-  hidden: true
-  order: 3
-  challenges:
-  - id: supersecret
-    title: Super Secret Challenge
-    flag: 'myctf{I_can_see_everything}'
-    difficulty: 6
-    description: |-
-      It is possible to set a challenge as hidden, which will require the users to activate them (currently via 
-      inputting the [Konami Code](https://en.wikipedia.org/wiki/Konami_Code) anywhere on the site). Hidden challenges 
-      are not visible unless explicitly activated.
-
-      Enabling of these events occurs by hitting the `/api/session/unhide` endpoint, with the user's authentication 
-      token, therefore anything that performs this action will enable them (including users hitting the endpoint 
-      manually, however it should be noted that the endpoint requires and validates anti-XSRF data).
-
-      The SPA can be customized to change the trigger.
-
-    baseScore: 500
-    hidden: true
     
