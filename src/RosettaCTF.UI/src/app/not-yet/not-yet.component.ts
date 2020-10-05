@@ -83,10 +83,10 @@ export class NotYetComponent implements OnInit, OnDestroy {
                 round: true,
                 largest: 3,
                 unitMeasures: {
-                    d: 172_800_000,
-                    h:   3_600_000,
-                    m:      60_000,
-                    s:       1_000
+                    d: 86_400_000,
+                    h:  3_600_000,
+                    m:     60_000,
+                    s:      1_000
                 }
             });
         }

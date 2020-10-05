@@ -76,8 +76,17 @@ export class LandingComponent implements OnInit, OnDestroy {
         const end = parseZone(cfg.endTime);
         const start = parseZone(cfg.startTime);
 
-        const dur = duration(end.diff(start));
-        return dur.humanize({ h: 48, m: 60, s: 60, ss: 5 });
+        return this.humanizer.humanize(end.diff(start), {
+            units: ["d", "h", "m", "s"],
+            round: true,
+            largest: 3,
+            unitMeasures: {
+                d: 86_400_000,
+                h:  3_600_000,
+                m:     60_000,
+                s:      1_000
+            }
+        });
     }
 
     private stopTimer(): void {
@@ -100,10 +109,10 @@ export class LandingComponent implements OnInit, OnDestroy {
                 round: true,
                 largest: 3,
                 unitMeasures: {
-                    d: 172_800_000,
-                    h:   3_600_000,
-                    m:      60_000,
-                    s:       1_000
+                    d: 86_400_000,
+                    h:  3_600_000,
+                    m:     60_000,
+                    s:      1_000
                 }
             });
         }

@@ -81,4 +81,3 @@ scoring: jeopardy
       host: tcp.myrosettactfinstance.xyz
       port: 42000
     baseScore: 500
-    

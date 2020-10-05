@@ -22,7 +22,9 @@
     "forwardHeaders": {
       "enable": true,
       "limit": 1,
-      "networks": [ "10.0.0.0/8" ]
+      "networks": [
+        "10.0.0.0/8"
+      ]
     },
     "listen": [
       {
@@ -50,25 +52,30 @@
             123456789123456789
           ]
         },
-		{
-		  "type": "custom",
-		  "id": "ctftime",
-		  "name": "CTFtime",
-		  "colour": "#FF0000",
-		  "clientId": "Your event ID",
-		  "clientSecret": "Your client secret from event management interface",
-		  "authorizeUrl": "https://oauth.ctftime.org/authorize",
-		  "tokenUrl": "https://oauth.ctftime.org/token",
-		  "refreshUrl": "Optional, if the provider supports refreshing.",
-		  "revokeUrl": "Optional, if the provider supports revocations.",
-		  "userUrl": "https://oauth.ctftime.org/user",
-		  "scopes": [ "profile:read" ],
-		  "hostnames": [ "oauth.ctftime.org", "ctftime.org" ],
-		  "mappings": {
-			"userId": "id",
-			"username": "username"
-		  }
-		}
+        {
+          "type": "custom",
+          "id": "ctftime",
+          "name": "CTFtime",
+          "colour": "#FF0000",
+          "clientId": "Your event ID",
+          "clientSecret": "Your client secret from event management interface",
+          "authorizeUrl": "https://oauth.ctftime.org/authorize",
+          "tokenUrl": "https://oauth.ctftime.org/token",
+          "refreshUrl": "Optional, if the provider supports refreshing.",
+          "revokeUrl": "Optional, if the provider supports revocations.",
+          "userUrl": "https://oauth.ctftime.org/user",
+          "scopes": [
+            "profile:read"
+          ],
+          "hostnames": [
+            "oauth.ctftime.org",
+            "ctftime.org"
+          ],
+          "mappings": {
+            "userId": "id",
+            "username": "username"
+          }
+        }
       ]
     }
   },
