@@ -107,10 +107,12 @@ export class ChallengesComponent implements OnInit, OnDestroy {
         const response = await this.api.submitSolve(flag);
         if (!response.isSuccess) {
             this.eventDispatcher.emit("error", { message: "Submitting flag failed.", reason: response.error });
+            this.disableButtons = false;
             return;
         } else if (!response.result) {
             // tslint:disable-next-line: max-line-length
             this.eventDispatcher.emit("dialog", { componentType: ErrorDialogComponent, defaults: { message: "Your response was incorrect." } });
+            this.disableButtons = false;
             return;
         }
 
