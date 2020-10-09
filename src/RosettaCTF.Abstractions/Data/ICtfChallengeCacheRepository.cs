@@ -40,6 +40,14 @@ namespace RosettaCTF.Data
         Task<int> IncrementBaselineSolveCountAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Stes the number of teams that solved the baseline challenge.
+        /// </summary>
+        /// <param name="count">Number of baseline solves to set.</param>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
+        /// <returns>A task encapsulating the operation.</returns>
+        Task SetBaselineSolveCountAsync(int count, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Gets the current score of a challenge.
         /// </summary>
         /// <param name="challengeId">ID of the challenge to get current score for.</param>

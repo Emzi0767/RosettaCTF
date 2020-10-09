@@ -156,9 +156,10 @@ namespace RosettaCTF.Services
                     if (score == 0 || score == null)
                         score = x.Sum(x => scores?[x.Challenge.Id] ?? 0);
 
-                    return new { team = teams[x.Key], score = score.Value };
+                    return new { team = teams[x.Key], score = score.Value, lastAccept = x.Last().Timestamp };
                 })
                 .OrderByDescending(x => x.score)
+                .ThenBy(x => x.lastAccept)
                 .Select((x, i) => new ScoreboardEntryPreview(x.team, x.score, i + 1, null))
                 .ToList();
 

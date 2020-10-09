@@ -40,7 +40,7 @@ namespace RosettaCTF.Controllers
         private ICtfChallengeRepository ChallengeRepository { get; }
         private ChallengePreviewRepository ChallengePreviewRepository { get; }
         private ICtfChallengeCacheRepository ChallengeCacheRepository { get; }
-        private IScoringModel ScoringModel { get; }
+        private ScoreCalculatorService ScoreCalculator { get; }
 
         public ChallengesController(
             ILoggerFactory loggerFactory,
@@ -50,13 +50,13 @@ namespace RosettaCTF.Controllers
             ICtfChallengeRepository challengeRepository,
             ChallengePreviewRepository challengePreviewRepository,
             ICtfChallengeCacheRepository challengeCacheRepository,
-            IScoringModel scoringModel)
+            ScoreCalculatorService scoreCalculator)
             : base(loggerFactory, userRepository, userPreviewRepository, ctfConfigurationLoader)
         {
             this.ChallengeRepository = challengeRepository;
             this.ChallengePreviewRepository = challengePreviewRepository;
             this.ChallengeCacheRepository = challengeCacheRepository;
-            this.ScoringModel = scoringModel;
+            this.ScoreCalculator = scoreCalculator;
         }
 
         [HttpGet]
@@ -137,16 +137,10 @@ namespace RosettaCTF.Controllers
             
             if (valid && this.EventConfiguration.Scoring != CtfScoringMode.Static)
             {
-                var solves = await this.ChallengeCacheRepository.IncrementSolveCountAsync(challenge.Id, cancellationToken);
-                var baseline = await this.ChallengeCacheRepository.GetBaselineSolveCountAsync(cancellationToken);
-                var rate = solves / (double)baseline;
-                var postRate = (solves + 1.0) / baseline;
-                var cscore = this.ScoringModel.ComputeScore(challenge.BaseScore, rate);
-                var pscore = this.ScoringModel.ComputeScore(challenge.BaseScore, postRate);
+                var scoreInfo = await this.ScoreCalculator.ComputeCurrentScoreAsync(challenge, cancellationToken);
 
-                await this.ChallengeCacheRepository.UpdateScoreAsync(challenge.Id, pscore, cancellationToken);
                 if (this.EventConfiguration.Scoring == CtfScoringMode.Freezer)
-                    score = cscore;
+                    score = scoreInfo.Current;
             }
 
             var solve = await this.ChallengeRepository.SubmitSolveAsync(flag, valid, challenge.Id, this.RosettaUser.Id, this.RosettaUser.Team.Id, score, cancellationToken);
@@ -154,7 +148,12 @@ namespace RosettaCTF.Controllers
                 return this.Conflict(ApiResult.FromError<bool>(new ApiError(ApiErrorCode.AlreadySolved, "Your team already solved this challenge.")));
 
             if (valid && challenge.BaseScore == 1)
+            {
                 await this.ChallengeCacheRepository.IncrementBaselineSolveCountAsync(cancellationToken);
+
+                if (this.EventConfiguration.Scoring != CtfScoringMode.Static)
+                    await this.ScoreCalculator.UpdateAllScoresAsync(this.EventConfiguration.Scoring == CtfScoringMode.Freezer, false, cancellationToken);
+            }
 
             return this.Ok(ApiResult.FromResult(valid));
         }

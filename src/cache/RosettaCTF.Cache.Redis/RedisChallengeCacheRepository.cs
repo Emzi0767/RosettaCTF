@@ -41,6 +41,9 @@ namespace RosettaCTF
         public async Task<int> IncrementBaselineSolveCountAsync(CancellationToken cancellationToken = default)
             => (int)await this.Redis.IncrementValueAsync(BaselineKey, SolvesKey) - 1;
 
+        public async Task SetBaselineSolveCountAsync(int count, CancellationToken cancellationToken = default)
+            => await this.Redis.SetValueAsync(count, BaselineKey, SolvesKey);
+
         public async Task<int> GetScoreAsync(string challengeId, CancellationToken cancellationToken = default)
             => await this.Redis.GetValueAsync<int>(ChallengesKey, challengeId, ScoreKey);
 

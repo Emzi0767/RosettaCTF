@@ -1,5 +1,5 @@
-// This file is part of RosettaCTF project.
-//
+﻿// This file is part of RosettaCTF project.
+// 
 // Copyright 2020 Emzi0767
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,16 +14,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@import "../../common/buttons.less";
-@import "../../common/grid-tables.less";
+namespace RosettaCTF.Models
+{
+    public struct ScoreInfo
+    {
+        public int Current { get; }
+        public int Next { get; }
 
-small {
-    display: inline-block;
-    margin-left: 18px;
-    
-    color: #bbb;
-    font-size: 0.66em;
+        public ScoreInfo(int current, int next)
+        {
+            this.Current = current;
+            this.Next = next;
+        }
+    }
 }
-
-.grid-table(members, 3, min-content 1fr min-content);
-.grid-table(solves, 4, 1fr 2fr min-content 1fr);

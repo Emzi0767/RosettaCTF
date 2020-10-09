@@ -73,8 +73,25 @@ namespace RosettaCTF.Data
         /// <param name="teamId">ID of the submitting team.</param>
         /// <param name="score">Frozen score, if applicable.</param>
         /// <param name="cancellationToken">Token to cancel any pending operation.</param>
-        /// <returns>The created solution.</returns>
+        /// <returns>The created solve.</returns>
         Task<ICtfSolveSubmission> SubmitSolveAsync(string flag, bool isValid, string challengeId, long userId, long teamId, int? score, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Updates a single solve.
+        /// </summary>
+        /// <param name="id">ID of the solve entry to update.</param>
+        /// <param name="score">Score to set for it.</param>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
+        /// <returns>The updated solve.</returns>
+        Task<ICtfSolveSubmission> UpdateSolveAsync(long id, int? score, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Updates multiple solves.
+        /// </summary>
+        /// <param name="solveUpdates">Solve updates to process.</param>
+        /// <param name="cancellationToken">Token to cancel any pending operation.</param>
+        /// <returns>A task representing the operation.</returns>
+        Task UpdateSolvesAsync(IEnumerable<CtfSolveUpdate> solveUpdates, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets successful solves.

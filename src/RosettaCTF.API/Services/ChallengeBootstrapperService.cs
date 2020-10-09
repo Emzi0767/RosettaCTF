@@ -58,11 +58,16 @@ namespace RosettaCTF.Services
                 var repository = services.GetRequiredService<ICtfChallengeRepository>();
                 var configLoader = services.GetRequiredService<ICtfConfigurationLoader>();
                 var cache = services.GetRequiredService<ICtfChallengeCacheRepository>();
+                var scorer = services.GetRequiredService<ScoreCalculatorService>();
                 var challenges = configLoader.LoadChallenges();
+                var @event = configLoader.LoadEventData();
 
                 await repository.InstallAsync(challenges, cancellationToken);
                 await cache.InstallAsync(challenges.SelectMany(x => x.Challenges)
                     .ToDictionary(x => x.Id, x => x.BaseScore), cancellationToken);
+                
+                if (@event.Scoring != CtfScoringMode.Static)
+                    await scorer.UpdateAllScoresAsync(@event.Scoring == CtfScoringMode.Freezer, true, cancellationToken);
             }
         }
 

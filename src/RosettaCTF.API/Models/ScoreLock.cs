@@ -1,5 +1,5 @@
-// This file is part of RosettaCTF project.
-//
+﻿// This file is part of RosettaCTF project.
+// 
 // Copyright 2020 Emzi0767
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,16 +14,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@import "../../common/buttons.less";
-@import "../../common/grid-tables.less";
+using System;
+using System.Threading;
 
-small {
-    display: inline-block;
-    margin-left: 18px;
-    
-    color: #bbb;
-    font-size: 0.66em;
+namespace RosettaCTF.Models
+{
+    public sealed class ScoreLock : IDisposable
+    {
+        private SemaphoreSlim Semaphore { get; }
+
+        public ScoreLock(SemaphoreSlim semaphore)
+        {
+            this.Semaphore = semaphore;
+        }
+
+        public void Dispose()
+        {
+            this.Semaphore.Release(1);
+        }
+    }
 }
-
-.grid-table(members, 3, min-content 1fr min-content);
-.grid-table(solves, 4, 1fr 2fr min-content 1fr);

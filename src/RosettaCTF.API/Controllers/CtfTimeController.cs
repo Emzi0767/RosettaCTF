@@ -34,6 +34,7 @@ namespace RosettaCTF.Controllers
     {
         private ICtfChallengeRepository ChallengeRepository { get; }
         private ICtfChallengeCacheRepository ChallengeCacheRepository { get; }
+        private ScoreCalculatorService ScoreCalculator { get; }
 
         public CtfTimeController(
             ILoggerFactory loggerFactory,
@@ -62,6 +63,7 @@ namespace RosettaCTF.Controllers
                 Tasks = challenges.Select(x => x.Title),
                 Standings = this.CreateStandings(solves.GroupBy(x => x.Team), points)
                     .OrderByDescending(x => x.Score)
+                    .ThenBy(x => x.LastAccept)
                     .Select((x, i) => { x.Pos = i + 1; return x; })
             };
             return this.Ok(scoreboard);

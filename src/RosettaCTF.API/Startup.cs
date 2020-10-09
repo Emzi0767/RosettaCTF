@@ -191,7 +191,9 @@ namespace RosettaCTF.API
                 .AddSingleton<OAuthConfigurationProvider>()
                 .AddScoped<OAuthProviderSelector>()
                 .AddScoped<LoginSettingsRepository>()
-                .AddTransient<MfaValidatorService>();
+                .AddTransient<MfaValidatorService>()
+                .AddScoped<ScoreCalculatorService>()
+                .AddSingleton<ScoreLockService>();
 
             services.AddHostedService<ChallengeBootstrapperService>();
 

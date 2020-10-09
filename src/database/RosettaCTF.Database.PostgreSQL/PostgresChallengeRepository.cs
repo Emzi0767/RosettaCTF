@@ -187,11 +187,39 @@ namespace RosettaCTF
             catch { return null; }
         }
 
+        public async Task<ICtfSolveSubmission> UpdateSolveAsync(long id, int? score, CancellationToken cancellationToken = default)
+        {
+            var solve = await this.Database.Solves.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            if (solve == null)
+                return null;
+
+            solve.Score = score;
+            this.Database.Solves.Update(solve);
+            await this.Database.SaveChangesAsync(cancellationToken);
+
+            return solve;
+        }
+
+        public async Task UpdateSolvesAsync(IEnumerable<CtfSolveUpdate> solveUpdates, CancellationToken cancellationToken = default)
+        {
+            foreach (var solveUpdate in solveUpdates)
+            {
+                if (!(solveUpdate.Solve is PostgresSolveSubmission solve))
+                    continue;
+
+                solve.Score = solveUpdate.NewScore;
+                this.Database.Solves.Update(solve);
+            }
+
+            await this.Database.SaveChangesAsync(cancellationToken);
+        }
+
         public async Task<IEnumerable<ICtfSolveSubmission>> GetSuccessfulSolvesAsync(CancellationToken cancellationToken = default)
             => await this.Database.Solves
                 .Where(x => x.IsValid)
                 .Include(x => x.TeamInternal)
                 .Include(x => x.ChallengeInternal).ThenInclude(x => x.CategoryInternal)
+                .OrderBy(x => x.Timestamp)
                 .ToListAsync(cancellationToken);
 
         public async Task<IEnumerable<ICtfSolveSubmission>> GetSuccessfulSolvesAsync(long teamId, CancellationToken cancellationToken = default)
@@ -199,6 +227,7 @@ namespace RosettaCTF
                 .Include(x => x.ChallengeInternal).ThenInclude(x => x.CategoryInternal)
                 .Include(x => x.UserInternal).ThenInclude(x => x.CountryInternal)
                 .Where(x => x.IsValid && x.TeamId == teamId)
+                .OrderBy(x => x.Timestamp)
                 .ToListAsync(cancellationToken);
 
         public async Task<IEnumerable<ICtfSolveSubmission>> GetSuccessfulSolvesAsync(string challengeId, CancellationToken cancellationToken = default)
@@ -206,6 +235,7 @@ namespace RosettaCTF
                 .Include(x => x.TeamInternal)
                 .Include(x => x.ChallengeInternal).ThenInclude(x => x.CategoryInternal)
                 .Where(x => x.IsValid && x.ChallengeId == challengeId)
+                .OrderBy(x => x.Timestamp)
                 .ToListAsync(cancellationToken);
 
         public async Task<IEnumerable<ICtfSolveSubmission>> GetAllSolvesAsync(long lastId = -1, CancellationToken cancellationToken = default)
@@ -214,6 +244,7 @@ namespace RosettaCTF
                 .OrderBy(x => x.Id)
                 .Include(x => x.TeamInternal)
                 .Include(x => x.ChallengeInternal).ThenInclude(x => x.CategoryInternal)
+                .OrderBy(x => x.Timestamp)
                 .ToListAsync(cancellationToken);
     }
 }
