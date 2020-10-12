@@ -651,7 +651,7 @@ export interface ISolve {
     /**
      * Gets the amount of time taken to solve.
      */
-    timeTaken: number;
+    timeTaken: string;
 }
 
 /**
