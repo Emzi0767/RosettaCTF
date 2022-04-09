@@ -25,7 +25,7 @@
     "@angular/router": "^11.1.2",
     "angular2-qrcode": "^2.0.3",
     "humanize-duration-ts": "^2.1.1",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "ngx-markdown": "^10.1.1",
     "rxjs": "~6.6.3",
     "tslib": "^2.0.0",
